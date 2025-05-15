@@ -169,33 +169,33 @@ export class DatabaseStorage implements IStorage {
     // Get paginated data
     const offset = (page - 1) * limit;
     
-    // Determine sort column and direction
-    let query = db.select().from(businessSubmissions).where(whereClause);
-    
-    if (sortBy === 'businessName') {
-      query = sortOrder === 'asc' 
-        ? query.orderBy(businessSubmissions.businessName)
-        : query.orderBy(desc(businessSubmissions.businessName));
-    } else if (sortBy === 'businessType') {
-      query = sortOrder === 'asc'
-        ? query.orderBy(businessSubmissions.businessType)
-        : query.orderBy(desc(businessSubmissions.businessType));
-    } else if (sortBy === 'status') {
-      query = sortOrder === 'asc'
-        ? query.orderBy(businessSubmissions.status)
-        : query.orderBy(desc(businessSubmissions.status));
-    } else if (sortBy === 'updatedAt') {
-      query = sortOrder === 'asc'
-        ? query.orderBy(businessSubmissions.updatedAt)
-        : query.orderBy(desc(businessSubmissions.updatedAt));
-    } else {
-      // Default to createdAt
-      query = sortOrder === 'asc'
-        ? query.orderBy(businessSubmissions.createdAt)
-        : query.orderBy(desc(businessSubmissions.createdAt));
+    // Build the query with sorting
+    let orderByField;
+    switch (sortBy) {
+      case 'businessName':
+        orderByField = businessSubmissions.businessName;
+        break;
+      case 'businessType':
+        orderByField = businessSubmissions.businessType;
+        break;
+      case 'status':
+        orderByField = businessSubmissions.status;
+        break;
+      case 'updatedAt':
+        orderByField = businessSubmissions.updatedAt;
+        break;
+      default:
+        orderByField = businessSubmissions.createdAt;
     }
     
-    const data = await query.limit(limit).offset(offset);
+    // Get the data with proper ordering
+    const data = await db
+      .select()
+      .from(businessSubmissions)
+      .where(whereClause)
+      .orderBy(sortOrder === 'asc' ? orderByField : desc(orderByField))
+      .limit(limit)
+      .offset(offset);
     
     return { data, total };
   }
