@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import SimpleHeader from '@/components/layout/SimpleHeader';
 import SimpleFooter from '@/components/layout/SimpleFooter';
-import { BusinessSubmission } from '@shared/schema';
+import { BusinessSubmission, User } from '@shared/schema';
 
 interface SubmissionsResponse {
   data: BusinessSubmission[];
@@ -31,20 +31,23 @@ const Admin: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // Auth check
-  const { data: user, isLoading: isLoadingUser } = useQuery({
+  const { data: user, isLoading: isLoadingUser } = useQuery<User>({
     queryKey: ['/api/auth/user'],
-    retry: false,
-    onSuccess: (userData) => {
-      if (!userData?.isAdmin) {
+    retry: false
+  });
+
+  // Handle authentication and authorization redirects
+  useEffect(() => {
+    if (!isLoadingUser) {
+      if (!user) {
+        // Redirect to login if not authenticated
+        window.location.href = '/api/login';
+      } else if (!user.isAdmin) {
         // Redirect non-admin users to the homepage
         window.location.href = '/';
       }
-    },
-    onError: () => {
-      // Redirect to login if not authenticated
-      window.location.href = '/api/login';
     }
-  });
+  }, [user, isLoadingUser]);
 
   // Fetch submissions with the admin API
   const { 
@@ -61,7 +64,7 @@ const Admin: React.FC = () => {
       sortBy,
       sortOrder
     ],
-    enabled: !!user && user.isAdmin, // Only fetch if user is admin
+    enabled: !!user && !!user.isAdmin, // Only fetch if user is admin
   });
   
   // Function to handle data export
