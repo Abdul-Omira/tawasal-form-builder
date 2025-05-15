@@ -8,7 +8,7 @@ import { fromZodError } from "zod-validation-error";
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { createArabicPDF } from './puppeteerPdfUtils';
+import { createArabicPDF } from './pdfUtils2';
 import path from 'path';
 import fs from 'fs';
 import { setupAuth, isAuthenticated, isAdmin } from "./auth";
@@ -300,8 +300,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ];
           });
           
-          // Create the PDF using our puppeteer PDF generator with proper Arabic support
-          const pdfBuffer = await createArabicPDF(
+          // Create the PDF using our reliable PDF generator
+          const pdfBuffer = createArabicPDF(
             'تقرير طلبات الشركات المتضررة من العقوبات',
             tableData,
             tableHeaders,

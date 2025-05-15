@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import path from 'path';
 import fs from 'fs';
 
@@ -24,10 +24,17 @@ export async function createArabicPDF(
     // Create HTML content with proper Arabic support
     const htmlContent = generateHtml(title, data, headers, dateStr, refNumber);
     
-    // Launch puppeteer
+    // Launch puppeteer with chromium path
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      executablePath: '/nix/store/p6s9v8kp640jdyj7a82vmxyr5pbqxsrh-chromium-112.0.5615.121/bin/chromium',
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--single-process'
+      ]
     });
     
     try {
