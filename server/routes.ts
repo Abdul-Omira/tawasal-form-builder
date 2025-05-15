@@ -271,89 +271,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         return res.send(excelBuffer);
       } else if (format === 'pdf') {
-        // Create new PDF document with RTL support
+        // Create PDF with proper Arabic support by using a modified approach
+        // Set up PDF object with RTL support
         const doc = new jsPDF({
           orientation: 'landscape',
           unit: 'mm',
-          format: 'a4'
+          format: 'a4',
+          putOnlyUsedFonts: true,
+          compress: true
         });
         
         // Page dimensions
         const pageWidth = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
         
-        // Add Syrian emblem logo (centered at the top)
-        const emblemPath = path.join(process.cwd(), 'client/src/assets/syria-emblem.png');
+        // Use the SVG version of the emblem
+        const emblemPath = path.join(process.cwd(), 'client/src/assets/syria-emblem-svg.png');
         if (fs.existsSync(emblemPath)) {
           const emblemData = fs.readFileSync(emblemPath);
           const emblemBase64 = Buffer.from(emblemData).toString('base64');
-          // Center the emblem at the top
+          // Center the emblem at the top (better quality SVG version)
           doc.addImage(`data:image/png;base64,${emblemBase64}`, 'PNG', (pageWidth / 2) - 15, 5, 30, 30);
         }
         
-        // Add Ministry logo on the right side
-        const logoPath = path.join(process.cwd(), 'client/src/assets/ministry-logo.png');
-        if (fs.existsSync(logoPath)) {
-          const logoData = fs.readFileSync(logoPath);
-          const logoBase64 = Buffer.from(logoData).toString('base64');
-          // Place ministry logo on the right side
-          doc.addImage(`data:image/png;base64,${logoBase64}`, 'PNG', pageWidth - 45, 5, 35, 35);
-        }
+        // Skip adding the ministry logo as per user request - using only the emblem
         
-        // Add header text
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(18);
-        doc.text('الجمهورية العربية السورية', pageWidth / 2, 40, { align: 'center' });
-        doc.text('وزارة الاتصالات وتقانة المعلومات', pageWidth / 2, 48, { align: 'center' });
+        // Use jsPDF's built-in RTL features for proper Arabic text rendering
+        
+        // We'll use jsPDF's built-in RTL support for Arabic text
+        // Define header text
+        const headerText1 = 'الجمهورية العربية السورية';
+        const headerText2 = 'وزارة الاتصالات وتقانة المعلومات';
+        const reportTitle = 'تقرير طلبات الشركات المتضررة من العقوبات';
+        
+        // Instead of addArabicText function which doesn't work in Node.js environment
+        // we'll use the built-in text function but with specific settings
         
         // Add gold line under header
         doc.setDrawColor(184, 134, 11); // Gold color
         doc.setLineWidth(0.5);
         doc.line(60, 53, pageWidth - 60, 53);
         
+        // Use a workaround for Arabic text - simplified approach
+        // Set font with Arabic support
+        doc.setFont('Amiri', 'normal');
+        doc.setR2L(true); // Enable right-to-left mode
+        
+        // Add headers and title
+        doc.setFontSize(18);
+        doc.text(headerText1, pageWidth / 2, 40, { align: 'center' });
+        doc.text(headerText2, pageWidth / 2, 48, { align: 'center' });
+        
         // Add report title
         doc.setFontSize(16);
-        doc.text('تقرير طلبات الشركات المتضررة من العقوبات', pageWidth / 2, 60, { align: 'center' });
+        doc.text(reportTitle, pageWidth / 2, 60, { align: 'center' });
         
         // Add generation date and reference number
         doc.setFontSize(10);
         const today = new Date();
-        doc.text(`تاريخ التقرير: ${today.toLocaleDateString('ar-SY')}`, pageWidth / 2, 67, { align: 'center' });
-        doc.text(`رقم المرجع: MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`, pageWidth / 2, 72, { align: 'center' });
+        const dateStr = today.toLocaleDateString('ar-SY');
+        const refNumber = `MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`;
         
-        // Prepare columns for the table (subset of all available data for readability)
-        const tableColumns = [
-          'ID',
-          'اسم الشركة',
-          'نوع النشاط',
-          'اسم المسؤول',
-          'البريد الإلكتروني',
-          'رقم الهاتف',
-          'المحافظة',
-          'تفاصيل التحديات',
-          'الحالة',
-          'تاريخ التقديم'
-        ];
-        
-        // Prepare table data
-        const tableData = exportData.map(row => [
-          row['ID'],
-          row['اسم الشركة'],
-          row['نوع النشاط'],
-          row['اسم المسؤول'],
-          row['البريد الإلكتروني'],
-          row['رقم الهاتف'],
-          row['المحافظة'],
-          row['تفاصيل التحديات'].substring(0, 40) + (row['تفاصيل التحديات'].length > 40 ? '...' : ''),
-          row['الحالة'],
-          row['تاريخ التقديم']
-        ]);
+        doc.text(`تاريخ التقرير: ${dateStr}`, pageWidth / 2, 67, { align: 'center' });
+        doc.text(`رقم المرجع: ${refNumber}`, pageWidth / 2, 72, { align: 'center' });
         
         // Create table with Arabic column headers
+        // Use jspdf-autotable with specific settings for RTL support
         autoTable(doc, {
           startY: 80,
-          head: [tableColumns],
-          body: tableData,
+          // Define column headers in reverse order for RTL
+          head: [[
+            'تاريخ التقديم',
+            'الحالة',
+            'المحافظة',
+            'رقم الهاتف',
+            'البريد الإلكتروني',
+            'اسم المسؤول',
+            'نوع النشاط',
+            'اسم الشركة',
+            'رقم الطلب'
+          ]],
+          // Add table data in reverse order for RTL
+          body: exportData.map(row => [
+            row['تاريخ التقديم'],
+            row['الحالة'],
+            row['المحافظة'] || '',
+            row['رقم الهاتف'],
+            row['البريد الإلكتروني'],
+            row['اسم المسؤول'],
+            row['نوع النشاط'],
+            row['اسم الشركة'],
+            row['ID'].toString()
+          ]),
           headStyles: { 
             fillColor: [0, 110, 81], // Ministry green
             textColor: [255, 255, 255], 
@@ -369,24 +378,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // RTL support
           styles: { 
             halign: 'right', 
-            font: 'helvetica',
+            font: 'Amiri',
             overflow: 'linebreak'
           },
           alternateRowStyles: {
             fillColor: [240, 240, 240]
           },
-          // Column widths
-          columnStyles: {
-            0: { cellWidth: 10 },  // ID
-            1: { cellWidth: 35 },  // Business Name
-            2: { cellWidth: 25 },  // Business Type
-            3: { cellWidth: 25 },  // Contact Name
-            4: { cellWidth: 35 },  // Email
-            5: { cellWidth: 20 },  // Phone
-            6: { cellWidth: 20 },  // Governorate
-            7: { cellWidth: 45 },  // Challenge Details
-            8: { cellWidth: 20 },  // Status
-            9: { cellWidth: 20 }   // Created Date
+          // Don't specify column widths - let it adjust automatically
+          didDrawPage: (data) => {
+            // Reset text direction for footer
+            doc.setR2L(true);
           }
         });
         
@@ -405,18 +406,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doc.setPage(i);
           doc.setFontSize(8);
           doc.setTextColor(100, 100, 100);
+          doc.setR2L(true);
           // Footer with security notice
           doc.text('جميع البيانات في هذا التقرير مشفرة ومؤمنة - للاستخدام الرسمي فقط', pageWidth / 2, pageHeight - 5, { align: 'center' });
-          // Page numbers
-          doc.text(`صفحة ${i} من ${pageCount}`, 20, pageHeight - 5);
+          // Page numbers (LTR)
+          doc.setR2L(false);
+          doc.text(`${pageCount} / ${i}`, 20, pageHeight - 5);
         }
         
         // Generate PDF buffer
         const pdfBuffer = doc.output('arraybuffer');
         
         // Set headers for file download with date in filename
-        const dateStr = today.toISOString().split('T')[0];
-        res.setHeader('Content-Disposition', `attachment; filename=business-submissions-report-${dateStr}.pdf`);
+        const outputDateStr = today.toISOString().split('T')[0];
+        res.setHeader('Content-Disposition', `attachment; filename=business-submissions-report-${outputDateStr}.pdf`);
         res.setHeader('Content-Type', 'application/pdf');
         
         return res.send(Buffer.from(pdfBuffer));
