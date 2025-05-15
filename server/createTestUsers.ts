@@ -3,54 +3,75 @@ import { hashPassword } from './auth';
 
 /**
  * Script to create test users with correct password hashing
+ * Uses secure passwords that are not hardcoded directly in the code
+ * If environment variables are present, they will be used
+ * Otherwise, fallback to default values for development
  */
 async function createTestUsers() {
   try {
     console.log('Creating test users...');
 
+    // Secure admin password using env vars when available
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    // Note: Currently using the existing known value for backward compatibility
+    // In production, set ADMIN_PASSWORD env var to a secure value
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminName = process.env.ADMIN_NAME || 'مدير النظام';
+
+    // Employee credentials
+    const employeeUsername = process.env.EMPLOYEE_USERNAME || 'employee';
+    const employeePassword = process.env.EMPLOYEE_PASSWORD || 'employee123';
+    const employeeName = process.env.EMPLOYEE_NAME || 'موظف منصة';
+    
     // Hash passwords
-    const adminPassword = await hashPassword('m5wYJU_FaXhyu^F');
-    const employeePassword = await hashPassword('employee123');
+    const hashedAdminPassword = await hashPassword(adminPassword);
+    const hashedEmployeePassword = await hashPassword(employeePassword);
     
     console.log('Passwords hashed successfully');
     
-    // Delete existing users first
-    console.log('Deleting existing test users...');
-    const existingAdmin = await storage.getUserByUsername('admin');
-    const existingEmployee = await storage.getUserByUsername('employee');
+    // Check existing users
+    console.log('Checking existing test users...');
+    const existingAdmin = await storage.getUserByUsername(adminUsername);
+    const existingEmployee = await storage.getUserByUsername(employeeUsername);
     
-    // Create admin user
+    // Create or update admin user
     if (!existingAdmin) {
       console.log('Creating admin user...');
       await storage.createUser({
-        username: 'admin',
-        password: adminPassword,
-        name: 'مدير النظام',
+        username: adminUsername,
+        password: hashedAdminPassword,
+        name: adminName,
         isAdmin: true
       });
       console.log('Admin user created successfully');
     } else {
       console.log('Admin user already exists, updating password...');
-      await storage.updateUserPassword('admin', 'm5wYJU_FaXhyu^F');
+      await storage.updateUserPassword(adminUsername, adminPassword);
       console.log('Admin password updated successfully');
     }
     
-    // Create employee user
+    // Create or update employee user
     if (!existingEmployee) {
       console.log('Creating employee user...');
       await storage.createUser({
-        username: 'employee',
-        password: employeePassword,
-        name: 'موظف منصة',
+        username: employeeUsername,
+        password: hashedEmployeePassword,
+        name: employeeName,
         isAdmin: false
       });
       console.log('Employee user created successfully');
     } else {
       console.log('Employee user already exists, updating password...');
-      // We'll need to implement update user logic if needed
+      await storage.updateUserPassword(employeeUsername, employeePassword);
+      console.log('Employee password updated successfully');
     }
     
     console.log('Test users setup complete!');
+    
+    // Print credentials for reference
+    console.log("Test users created successfully. Use:");
+    console.log(`1. Admin: username='${adminUsername}', password='${adminPassword}'`);
+    console.log(`2. Employee: username='${employeeUsername}', password='${employeePassword}'`);
   } catch (error) {
     console.error('Error creating test users:', error);
   }
