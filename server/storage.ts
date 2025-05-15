@@ -1,21 +1,28 @@
 import { 
   BusinessSubmission, 
   InsertBusinessSubmission, 
-  User, 
-  UpsertUser,
+  User,
+  InsertUser,
+  LoginCredentials,
   businessSubmissions,
   users
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, and, like, or } from "drizzle-orm";
+import { scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
 
 // Interface for storage operations
 export interface IStorage {
-  // User operations (for Replit Auth)
-  getUser(id: string): Promise<User | undefined>;
-  upsertUser(user: UpsertUser): Promise<User>;
-  isUserAdmin(id: string): Promise<boolean>;
-  setUserAsAdmin(id: string): Promise<User>;
+  // User operations for local authentication
+  getUserById(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  validateUser(credentials: LoginCredentials): Promise<User | null>;
+  isUserAdmin(id: number): Promise<boolean>;
+  setUserAsAdmin(id: number): Promise<User>;
   
   // Business submission operations
   getAllBusinessSubmissions(): Promise<BusinessSubmission[]>;
@@ -41,38 +48,66 @@ export interface IStorage {
   }>;
 }
 
+// Helper functions for password hashing
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
+
+async function comparePasswords(supplied: string, stored: string) {
+  const [hashed, salt] = stored.split(".");
+  const hashedBuf = Buffer.from(hashed, "hex");
+  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+  return timingSafeEqual(hashedBuf, suppliedBuf);
+}
+
 // Storage class for database operations
 export class DatabaseStorage implements IStorage {
-  // User operations (for Replit Auth)
-  async getUser(id: string): Promise<User | undefined> {
+  // User operations for local authentication
+  async getUserById(id: number): Promise<User | undefined> {
     const results = await db.select().from(users).where(eq(users.id, id));
     return results.length > 0 ? results[0] : undefined;
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const results = await db.select().from(users).where(eq(users.username, username));
+    return results.length > 0 ? results[0] : undefined;
+  }
+
+  async createUser(userData: InsertUser): Promise<User> {
+    // Hash the password before storing
+    const hashedPassword = await hashPassword(userData.password);
+    
     const results = await db
       .insert(users)
       .values({
         ...userData,
-        updatedAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
+        password: hashedPassword,
       })
       .returning();
+    
     return results[0];
   }
 
-  async isUserAdmin(id: string): Promise<boolean> {
-    const user = await this.getUser(id);
+  async validateUser(credentials: LoginCredentials): Promise<User | null> {
+    const user = await this.getUserByUsername(credentials.username);
+    
+    if (!user) {
+      return null;
+    }
+    
+    const isValid = await comparePasswords(credentials.password, user.password);
+    
+    return isValid ? user : null;
+  }
+
+  async isUserAdmin(id: number): Promise<boolean> {
+    const user = await this.getUserById(id);
     return user?.isAdmin || false;
   }
 
-  async setUserAsAdmin(id: string): Promise<User> {
+  async setUserAsAdmin(id: number): Promise<User> {
     const results = await db
       .update(users)
       .set({ 
@@ -81,6 +116,7 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(users.id, id))
       .returning();
+    
     return results[0];
   }
 

@@ -10,7 +10,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import path from 'path';
 import fs from 'fs';
-import { setupAuth, isAuthenticated, isAdmin } from "./replitAuth";
+import { setupAuth, isAuthenticated, isAdmin } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
@@ -93,17 +93,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Auth-related routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "حدث خطأ أثناء جلب بيانات المستخدم" });
-    }
-  });
+  // Our new auth.ts file handles these routes:
+  // - /api/login
+  // - /api/register
+  // - /api/logout
+  // - /api/user
 
   // Admin-only routes (protected)
   app.get("/api/admin/business-submissions", isAdmin, async (req: Request, res: Response) => {
