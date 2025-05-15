@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CountryCodeInput } from '@/components/ui/country-code-input';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
@@ -251,10 +252,10 @@ const SimpleBusinessForm: React.FC = () => {
                           رقم الهاتف <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input 
-                            type="tel" 
-                            {...field} 
-                            placeholder="09xxxxxxxx" 
+                          <CountryCodeInput 
+                            value={field.value} 
+                            onChange={field.onChange}
+                            placeholder="أدخل رقم الهاتف" 
                             className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
                           />
                         </FormControl>
