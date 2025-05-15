@@ -148,20 +148,60 @@ export class DatabaseStorage implements IStorage {
 
   // Business submission operations
   async getAllBusinessSubmissions(): Promise<BusinessSubmission[]> {
-    return await db
+    const submissions = await db
       .select()
       .from(businessSubmissions)
       .orderBy(desc(businessSubmissions.createdAt));
+    
+    // Decrypt all sensitive fields in all submissions
+    return submissions.map(submission => {
+      const decryptedSubmission = { ...submission };
+      
+      // Decrypt each sensitive field
+      for (const field of SENSITIVE_BUSINESS_FIELDS) {
+        if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
+          try {
+            decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
+          } catch (error) {
+            console.error(`Error decrypting field ${field} in submission ${submission.id}:`, error);
+            // Keep the encrypted value if decryption fails
+          }
+        }
+      }
+      
+      return decryptedSubmission;
+    });
   }
   
   async getBusinessSubmissionById(id: number): Promise<BusinessSubmission | undefined> {
     const results = await db.select().from(businessSubmissions).where(eq(businessSubmissions.id, id));
-    return results.length > 0 ? results[0] : undefined;
+    
+    if (results.length === 0) {
+      return undefined;
+    }
+    
+    // Decrypt sensitive fields before returning
+    const submission = results[0];
+    const decryptedSubmission = { ...submission };
+    
+    // Decrypt each sensitive field
+    for (const field of SENSITIVE_BUSINESS_FIELDS) {
+      if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
+        try {
+          decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
+        } catch (error) {
+          console.error(`Error decrypting field ${field}:`, error);
+          // Keep the encrypted value if decryption fails
+        }
+      }
+    }
+    
+    return decryptedSubmission;
   }
   
   async createBusinessSubmission(insertSubmission: InsertBusinessSubmission): Promise<BusinessSubmission> {
     try {
-      console.log("Creating business submission with data:", insertSubmission);
+      console.log("Creating business submission with data (sensitive info redacted)");
       
       // Only include fields that exist in the database schema
       const sanitizedData = {
@@ -192,9 +232,35 @@ export class DatabaseStorage implements IStorage {
         createdAt: new Date()
       };
       
-      const results = await db.insert(businessSubmissions).values(sanitizedData).returning();
-      console.log("Submission created successfully:", results[0]);
-      return results[0];
+      // Encrypt sensitive fields before storing in database
+      const encryptedData = { ...sanitizedData };
+      
+      // Encrypt each sensitive field
+      for (const field of SENSITIVE_BUSINESS_FIELDS) {
+        if (encryptedData[field] && typeof encryptedData[field] === 'string') {
+          encryptedData[field] = encrypt(encryptedData[field]);
+        }
+      }
+      
+      const results = await db.insert(businessSubmissions).values(encryptedData).returning();
+      
+      // Decrypt the data before returning to client
+      const decryptedSubmission = { ...results[0] };
+      
+      // Decrypt each sensitive field
+      for (const field of SENSITIVE_BUSINESS_FIELDS) {
+        if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
+          try {
+            decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
+          } catch (error) {
+            console.error(`Error decrypting field ${field}:`, error);
+            // Keep the encrypted value if decryption fails
+          }
+        }
+      }
+      
+      console.log("Business submission created successfully with encrypted sensitive data");
+      return decryptedSubmission;
     } catch (error) {
       console.error("Database error creating submission:", error);
       throw error;
@@ -210,7 +276,27 @@ export class DatabaseStorage implements IStorage {
       .where(eq(businessSubmissions.id, id))
       .returning();
     
-    return results.length > 0 ? results[0] : undefined;
+    if (results.length === 0) {
+      return undefined;
+    }
+    
+    // Decrypt sensitive fields before returning
+    const submission = results[0];
+    const decryptedSubmission = { ...submission };
+    
+    // Decrypt each sensitive field
+    for (const field of SENSITIVE_BUSINESS_FIELDS) {
+      if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
+        try {
+          decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
+        } catch (error) {
+          console.error(`Error decrypting field ${field}:`, error);
+          // Keep the encrypted value if decryption fails
+        }
+      }
+    }
+    
+    return decryptedSubmission;
   }
 
   // Advanced business submission operations for admin panel
@@ -283,13 +369,32 @@ export class DatabaseStorage implements IStorage {
     }
     
     // Get the data with proper ordering
-    const data = await db
+    const encryptedData = await db
       .select()
       .from(businessSubmissions)
       .where(whereClause)
       .orderBy(sortOrder === 'asc' ? orderByField : desc(orderByField))
       .limit(limit)
       .offset(offset);
+    
+    // Decrypt sensitive fields before returning
+    const data = encryptedData.map(submission => {
+      const decryptedSubmission = { ...submission };
+      
+      // Decrypt each sensitive field
+      for (const field of SENSITIVE_BUSINESS_FIELDS) {
+        if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
+          try {
+            decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
+          } catch (error) {
+            console.error(`Error decrypting field ${field} in submission ${submission.id}:`, error);
+            // Keep the encrypted value if decryption fails
+          }
+        }
+      }
+      
+      return decryptedSubmission;
+    });
     
     return { data, total };
   }
