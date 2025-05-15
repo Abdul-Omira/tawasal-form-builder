@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCodeInput } from '@/components/ui/country-code-input';
-import { SimpleCaptcha } from '@/components/ui/simple-captcha';
+import { ClickCaptcha } from '@/components/ui/click-captcha';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';

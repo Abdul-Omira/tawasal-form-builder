@@ -50,39 +50,39 @@ const Home: React.FC = () => {
       <main className="flex-grow">
         {/* Banner Section with animation */}
         <motion.section 
-          className="bg-primary py-8 md:py-12 overflow-hidden"
+          className="bg-primary py-8 md:py-12 overflow-hidden font-ibm"
           variants={bannerVariants}
           initial="hidden"
           animate="visible"
         >
           <div className="container mx-auto px-4">
             <motion.div 
-              className="text-center text-white"
+              className="text-center text-white font-ibm"
               variants={textVariants}
               initial="hidden"
               animate="visible"
             >
               <motion.div 
-                className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 animate-theme"
+                className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 animate-theme font-ibm"
                 variants={textVariants}
               >
                 <FancyCalligraphyAnimation 
                   text="نظام التواصل للشركات المتأثرة بالعقوبات"
                   duration={0.06}
                   delay={0.2}
-                  className="inline-block"
+                  className="inline-block font-ibm"
                   as="h1"
                 />
               </motion.div>
               <motion.div 
-                className="mb-6 max-w-2xl mx-auto text-sm md:text-base"
+                className="mb-6 max-w-2xl mx-auto text-sm md:text-base font-ibm"
                 variants={textVariants}
               >
                 <CalligraphyAnimation 
                   text="منصة وزارة الاتصالات السورية لجمع معلومات حول الشركات الناشئة والأعمال المتأثرة بالعقوبات ومساعدتها في التغلب على التحديات"
                   duration={0.03}
                   delay={0.5}
-                  className="inline-block"
+                  className="inline-block font-ibm"
                 />
               </motion.div>
             </motion.div>
@@ -91,14 +91,14 @@ const Home: React.FC = () => {
 
         {/* Form Section with animation */}
         <motion.section 
-          className="py-8 md:py-12"
+          className="py-8 md:py-12 font-ibm"
           variants={formVariants}
           initial="hidden"
           animate="visible"
           id="form-section"
         >
           <div className="container mx-auto px-4">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-shadow hover:shadow-lg">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-shadow hover:shadow-lg font-ibm">
               <SimpleBusinessForm />
             </div>
           </div>
