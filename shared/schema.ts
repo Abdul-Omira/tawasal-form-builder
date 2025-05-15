@@ -27,7 +27,6 @@ export const businessSubmissions = pgTable("business_submissions", {
   additionalComments: text("additional_comments"),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Session storage table for Replit Auth
@@ -49,7 +48,6 @@ export const users = pgTable("users", {
   name: varchar("name"),
   isAdmin: boolean("is_admin").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Business submission validation schema
@@ -80,7 +78,6 @@ export const BusinessSubmissionSchema = z.object({
 export const insertBusinessSubmissionSchema = createInsertSchema(businessSubmissions).omit({
   id: true,
   createdAt: true,
-  updatedAt: true,
   status: true
 });
 
@@ -100,8 +97,7 @@ export const LoginSchema = z.object({
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true
+  createdAt: true
 });
 
 // Types
