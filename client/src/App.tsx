@@ -10,6 +10,7 @@ import i18n from './lib/i18n';
 import Home from '@/pages/Home';
 import Admin from '@/pages/Admin';
 import Confirmation from '@/pages/Confirmation';
+import AuthPage from '@/pages/AuthPage';
 import NotFound from '@/pages/not-found';
 
 function Router() {
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/" component={Home}/>
       <Route path="/admin" component={Admin}/>
       <Route path="/confirmation" component={Confirmation}/>
+      <Route path="/auth" component={AuthPage}/>
       <Route component={NotFound} />
     </Switch>
   );

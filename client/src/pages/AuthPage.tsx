@@ -1,0 +1,89 @@
+import React, { useEffect } from 'react';
+import { useLocation } from 'wouter';
+import SimpleHeader from '@/components/layout/SimpleHeader';
+import SimpleFooter from '@/components/layout/SimpleFooter';
+import LoginForm from '@/components/auth/LoginForm';
+import { motion } from 'framer-motion';
+import emblemSrc from '@assets/Emblem_of_Syria.svg.png';
+import { useAuth } from '@/hooks/useAuth';
+
+const AuthPage: React.FC = () => {
+  const [location, setLocation] = useLocation();
+  const { user, isLoading, isAuthenticated, isAdmin } = useAuth();
+  
+  // If user is already logged in, redirect to home or admin page
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      if (isAdmin) {
+        setLocation('/admin');
+      } else {
+        setLocation('/');
+      }
+    }
+  }, [isAuthenticated, isAdmin, isLoading, setLocation]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-lg text-foreground">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <SimpleHeader />
+      
+      <main className="flex-grow bg-muted/20">
+        <div className="container mx-auto px-4 py-12">
+          <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden">
+            {/* Login Form */}
+            <motion.div 
+              className="w-full md:w-1/2 p-8 md:p-12"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-2xl font-bold mb-8 text-center text-primary">تسجيل الدخول للموظفين</h2>
+              <LoginForm />
+            </motion.div>
+            
+            {/* Hero Section */}
+            <motion.div 
+              className="w-full md:w-1/2 bg-primary/90 p-8 md:p-12 flex flex-col justify-center items-center text-white"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <div className="flex flex-col items-center">
+                <img 
+                  src={emblemSrc} 
+                  alt="شعار الجمهورية العربية السورية" 
+                  className="w-32 h-32 mb-6"
+                />
+                <h1 className="text-3xl font-bold text-center mb-4">وزارة الاتصالات وتقانة المعلومات</h1>
+                <p className="text-lg text-center mb-6">
+                  الجمهورية العربية السورية
+                </p>
+                <div className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+                  <h3 className="text-xl font-bold mb-4">منصة دعم الشركات التقنية</h3>
+                  <p className="text-sm">
+                    هذه المنصة مخصصة لجمع معلومات عن الشركات الناشئة والأعمال في سوريا 
+                    المتأثرة بالعقوبات والتحديات الاقتصادية، بهدف توفير الدعم والمساعدة المناسبة.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </main>
+      
+      <SimpleFooter />
+    </div>
+  );
+};
+
+export default AuthPage;

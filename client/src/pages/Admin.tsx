@@ -12,7 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import SimpleHeader from '@/components/layout/SimpleHeader';
 import SimpleFooter from '@/components/layout/SimpleFooter';
-import { BusinessSubmission, User } from '@shared/schema';
+import { useAuth } from '@/hooks/useAuth';
+import { useLocation } from 'wouter';
+import { queryClient } from '@/lib/queryClient';
+import { BusinessSubmission } from '@shared/schema';
 
 interface SubmissionsResponse {
   data: BusinessSubmission[];
@@ -21,6 +24,8 @@ interface SubmissionsResponse {
 
 const Admin: React.FC = () => {
   const { toast } = useToast();
+  const [_, setLocation] = useLocation();
+  const { user, isLoading: isLoadingUser, isAuthenticated, isAdmin } = useAuth();
   
   // Filtering and pagination state
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,24 +35,18 @@ const Admin: React.FC = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  // Auth check
-  const { data: user, isLoading: isLoadingUser } = useQuery<User>({
-    queryKey: ['/api/auth/user'],
-    retry: false
-  });
-
   // Handle authentication and authorization redirects
   useEffect(() => {
     if (!isLoadingUser) {
-      if (!user) {
+      if (!isAuthenticated) {
         // Redirect to login if not authenticated
-        window.location.href = '/api/login';
-      } else if (!user.isAdmin) {
+        setLocation('/auth');
+      } else if (!isAdmin) {
         // Redirect non-admin users to the homepage
-        window.location.href = '/';
+        setLocation('/');
       }
     }
-  }, [user, isLoadingUser]);
+  }, [isAuthenticated, isAdmin, isLoadingUser, setLocation]);
 
   // Fetch submissions with the admin API
   const { 
@@ -64,7 +63,7 @@ const Admin: React.FC = () => {
       sortBy,
       sortOrder
     ],
-    enabled: !!user && !!user.isAdmin, // Only fetch if user is admin
+    enabled: !!isAuthenticated && !!isAdmin, // Only fetch if user is admin
   });
   
   // Function to handle data export
@@ -154,7 +153,7 @@ const Admin: React.FC = () => {
   }
 
   // If user is not admin, show access denied
-  if (user && !user.isAdmin) {
+  if (!isLoadingUser && (!isAuthenticated || !isAdmin)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -163,7 +162,7 @@ const Admin: React.FC = () => {
           </svg>
           <h2 className="text-2xl font-bold text-foreground mb-2">صلاحيات غير كافية</h2>
           <p className="text-lg text-muted-foreground mb-6">ليس لديك الصلاحيات اللازمة للوصول إلى لوحة التحكم</p>
-          <Button onClick={() => window.location.href = '/'}>العودة إلى الصفحة الرئيسية</Button>
+          <Button onClick={() => setLocation('/auth')}>تسجيل الدخول</Button>
         </div>
       </div>
     );
@@ -182,7 +181,13 @@ const Admin: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 className="border-primary text-primary hover:bg-primary/10"
-                onClick={() => window.location.href = '/api/logout'}
+                onClick={() => {
+                  fetch('/api/logout', { method: 'POST' })
+                    .then(() => {
+                      queryClient.invalidateQueries(['/api/user']);
+                      setLocation('/auth');
+                    });
+                }}
               >
                 تسجيل الخروج
               </Button>
