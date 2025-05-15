@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FancyCalligraphyAnimation } from './CalligraphyAnimation';
+import { FancyCalligraphyAnimation } from './NewCalligraphyAnimation';
 
 interface WelcomeScreenProps {
   onComplete?: () => void;

@@ -4,7 +4,7 @@ import SimpleBusinessForm from '../components/form/SimpleBusinessForm';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
 import PageTransition from '../components/ui/page-transition';
-import { CalligraphyAnimation, FancyCalligraphyAnimation } from '../components/animation/CalligraphyAnimation';
+import { CalligraphyAnimation, FancyCalligraphyAnimation } from '../components/animation/NewCalligraphyAnimation';
 
 const Home: React.FC = () => {
   // Scroll to top on page load
