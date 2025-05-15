@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import SimpleHeader from '@/components/layout/SimpleHeader';
 import SimpleFooter from '@/components/layout/SimpleFooter';
@@ -36,6 +37,10 @@ const Admin: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  
+  // Submission details dialog state
+  const [selectedSubmission, setSelectedSubmission] = useState<BusinessSubmission | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   // Handle authentication and authorization redirects
   useEffect(() => {
