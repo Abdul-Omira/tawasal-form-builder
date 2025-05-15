@@ -173,39 +173,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         submissions = await storage.getAllBusinessSubmissions();
       }
 
-      // Format data for export with more detailed information and safe fallbacks
-      const exportData = submissions.map(sub => {
-        // Create a safe getter function to handle potentially undefined or null values
-        const safeProp = (value: any): string => value ?? '';
-        
-        // Handle date safely
-        let formattedDate = '';
-        try {
-          formattedDate = sub.createdAt ? new Date(sub.createdAt).toLocaleDateString('ar-SY') : '';
-        } catch (e) {
-          console.error('Error formatting date:', e);
-        }
-        
-        return {
-          ID: sub.id || '',
-          'اسم الشركة': safeProp(sub.businessName),
-          'نوع النشاط': safeProp(sub.businessType),
-          'عدد الموظفين': safeProp(sub.employeesCount),
-          'تاريخ التأسيس': safeProp(sub.establishmentDate),
-          'رقم التسجيل': safeProp(sub.registrationNumber),
-          'اسم المسؤول': safeProp(sub.contactName),
-          'المنصب': safeProp(sub.position),
-          'البريد الإلكتروني': safeProp(sub.email),
-          'رقم الهاتف': safeProp(sub.phone),
-          'المحافظة': safeProp(sub.governorate),
-          'العنوان': safeProp(sub.address),
-          'تفاصيل التحديات': safeProp(sub.challengeDetails),
-          'اسم الشركة الأجنبية المفروضة عليها عقوبات': safeProp(sub.sanctionedCompanyName),
-          'رابط الشركة الأجنبية': safeProp(sub.sanctionedCompanyLink),
-          'الحالة': getArabicStatus(safeProp(sub.status)),
-          'تاريخ التقديم': formattedDate
-        };
-      });
+      // Format data for export using our standardized utility function
+      // This handles decryption and provides consistent formatting
+      const exportData = prepareBusinessSubmissionsForExport(submissions);
 
       if (format === 'xlsx') {
         // Create title rows for ministry branding
