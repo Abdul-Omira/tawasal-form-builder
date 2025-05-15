@@ -13,14 +13,15 @@ async function createTestUsers() {
 
     // Secure admin password using env vars when available
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    // Note: Currently using the existing known value for backward compatibility
+    // Using a secure, complex password that combines uppercase, lowercase, numbers and special characters
     // In production, set ADMIN_PASSWORD env var to a secure value
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Sy#Min2024!C0m@7';
     const adminName = process.env.ADMIN_NAME || 'مدير النظام';
 
     // Employee credentials
     const employeeUsername = process.env.EMPLOYEE_USERNAME || 'employee';
-    const employeePassword = process.env.EMPLOYEE_PASSWORD || 'employee123';
+    // Also using a secure, complex password for employee accounts
+    const employeePassword = process.env.EMPLOYEE_PASSWORD || 'Emp#Sy2024$Tech!8';
     const employeeName = process.env.EMPLOYEE_NAME || 'موظف منصة';
     
     // Hash passwords
