@@ -4,6 +4,7 @@ import SimpleBusinessForm from '../components/form/SimpleBusinessForm';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
 import PageTransition from '../components/ui/page-transition';
+import { CalligraphyAnimation, FancyCalligraphyAnimation } from '../components/animation/CalligraphyAnimation';
 
 const Home: React.FC = () => {
   // Scroll to top on page load
@@ -61,12 +62,18 @@ const Home: React.FC = () => {
               initial="hidden"
               animate="visible"
             >
-              <motion.h1 
+              <motion.div 
                 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 animate-theme"
                 variants={textVariants}
               >
-                نظام التواصل للشركات المتأثرة بالعقوبات
-              </motion.h1>
+                <FancyCalligraphyAnimation 
+                  text="نظام التواصل للشركات المتأثرة بالعقوبات"
+                  duration={0.06}
+                  delay={0.2}
+                  className="inline-block"
+                  as="h1"
+                />
+              </motion.div>
               <motion.p 
                 className="mb-6 max-w-2xl mx-auto text-sm md:text-base"
                 variants={textVariants}

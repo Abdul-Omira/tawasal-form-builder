@@ -86,11 +86,14 @@ export const CalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
 /**
  * A more elaborate calligraphy animation with decorative elements
  */
-export const FancyCalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
+export const FancyCalligraphyAnimation: React.FC<CalligraphyAnimationProps & {
+  as?: 'div' | 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+}> = ({
   text,
   className = '',
   delay = 0,
-  duration = 0.05
+  duration = 0.05,
+  as = 'div'
 }) => {
   // Split the text into an array of characters
   const chars = text.split('');
@@ -142,9 +145,12 @@ export const FancyCalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
     }
   };
   
+  // Dynamically render the component based on the 'as' prop
+  const Container = as;
+  
   return (
-    <div className={`relative ${className}`}>
-      <motion.div
+    <Container className={`relative ${className}`}>
+      <motion.span
         className="inline-block"
         dir="rtl"
         variants={container}
@@ -165,7 +171,7 @@ export const FancyCalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
             {char === ' ' ? '\u00A0' : char}
           </motion.span>
         ))}
-      </motion.div>
+      </motion.span>
       
       {/* Decorative line beneath the text */}
       <motion.div
@@ -174,7 +180,7 @@ export const FancyCalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
         initial="hidden"
         animate="visible"
       />
-    </div>
+    </Container>
   );
 };
 

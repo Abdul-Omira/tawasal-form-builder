@@ -120,7 +120,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             className="mb-8"
           >
             <img 
-              src="/assets/Emblem_of_Syria.svg.png" 
+              src="/Emblem_of_Syria.svg.png" 
               alt="شعار الجمهورية العربية السورية" 
               className="w-40 h-auto"
             />
