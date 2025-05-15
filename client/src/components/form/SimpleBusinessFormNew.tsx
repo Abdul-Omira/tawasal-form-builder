@@ -89,53 +89,53 @@ const SimpleBusinessForm: React.FC = () => {
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
-        title: "تم إرسال البيانات بنجاح",
-        description: "شكراً لتقديم معلومات شركتك. سيتم التواصل معك قريباً.",
-        duration: 5000,
+        title: "تم إرسال طلبك بنجاح",
+        description: "سيتم التواصل معك قريباً",
+        variant: "default",
       });
       
-      // Redirect to confirmation page with request ID
-      setLocation(`/confirmation?id=${data.id}`);
+      // Redirect to confirmation page
+      setLocation('/confirmation');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
-        title: "خطأ",
-        description: error.message,
+        title: "حدث خطأ أثناء إرسال الطلب",
+        description: error.message || "يرجى المحاولة مرة أخرى لاحقاً",
         variant: "destructive",
-        duration: 5000,
       });
     }
   });
-
-  // Handle form submission
-  const onSubmit = (data: any) => {
+  
+  // Form submission handler
+  const onSubmit = (data: z.infer<typeof SimpleFormSchema>) => {
+    console.log("Form submitted:", data);
     mutate(data);
   };
-
+  
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
+    visible: { 
       opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
+      transition: { 
+        staggerChildren: 0.1,
         delayChildren: 0.2
       }
     }
   };
-
+  
   const formItemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
-
+  
   const buttonVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: 0.6 } }
   };
-
+  
   return (
     <motion.div
       initial="hidden"
@@ -250,20 +250,20 @@ const SimpleBusinessForm: React.FC = () => {
                       </FormItem>
                     )}
                   />
-                  
+                
                   <FormField
                     control={form.control}
-                    name="phone"
+                    name="email"
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">
-                          رقم الهاتف <span className="text-destructive">*</span>
+                          البريد الإلكتروني <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
-                          <CountryCodeInput 
-                            value={field.value} 
-                            onChange={field.onChange}
-                            placeholder="أدخل رقم الهاتف" 
+                          <Input 
+                            {...field} 
+                            type="email" 
+                            placeholder="أدخل البريد الإلكتروني" 
                             className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
                           />
                         </FormControl>
@@ -276,18 +276,17 @@ const SimpleBusinessForm: React.FC = () => {
                 <motion.div variants={formItemVariants}>
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="phone"
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">
-                          البريد الإلكتروني <span className="text-destructive">*</span>
+                          رقم الهاتف <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input 
-                            type="email" 
-                            {...field} 
-                            placeholder="example@domain.com" 
-                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
+                          <CountryCodeInput
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="أدخل رقم الهاتف"
                           />
                         </FormControl>
                         <FormMessage />
@@ -311,6 +310,73 @@ const SimpleBusinessForm: React.FC = () => {
                             {...field} 
                             placeholder="اشرح بإيجاز التحديات التي تواجهها شركتك..." 
                             className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth resize-none md:resize-y"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+
+                {/* Sanctioned Company Information */}
+                <motion.div variants={formItemVariants}>
+                  <h3 className="text-lg font-semibold text-foreground mb-3">معلومات عن الشركات الخارجية المتأثرة بالعقوبات</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <FormField
+                      control={form.control}
+                      name="sanctionedCompanyName"
+                      render={({ field }) => (
+                        <FormItem className="animate-smooth">
+                          <FormLabel className="font-medium">
+                            اسم الشركة التي لم تتمكن من التعامل معها بسبب العقوبات
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              placeholder="أدخل اسم الشركة الخارجية" 
+                              className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="sanctionedCompanyLink"
+                      render={({ field }) => (
+                        <FormItem className="animate-smooth">
+                          <FormLabel className="font-medium">
+                            رابط موقع الشركة (اختياري)
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              placeholder="أدخل رابط موقع الشركة الإلكتروني" 
+                              className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </motion.div>
+                
+                {/* CAPTCHA Verification */}
+                <motion.div variants={formItemVariants}>
+                  <FormField
+                    control={form.control}
+                    name="captchaAnswer"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormControl>
+                          <SimpleCaptcha
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={form.formState.errors.captchaAnswer?.message}
                           />
                         </FormControl>
                         <FormMessage />

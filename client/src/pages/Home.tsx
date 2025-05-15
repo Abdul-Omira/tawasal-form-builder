@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import SimpleBusinessForm from '../components/form/SimpleBusinessForm';
+import SimpleBusinessForm from '../components/form/SimpleBusinessFormNew';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
 import PageTransition from '../components/ui/page-transition';
