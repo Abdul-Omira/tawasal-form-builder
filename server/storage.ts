@@ -21,6 +21,38 @@ import {
 
 const scryptAsync = promisify(scrypt);
 
+// Helper function to safely decrypt business submission data
+function safelyDecryptBusinessSubmission(submission: any): any {
+  if (!submission) return submission;
+  
+  const decryptedSubmission = { ...submission };
+  
+  // Process each sensitive field
+  for (const field of SENSITIVE_BUSINESS_FIELDS) {
+    if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
+      try {
+        // Store original value
+        const originalValue = decryptedSubmission[field];
+        
+        // Try to decrypt
+        const decryptedValue = decrypt(originalValue);
+        
+        // Only use decrypted value if it's valid
+        if (decryptedValue !== null && 
+            decryptedValue !== undefined && 
+            (typeof decryptedValue !== 'string' || decryptedValue.trim() !== '')) {
+          decryptedSubmission[field] = decryptedValue;
+        }
+      } catch (error) {
+        console.error(`Error decrypting field ${field}:`, error);
+        // Keep original value if decryption fails
+      }
+    }
+  }
+  
+  return decryptedSubmission;
+}
+
 // Interface for storage operations
 export interface IStorage {
   // User operations for local authentication
@@ -153,24 +185,8 @@ export class DatabaseStorage implements IStorage {
       .from(businessSubmissions)
       .orderBy(desc(businessSubmissions.createdAt));
     
-    // Decrypt all sensitive fields in all submissions
-    return submissions.map(submission => {
-      const decryptedSubmission = { ...submission };
-      
-      // Decrypt each sensitive field
-      for (const field of SENSITIVE_BUSINESS_FIELDS) {
-        if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
-          try {
-            decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
-          } catch (error) {
-            console.error(`Error decrypting field ${field} in submission ${submission.id}:`, error);
-            // Keep the encrypted value if decryption fails
-          }
-        }
-      }
-      
-      return decryptedSubmission;
-    });
+    // Use our helper function to safely decrypt all submissions
+    return submissions.map(submission => safelyDecryptBusinessSubmission(submission));
   }
   
   async getBusinessSubmissionById(id: number): Promise<BusinessSubmission | undefined> {
