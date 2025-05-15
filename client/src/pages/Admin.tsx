@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useLocation } from 'wouter';
 import { SearchIcon, DownloadIcon, BarChart4Icon, SettingsIcon, FilePlusIcon } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -13,13 +11,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import SimpleHeader from '@/components/layout/SimpleHeader';
-import Footer from '@/components/layout/Footer';
+import SimpleFooter from '@/components/layout/SimpleFooter';
 import { BusinessSubmission } from '@shared/schema';
 
+interface SubmissionsResponse {
+  data: BusinessSubmission[];
+  total: number;
+}
+
 const Admin: React.FC = () => {
-  const { t } = useTranslation();
-  const [location, setLocation] = useLocation();
   const { toast } = useToast();
+  
+  // Filtering and pagination state
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,7 +33,17 @@ const Admin: React.FC = () => {
   // Auth check
   const { data: user, isLoading: isLoadingUser } = useQuery({
     queryKey: ['/api/auth/user'],
-    retry: false
+    retry: false,
+    onSuccess: (userData) => {
+      if (!userData?.isAdmin) {
+        // Redirect non-admin users to the homepage
+        window.location.href = '/';
+      }
+    },
+    onError: () => {
+      // Redirect to login if not authenticated
+      window.location.href = '/api/login';
+    }
   });
 
   // Fetch submissions with the admin API
@@ -38,10 +51,7 @@ const Admin: React.FC = () => {
     data: submissionsData, 
     isLoading: isLoadingSubmissions,
     refetch 
-  } = useQuery<{
-    data: BusinessSubmission[];
-    total: number;
-  }>({
+  } = useQuery<SubmissionsResponse>({
     queryKey: [
       '/api/admin/business-submissions', 
       currentPage, 
@@ -51,7 +61,7 @@ const Admin: React.FC = () => {
       sortBy,
       sortOrder
     ],
-    enabled: !!user,
+    enabled: !!user && user.isAdmin, // Only fetch if user is admin
   });
   
   // Function to handle data export
@@ -71,6 +81,37 @@ const Admin: React.FC = () => {
       title: "جاري تصدير البيانات",
       description: `تم بدء تحميل البيانات بتنسيق ${format.toUpperCase()}`,
     });
+  };
+  
+  // Update submission status function
+  const updateStatus = async (id: number, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/business-submissions/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+      
+      // Refresh data
+      refetch();
+      
+      toast({
+        title: "تم تحديث الحالة",
+        description: "تم تحديث حالة الطلب بنجاح",
+      });
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث الحالة",
+        variant: "destructive",
+      });
+    }
   };
   
   // Get status badge color based on status
@@ -104,6 +145,22 @@ const Admin: React.FC = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-foreground">جاري التحقق من الصلاحيات...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is not admin, show access denied
+  if (user && !user.isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <h2 className="text-2xl font-bold text-foreground mb-2">صلاحيات غير كافية</h2>
+          <p className="text-lg text-muted-foreground mb-6">ليس لديك الصلاحيات اللازمة للوصول إلى لوحة التحكم</p>
+          <Button onClick={() => window.location.href = '/'}>العودة إلى الصفحة الرئيسية</Button>
         </div>
       </div>
     );
@@ -146,7 +203,7 @@ const Admin: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-yellow-600">
-                  {isLoading ? '...' : submissionsData?.data.filter(s => s.status === 'pending').length || 0}
+                  {isLoading ? '...' : (submissionsData?.data?.filter(s => s.status === 'pending').length || 0)}
                 </div>
               </CardContent>
             </Card>
@@ -156,7 +213,7 @@ const Admin: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {isLoading ? '...' : submissionsData?.data.filter(s => s.status === 'approved').length || 0}
+                  {isLoading ? '...' : (submissionsData?.data?.filter(s => s.status === 'approved').length || 0)}
                 </div>
               </CardContent>
             </Card>
@@ -166,7 +223,7 @@ const Admin: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-red-600">
-                  {isLoading ? '...' : submissionsData?.data.filter(s => s.status === 'rejected').length || 0}
+                  {isLoading ? '...' : (submissionsData?.data?.filter(s => s.status === 'rejected').length || 0)}
                 </div>
               </CardContent>
             </Card>
@@ -296,9 +353,24 @@ const Admin: React.FC = () => {
                               عرض
                             </Button>
                             {submission.status === 'pending' && (
-                              <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-foreground">
-                                معالجة
-                              </Button>
+                              <>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 px-2 text-green-600 hover:text-green-800"
+                                  onClick={() => updateStatus(submission.id, 'approved')}
+                                >
+                                  موافقة
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 px-2 text-red-600 hover:text-red-800"
+                                  onClick={() => updateStatus(submission.id, 'rejected')}
+                                >
+                                  رفض
+                                </Button>
+                              </>
                             )}
                           </TableCell>
                         </TableRow>
@@ -338,12 +410,8 @@ const Admin: React.FC = () => {
                       return (
                         <Button
                           key={index}
-                          variant="outline"
-                          className={`text-sm ${
-                            pageNumber === currentPage
-                              ? 'bg-primary text-white hover:bg-primary/90'
-                              : ''
-                          }`}
+                          variant={pageNumber === currentPage ? "default" : "outline"}
+                          className="text-sm"
                           onClick={() => handlePageChange(pageNumber)}
                         >
                           {pageNumber}
@@ -380,7 +448,7 @@ const Admin: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      <SimpleFooter />
     </div>
   );
 };

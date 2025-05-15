@@ -77,7 +77,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { status } = req.body;
-      if (!status || !["pending", "processed", "needs_info"].includes(status)) {
+      if (!status || !["pending", "approved", "rejected"].includes(status)) {
         return res.status(400).json({ message: "حالة غير صالحة" });
       }
 
@@ -143,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get all submissions or filter by status if provided
       let submissions: BusinessSubmission[];
-      if (status && ['pending', 'processed', 'needs_info'].includes(status as string)) {
+      if (status && ['pending', 'approved', 'rejected'].includes(status as string)) {
         const result = await storage.getBusinessSubmissionsWithFilters({
           status: status as string,
           limit: 10000 // High limit to get all records
