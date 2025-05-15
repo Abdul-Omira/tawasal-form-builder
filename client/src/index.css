@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif;
+  }
+}
+
 :root {
   --background: 220 14% 98%;
   --foreground: 215 28% 17%;

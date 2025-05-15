@@ -25,6 +25,9 @@ export const businessSubmissions = pgTable("business_submissions", {
   consentToDataUse: boolean("consent_to_data_use").notNull(),
   wantsUpdates: boolean("wants_updates").notNull().default(false),
   additionalComments: text("additional_comments"),
+  sanctionedCompanyName: text("sanctioned_company_name"),
+  sanctionedCompanyLink: text("sanctioned_company_link"),
+  captchaAnswer: text("captcha_answer"),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -72,6 +75,9 @@ export const BusinessSubmissionSchema = z.object({
   consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام البيانات" }),
   wantsUpdates: z.boolean().default(false),
   additionalComments: z.string().optional(),
+  sanctionedCompanyName: z.string().optional(),
+  sanctionedCompanyLink: z.string().optional(),
+  captchaAnswer: z.string().min(1, { message: "الإجابة على سؤال التحقق مطلوبة" }),
 });
 
 // Insert schemas
