@@ -22,16 +22,8 @@ const AuthPage: React.FC = () => {
     }
   }, [isAuthenticated, isAdmin, isLoading, setLocation]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg text-foreground">جاري التحميل...</p>
-        </div>
-      </div>
-    );
-  }
+  // Removed infinite loading check to prevent getting stuck
+  // We'll only render the auth form for unauthenticated users
 
   return (
     <div className="flex flex-col min-h-screen">
