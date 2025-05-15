@@ -11,6 +11,13 @@ import { db } from "./db";
 import { eq, desc, sql, and, like, or } from "drizzle-orm";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import { 
+  encrypt, 
+  decrypt, 
+  encryptSensitiveFields, 
+  decryptSensitiveFields,
+  SENSITIVE_BUSINESS_FIELDS
+} from "./encryption";
 
 const scryptAsync = promisify(scrypt);
 
