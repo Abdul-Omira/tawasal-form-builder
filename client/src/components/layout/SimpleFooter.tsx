@@ -1,5 +1,5 @@
 import React from 'react';
-import ministryLogo from '../../assets/ministry-logo.png';
+import syrianEmblem from '../../assets/syrian-emblem.png';
 
 const SimpleFooter: React.FC = () => {
   // Get the current year for the copyright
@@ -13,11 +13,20 @@ const SimpleFooter: React.FC = () => {
           
           {/* Syrian Emblem in the middle */}
           <div className="mb-4 md:mb-0 flex justify-center">
-            <img 
-              src={ministryLogo} 
-              alt="شعار الجمهورية العربية السورية" 
-              className="h-16 w-auto opacity-80"
-            />
+            <div style={{ position: 'relative', height: '60px', width: '60px' }}>
+              <img 
+                src={syrianEmblem} 
+                alt="شعار الجمهورية العربية السورية" 
+                className="h-auto w-auto opacity-90"
+                style={{ 
+                  position: 'absolute',
+                  top: '-120px',
+                  left: '-25px',
+                  transform: 'scale(0.5)',
+                  clipPath: 'inset(0px 0px 230px 0px)'
+                }}
+              />
+            </div>
           </div>
           
           <div className="flex space-x-4 space-x-reverse">
