@@ -1,13 +1,12 @@
-// Simple PDF utility with basic Arabic support
+// Simplified PDF utility focusing on reliable text rendering for both Arabic and English
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 /**
- * Creates a minimal Arabic-friendly PDF document
- * This implementation relies on the browser's PDF rendering of Arabic content
- * and avoids complex font embedding to ensure proper character display
+ * Creates a basic PDF document with reliable English-only text
+ * that avoids RTL issues that cause text reversal and encoding problems
  * 
- * @param title PDF document title
+ * @param title PDF document title 
  * @param data Table data rows
  * @param headers Table headers
  * @param dateStr Date string to display
@@ -22,39 +21,74 @@ export function createArabicPDF(
   refNumber: string
 ): Buffer {
   try {
-    // Create a PDF document using minimal settings that work with Arabic
+    // Create a PDF document - using landscape for more column space
     const doc = new jsPDF({
       orientation: 'landscape',
       unit: 'mm',
       format: 'a4'
     });
     
-    // Enable right-to-left mode
-    doc.setR2L(true);
+    // IMPORTANT: Do NOT enable R2L mode which causes text reversal
+    // doc.setR2L(true); 
     
     // Page dimensions
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
     
-    // Add basic header with ministry info - using default font
+    // Add Ministry header in English only to ensure proper display
     doc.setFontSize(16);
-    doc.text('Syrian Arab Republic - Ministry of Communications', pageWidth / 2, 20, { align: 'center' });
-    doc.text('Business Information Report', pageWidth / 2, 30, { align: 'center' });
+    doc.text('Ministry of Communications and Technology', pageWidth / 2, 20, { align: 'center' });
+    doc.text('Syrian Arab Republic', pageWidth / 2, 30, { align: 'center' });
     
-    // Add title
+    // Add title - use English version to ensure proper display
     doc.setFontSize(14);
-    doc.text(title, pageWidth / 2, 40, { align: 'center' });
+    doc.text('Business Information Report', pageWidth / 2, 40, { align: 'center' });
     
-    // Add date and reference number in both Arabic and English for reliability
+    // Add date and reference information in English only
     doc.setFontSize(10);
     doc.text(`Report Date: ${dateStr}`, pageWidth / 2, 50, { align: 'center' });
     doc.text(`Reference #: ${refNumber}`, pageWidth / 2, 55, { align: 'center' });
     
-    // Create table with minimal styling to avoid Arabic rendering issues
+    // Process data to ensure proper rendering
+    // If we detect Arabic characters, we add a note that they may display incorrectly
+    const processedData = data.map(row => 
+      row.map((cell: any) => {
+        // Convert to string if not already
+        const cellStr = String(cell || '');
+        
+        // Check if cell contains Arabic characters (rough detection)
+        const hasArabic = /[\u0600-\u06FF]/.test(cellStr);
+        
+        // Return as is - Arabic will display in PDF viewer but might be reversed
+        return cellStr;
+      })
+    );
+    
+    // Process headers - use English equivalents where possible
+    const processedHeaders = headers.map(header => {
+      // If header is in Arabic, we can map common ones to English equivalents
+      // This ensures at least the column headers are properly displayed
+      const headerMap: {[key: string]: string} = {
+        'تاريخ التقديم': 'Submission Date',
+        'الحالة': 'Status',
+        'المحافظة': 'Province',
+        'رقم الهاتف': 'Phone',
+        'البريد الإلكتروني': 'Email',
+        'اسم المسؤول': 'Contact Name',
+        'نوع النشاط': 'Business Type',
+        'اسم الشركة': 'Company Name',
+        'رقم الطلب': 'ID',
+        'ملاحظات': 'Notes'
+      };
+      
+      return headerMap[header] || header;
+    });
+    
+    // Create table with automatic column width calculation
     autoTable(doc, {
       startY: 65,
-      head: [headers],
-      body: data,
+      head: [processedHeaders],
+      body: processedData,
       headStyles: { 
         fillColor: [0, 110, 81], // Ministry green
         textColor: [255, 255, 255], 
@@ -70,25 +104,19 @@ export function createArabicPDF(
       styles: { 
         font: 'helvetica', 
         overflow: 'ellipsize'
-      },
-      columnStyles: {
-        // Ensure all columns use consistent styling
-        0: { halign: 'right' },
-        1: { halign: 'right' },
-        2: { halign: 'right' },
-        3: { halign: 'right' },
-        4: { halign: 'right' },
-        5: { halign: 'right' },
-        6: { halign: 'right' },
-        7: { halign: 'right' },
-        8: { halign: 'right' }
       }
     });
     
-    // Add simple footer
+    // Add note about Arabic text
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Note: This report contains some Arabic text which may display with limited formatting support.', 
+             pageWidth / 2, pageHeight - 20, { align: 'center' });
+    
+    // Add footer
     doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
-    doc.text('CONFIDENTIAL - MINISTRY USE ONLY', pageWidth / 2, pageHeight - 10, { align: 'center' });
+    doc.text('CONFIDENTIAL - FOR OFFICIAL USE ONLY', pageWidth / 2, pageHeight - 10, { align: 'center' });
     
     // Generate and return PDF buffer
     return Buffer.from(doc.output('arraybuffer'));
