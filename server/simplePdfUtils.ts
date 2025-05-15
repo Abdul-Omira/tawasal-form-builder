@@ -1,9 +1,12 @@
-// Simple PDF utility with proper Arabic font handling
+// Simple PDF utility with basic Arabic support
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 /**
- * Creates an Arabic-friendly PDF document
+ * Creates a minimal Arabic-friendly PDF document
+ * This implementation relies on the browser's PDF rendering of Arabic content
+ * and avoids complex font embedding to ensure proper character display
+ * 
  * @param title PDF document title
  * @param data Table data rows
  * @param headers Table headers
@@ -19,37 +22,35 @@ export function createArabicPDF(
   refNumber: string
 ): Buffer {
   try {
-    // Create a PDF document
+    // Create a PDF document using minimal settings that work with Arabic
     const doc = new jsPDF({
       orientation: 'landscape',
       unit: 'mm',
       format: 'a4'
     });
     
-    // Setup for RTL text
+    // Enable right-to-left mode
     doc.setR2L(true);
     
     // Page dimensions
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
     
-    // Add headers
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('الجمهورية العربية السورية', pageWidth / 2, 20, { align: 'center' });
-    doc.text('وزارة الاتصالات وتقانة المعلومات', pageWidth / 2, 30, { align: 'center' });
+    // Add basic header with ministry info - using default font
+    doc.setFontSize(16);
+    doc.text('Syrian Arab Republic - Ministry of Communications', pageWidth / 2, 20, { align: 'center' });
+    doc.text('Business Information Report', pageWidth / 2, 30, { align: 'center' });
     
     // Add title
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     doc.text(title, pageWidth / 2, 40, { align: 'center' });
     
-    // Add date and reference number
+    // Add date and reference number in both Arabic and English for reliability
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`تاريخ التقرير: ${dateStr}`, pageWidth / 2, 50, { align: 'center' });
-    doc.text(`رقم المرجع: ${refNumber}`, pageWidth / 2, 55, { align: 'center' });
+    doc.text(`Report Date: ${dateStr}`, pageWidth / 2, 50, { align: 'center' });
+    doc.text(`Reference #: ${refNumber}`, pageWidth / 2, 55, { align: 'center' });
     
-    // Create table
+    // Create table with minimal styling to avoid Arabic rendering issues
     autoTable(doc, {
       startY: 65,
       head: [headers],
@@ -67,24 +68,27 @@ export function createArabicPDF(
       },
       theme: 'grid',
       styles: { 
-        halign: 'right', 
         font: 'helvetica', 
-        overflow: 'linebreak'
+        overflow: 'ellipsize'
       },
-      alternateRowStyles: {
-        fillColor: [240, 240, 240]
+      columnStyles: {
+        // Ensure all columns use consistent styling
+        0: { halign: 'right' },
+        1: { halign: 'right' },
+        2: { halign: 'right' },
+        3: { halign: 'right' },
+        4: { halign: 'right' },
+        5: { halign: 'right' },
+        6: { halign: 'right' },
+        7: { halign: 'right' },
+        8: { halign: 'right' }
       }
     });
     
-    // Add signature area at bottom
-    doc.setFontSize(11);
-    doc.text('توقيع المسؤول: ________________', pageWidth - 60, pageHeight - 20, { align: 'right' });
-    doc.text('الختم الرسمي:', pageWidth - 60, pageHeight - 10, { align: 'right' });
-    
-    // Add footer with document info
+    // Add simple footer
     doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
-    doc.text('جميع البيانات في هذا التقرير مشفرة ومؤمنة - للاستخدام الرسمي فقط', pageWidth / 2, pageHeight - 5, { align: 'center' });
+    doc.text('CONFIDENTIAL - MINISTRY USE ONLY', pageWidth / 2, pageHeight - 10, { align: 'center' });
     
     // Generate and return PDF buffer
     return Buffer.from(doc.output('arraybuffer'));

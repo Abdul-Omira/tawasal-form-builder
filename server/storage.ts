@@ -21,7 +21,10 @@ import {
 
 const scryptAsync = promisify(scrypt);
 
-// Helper function to safely decrypt business submission data
+/**
+ * Helper function to safely decrypt business submission data
+ * Uses a more resilient approach with detailed error handling
+ */
 function safelyDecryptBusinessSubmission(submission: any): any {
   if (!submission) return submission;
   
@@ -33,6 +36,11 @@ function safelyDecryptBusinessSubmission(submission: any): any {
       try {
         // Store original value
         const originalValue = decryptedSubmission[field];
+        
+        // Skip obviously non-encrypted values to avoid errors
+        if (originalValue.length < 20 || !originalValue.includes('.')) {
+          continue;
+        }
         
         // Try to decrypt
         const decryptedValue = decrypt(originalValue);
@@ -51,6 +59,30 @@ function safelyDecryptBusinessSubmission(submission: any): any {
   }
   
   return decryptedSubmission;
+}
+
+/**
+ * Prepares business submissions for export in a standardized format
+ * This handles proper decryption and ensures consistent data formatting
+ */
+export function prepareBusinessSubmissionsForExport(submissions: BusinessSubmission[]): any[] {
+  return submissions.map(submission => {
+    const decrypted = safelyDecryptBusinessSubmission(submission);
+    
+    // Format for export with standardized properties
+    return {
+      'ID': decrypted.id,
+      'اسم الشركة': decrypted.businessName || '',
+      'نوع النشاط': decrypted.businessType || '',
+      'اسم المسؤول': decrypted.ownerName || '',
+      'البريد الإلكتروني': decrypted.email || '',
+      'رقم الهاتف': decrypted.phone || '',
+      'المحافظة': decrypted.province || '',
+      'الحالة': decrypted.status || 'قيد المراجعة',
+      'تاريخ التقديم': decrypted.createdAt ? new Date(decrypted.createdAt).toLocaleDateString('ar-SY') : '',
+      'ملاحظات': decrypted.notes || ''
+    };
+  });
 }
 
 // Interface for storage operations
