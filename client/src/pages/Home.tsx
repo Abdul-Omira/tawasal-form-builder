@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import SimpleBusinessForm from '../components/form/SimpleBusinessFormNew';
+import SimpleBusinessFormNew from '../components/form/SimpleBusinessFormNew';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
 import PageTransition from '../components/ui/page-transition';
@@ -99,7 +99,7 @@ const Home: React.FC = () => {
         >
           <div className="container mx-auto px-4">
             <div className="bg-white rounded-lg shadow-md overflow-hidden transition-shadow hover:shadow-lg font-ibm">
-              <SimpleBusinessForm />
+              <SimpleBusinessFormNew />
             </div>
           </div>
         </motion.section>
