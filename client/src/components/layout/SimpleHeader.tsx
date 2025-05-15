@@ -15,15 +15,11 @@ const SimpleHeader: React.FC = () => {
             />
           </div>
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/">
-              <a className="text-primary hover:text-primary/80">
-                الرئيسية
-              </a>
+            <Link href="/" className="text-primary hover:text-primary/80">
+              الرئيسية
             </Link>
-            <Link href="/admin">
-              <a className="text-muted-foreground hover:text-primary">
-                لوحة التحكم
-              </a>
+            <Link href="/admin" className="text-muted-foreground hover:text-primary">
+              لوحة التحكم
             </Link>
           </div>
         </div>
