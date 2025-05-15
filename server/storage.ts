@@ -196,23 +196,8 @@ export class DatabaseStorage implements IStorage {
       return undefined;
     }
     
-    // Decrypt sensitive fields before returning
-    const submission = results[0];
-    const decryptedSubmission = { ...submission };
-    
-    // Decrypt each sensitive field
-    for (const field of SENSITIVE_BUSINESS_FIELDS) {
-      if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
-        try {
-          decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
-        } catch (error) {
-          console.error(`Error decrypting field ${field}:`, error);
-          // Keep the encrypted value if decryption fails
-        }
-      }
-    }
-    
-    return decryptedSubmission;
+    // Use our helper function to safely decrypt the submission
+    return safelyDecryptBusinessSubmission(results[0]);
   }
   
   async createBusinessSubmission(insertSubmission: InsertBusinessSubmission): Promise<BusinessSubmission> {
@@ -405,24 +390,8 @@ export class DatabaseStorage implements IStorage {
       .limit(limit)
       .offset(offset);
     
-    // Decrypt sensitive fields before returning
-    const data = encryptedData.map(submission => {
-      const decryptedSubmission = { ...submission };
-      
-      // Decrypt each sensitive field
-      for (const field of SENSITIVE_BUSINESS_FIELDS) {
-        if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
-          try {
-            decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
-          } catch (error) {
-            console.error(`Error decrypting field ${field} in submission ${submission.id}:`, error);
-            // Keep the encrypted value if decryption fails
-          }
-        }
-      }
-      
-      return decryptedSubmission;
-    });
+    // Use our helper function to safely decrypt all submissions
+    const data = encryptedData.map(submission => safelyDecryptBusinessSubmission(submission));
     
     return { data, total };
   }

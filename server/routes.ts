@@ -356,9 +356,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Simplify table data access to avoid any potential data issues
           body: exportData.map(row => {
             // Create a simple accessor with default empty string for missing values
-            const get = (key) => {
-              const value = row[key];
-              return value !== undefined && value !== null ? String(value) : '';
+            const get = (key: string): string => {
+              try {
+                // Access safely as row could be any object type
+                const value = (row as Record<string, any>)[key];
+                return value !== undefined && value !== null ? String(value) : '';
+              } catch (error) {
+                console.error(`Error accessing key ${key}:`, error);
+                return '';
+              }
             };
             
             return [
