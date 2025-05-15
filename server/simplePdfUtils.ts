@@ -56,7 +56,7 @@ export function createArabicPDF(
     
     // Create simple English headers and use built-in fonts
     const simpleHeaders = headers.map(header => {
-      // Transliteration mapping
+      // Transliteration mapping for common Arabic headers
       const headerMap: Record<string, string> = {
         'تاريخ التقديم': 'Date Submitted',
         'الحالة': 'Status',
@@ -66,7 +66,32 @@ export function createArabicPDF(
         'اسم المسؤول': 'Contact Name',
         'نوع النشاط': 'Business Type',
         'اسم الشركة': 'Company Name',
-        'رقم الطلب': 'ID'
+        'رقم الطلب': 'ID',
+        'businessName': 'Business Name',
+        'businessType': 'Business Type',
+        'establishmentDate': 'Est. Date',
+        'employeesCount': 'Employees',
+        'address': 'Address',
+        'governorate': 'Governorate',
+        'registrationNumber': 'Reg. Number',
+        'contactName': 'Contact Name',
+        'position': 'Position',
+        'email': 'Email',
+        'phone': 'Phone',
+        'alternativeContact': 'Alt. Contact',
+        'website': 'Website',
+        'challenges': 'Challenges',
+        'challengeDetails': 'Challenge Details',
+        'techNeeds': 'Tech Needs',
+        'techDetails': 'Tech Details',
+        'consentToDataUse': 'Data Consent',
+        'wantsUpdates': 'Wants Updates',
+        'additionalComments': 'Comments',
+        'sanctionedCompanyName': 'Sanctioned Company',
+        'sanctionedCompanyLink': 'Sanction Link',
+        'status': 'Status',
+        'createdAt': 'Created At',
+        'id': 'ID'
       };
       
       return headerMap[header] || header;
@@ -95,12 +120,15 @@ export function createArabicPDF(
     // Add footer with green line
     doc.setDrawColor(0, 110, 81);
     doc.setLineWidth(1);
-    doc.line(10, pageHeight - 15, pageWidth - 10, pageHeight - 15);
+    doc.line(10, pageHeight - 20, pageWidth - 10, pageHeight - 20);
     
     // Add confidential text
     doc.setFontSize(8);
     doc.setTextColor(0, 110, 81);
-    doc.text('OFFICIAL DOCUMENT - CONFIDENTIAL', pageWidth / 2, pageHeight - 10, { align: 'center' });
+    doc.text('CONFIDENTIAL - MINISTRY OF COMMUNICATIONS - SYRIAN ARAB REPUBLIC', 
+             pageWidth / 2, pageHeight - 15, { align: 'center' });
+    doc.text('سري - للاستخدام الرسمي فقط - وزارة الاتصالات - الجمهورية العربية السورية', 
+             pageWidth / 2, pageHeight - 10, { align: 'center' });
     
     // Convert to buffer
     return Buffer.from(doc.output('arraybuffer'));
