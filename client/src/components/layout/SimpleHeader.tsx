@@ -27,9 +27,21 @@ const SimpleHeader: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      // Clear JWT token
+      import('@/lib/jwtUtils').then(({ removeToken }) => {
+        removeToken();
+      });
+      
+      // Call logout API to clear sessions
       await fetch('/api/logout', { method: 'POST' });
+      
+      // Clear user data from cache
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      queryClient.setQueryData(['/api/user'], null);
+      
+      // Redirect to login page
       setLocation('/auth');
+      
       toast({
         title: 'تم تسجيل الخروج بنجاح',
         description: 'نراك مرة أخرى قريباً'

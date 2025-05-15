@@ -1,24 +1,43 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { getAuthHeader, getToken, handleTokenRefresh, isTokenExpired, removeToken } from "./jwtUtils";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
+    // Check for token expiry response
+    if (res.status === 401) {
+      // If token expired, clear it to force re-authentication
+      removeToken();
+    }
+    
     const text = (await res.text()) || res.statusText;
     throw new Error(`${res.status}: ${text}`);
   }
 }
 
+/**
+ * API request function that handles JWT tokens
+ */
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  // Combine content type header with auth header if token exists
+  const headers: Record<string, string> = {
+    ...(data ? { "Content-Type": "application/json" } : {}),
+    ...getAuthHeader()
+  };
+  
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    credentials: "include", // Keep cookies for session fallback
   });
-
+  
+  // Check for token refresh in response headers
+  handleTokenRefresh(res);
+  
   await throwIfResNotOk(res);
   return res;
 }
@@ -29,11 +48,22 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    // Add JWT token to headers if it exists
+    const headers = getAuthHeader();
+    
     const res = await fetch(queryKey[0] as string, {
-      credentials: "include",
+      headers,
+      credentials: "include", // Keep cookies for session fallback
     });
-
+    
+    // Check for token refresh in response headers
+    handleTokenRefresh(res);
+    
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+      // If unauthorized and token exists, it might be expired - clear it
+      if (getToken()) {
+        removeToken();
+      }
       return null;
     }
 

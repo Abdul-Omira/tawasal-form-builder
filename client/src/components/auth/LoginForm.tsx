@@ -46,7 +46,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       return await res.json();
     },
     onSuccess: (data) => {
+      // Store JWT token if provided
+      if (data.token) {
+        import('@/lib/jwtUtils').then(({ saveToken }) => {
+          saveToken(data.token);
+          console.log('JWT token saved successfully');
+        });
+      }
+      
+      // Update user data in React Query cache
       queryClient.setQueryData(['/api/user'], data);
+      
       toast({
         title: 'تم تسجيل الدخول بنجاح',
         description: `مرحباً بعودتك ${data.username}`,
