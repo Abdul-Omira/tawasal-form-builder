@@ -25,7 +25,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     await createTestUsers();
     
     console.log("Test users created successfully. Use:");
-    console.log("1. Admin: username='admin', password='admin123'");
+    console.log("1. Admin: username='admin', password='m5wYJU_FaXhyu^F'");
     console.log("2. Employee: username='employee', password='employee123'");
   } catch (error) {
     console.error("Error creating test users:", error);
