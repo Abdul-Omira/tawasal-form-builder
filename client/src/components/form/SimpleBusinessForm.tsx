@@ -48,20 +48,37 @@ const SimpleBusinessForm: React.FC = () => {
   // Form mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
+      console.log("Submitting form data:", data);
+      
       // Need to add these fields to comply with the backend schema
       const formattedData = {
         ...data,
         employeesCount: "1-10", // default value
         address: "سوريا", // default value
-        governorate: "damascus", // default value
+        governorate: "دمشق", // default value
         position: "مدير", // default value
-        challenges: ["challenge1"], // default value
-        techNeeds: ["techNeed1"], // default value
+        establishmentDate: new Date().toISOString().split('T')[0], // today as default
+        registrationNumber: Math.floor(Math.random() * 1000000).toString(), // random number as default
+        alternativeContact: "",
+        website: "",
+        challenges: ["sanctions"], // default value
+        techNeeds: ["internet_access"], // default value
+        techDetails: "",
+        additionalComments: "",
         wantsUpdates: true,
       };
       
-      const response = await apiRequest('POST', '/api/business-submissions', formattedData);
-      return await response.json();
+      console.log("Formatted data:", formattedData);
+      
+      try {
+        const response = await apiRequest('POST', '/api/business-submissions', formattedData);
+        const jsonResponse = await response.json();
+        console.log("Submit response:", jsonResponse);
+        return jsonResponse;
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       toast({
