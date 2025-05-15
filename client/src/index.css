@@ -107,6 +107,34 @@
   input, textarea, select {
     @apply text-right;
   }
+
+  /* Global transition settings */
+  .animate-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .animate-move {
+    @apply transition-transform duration-300 ease-in-out;
+  }
+  
+  .animate-fade {
+    @apply transition-opacity duration-300 ease-in-out;
+  }
+  
+  .animate-theme {
+    @apply transition-colors duration-200 ease-in-out;
+  }
+  
+  /* Responsive hover effects - only apply on non-touch devices */
+  @media (hover: hover) {
+    .hover-scale:hover {
+      @apply transform scale-105;
+    }
+    
+    .hover-lift:hover {
+      @apply transform -translate-y-1;
+    }
+  }
 }
 
 /* Additional custom styles */
