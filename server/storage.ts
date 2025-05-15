@@ -153,12 +153,45 @@ export class DatabaseStorage implements IStorage {
   }
   
   async createBusinessSubmission(insertSubmission: InsertBusinessSubmission): Promise<BusinessSubmission> {
-    const results = await db.insert(businessSubmissions).values({
-      ...insertSubmission,
-      status: "pending",
-      createdAt: new Date()
-    }).returning();
-    return results[0];
+    try {
+      console.log("Creating business submission with data:", insertSubmission);
+      
+      // Only include fields that exist in the database schema
+      const sanitizedData = {
+        businessName: insertSubmission.businessName,
+        businessType: insertSubmission.businessType,
+        establishmentDate: insertSubmission.establishmentDate,
+        employeesCount: insertSubmission.employeesCount,
+        address: insertSubmission.address,
+        governorate: insertSubmission.governorate,
+        registrationNumber: insertSubmission.registrationNumber,
+        contactName: insertSubmission.contactName,
+        position: insertSubmission.position,
+        email: insertSubmission.email,
+        phone: insertSubmission.phone,
+        alternativeContact: insertSubmission.alternativeContact,
+        website: insertSubmission.website,
+        challenges: insertSubmission.challenges,
+        challengeDetails: insertSubmission.challengeDetails,
+        techNeeds: insertSubmission.techNeeds,
+        techDetails: insertSubmission.techDetails,
+        consentToDataUse: insertSubmission.consentToDataUse,
+        wantsUpdates: insertSubmission.wantsUpdates,
+        additionalComments: insertSubmission.additionalComments,
+        sanctionedCompanyName: insertSubmission.sanctionedCompanyName,
+        sanctionedCompanyLink: insertSubmission.sanctionedCompanyLink,
+        captchaAnswer: insertSubmission.captchaAnswer,
+        status: "pending",
+        createdAt: new Date()
+      };
+      
+      const results = await db.insert(businessSubmissions).values(sanitizedData).returning();
+      console.log("Submission created successfully:", results[0]);
+      return results[0];
+    } catch (error) {
+      console.error("Database error creating submission:", error);
+      throw error;
+    }
   }
   
   async updateBusinessSubmissionStatus(id: number, status: string): Promise<BusinessSubmission | undefined> {
