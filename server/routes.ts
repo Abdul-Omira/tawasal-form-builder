@@ -8,6 +8,7 @@ import { fromZodError } from "zod-validation-error";
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { createArabicSupportedPDF } from './pdfUtils';
 import path from 'path';
 import fs from 'fs';
 import { setupAuth, isAuthenticated, isAdmin } from "./auth";
@@ -284,11 +285,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         return res.send(excelBuffer);
       } else if (format === 'pdf') {
-        // Create a simpler PDF without custom fonts to ensure reliability
-        const doc = new jsPDF({
-          orientation: 'landscape',
-          unit: 'mm',
-          format: 'a4'
+        // Create a PDF with proper Arabic support
+        const doc = createArabicSupportedPDF({
+          orientation: 'landscape', 
         });
         
         // Page dimensions
@@ -316,12 +315,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         doc.setLineWidth(0.5);
         doc.line(60, 53, pageWidth - 60, 53);
         
-        // Setup for RTL text
-        doc.setR2L(true);
+        // RTL is already set in createArabicSupportedPDF
         
-        // Add headers with default font
+        // Add headers with IBM Plex Sans Arabic font if available
         doc.setFontSize(18);
-        doc.setFont('helvetica', 'bold');
+        // Try to use our custom font, but fallback to helvetica if not available
+        try {
+          doc.setFont('IBMPlexSansArabic', 'bold');
+        } catch (error) {
+          console.warn('Falling back to helvetica for headers');
+          doc.setFont('helvetica', 'bold');
+        }
         doc.text('الجمهورية العربية السورية', pageWidth / 2, 40, { align: 'center' });
         doc.text('وزارة الاتصالات وتقانة المعلومات', pageWidth / 2, 48, { align: 'center' });
         
@@ -331,7 +335,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Add generation date and reference number
         doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
+        // Try to use our custom font (regular), but fallback to helvetica if not available
+        try {
+          doc.setFont('IBMPlexSansArabic', 'normal');
+        } catch (error) {
+          console.warn('Falling back to helvetica for normal text');
+          doc.setFont('helvetica', 'normal');
+        }
         const today = new Date();
         const dateStr = today.toISOString().split('T')[0]; // Use simple date format
         const refNumber = `MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`;
@@ -393,7 +403,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           theme: 'grid',
           styles: { 
             halign: 'right', 
-            font: 'helvetica',
+            font: 'IBMPlexSansArabic', // Use our custom font if available
             overflow: 'linebreak'
           },
           alternateRowStyles: {
