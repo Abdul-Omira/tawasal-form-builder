@@ -161,6 +161,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { format = 'xlsx', status } = req.query;
       
+      // Generate a unique reference number for this report
+      const today = new Date();
+      const dateStr = today.toISOString().split('T')[0];
+      const refNumber = `MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`;
+      
       // Get all submissions or filter by status if provided
       let submissions: BusinessSubmission[];
       if (status && ['pending', 'approved', 'rejected'].includes(status as string)) {
@@ -182,7 +187,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const title = [
           ['وزارة الاتصالات وتقانة المعلومات - الجمهورية العربية السورية'],
           ['تقرير طلبات الشركات'],
-          [`تاريخ التقرير: ${new Date().toLocaleDateString('ar-SY')}`],
+          [`تاريخ التقرير: ${dateStr}`],
           [] // Empty row for spacing
         ];
         
@@ -245,35 +250,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Note: Full styling requires a different library (like ExcelJS)
         // This provides basic structure with the available tools
         
+        // Add confidentiality notice at the end
+        XLSX.utils.sheet_add_aoa(worksheet, [
+          [''], // Blank row
+          ['CONFIDENTIAL - MINISTRY OF COMMUNICATIONS - SYRIAN ARAB REPUBLIC'],
+          ['سري - للاستخدام الرسمي فقط - وزارة الاتصالات'],
+          [`تاريخ التقرير: ${dateStr}`],
+          [`رقم المرجع: ${refNumber}`]
+        ], { origin: -1 }); // Add at the end
+        
         // Generate Excel buffer
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
         
         // Set headers for file download with date in filename
-        const today = new Date().toISOString().split('T')[0];
-        res.setHeader('Content-Disposition', `attachment; filename=business-submissions-${today}.xlsx`);
+        res.setHeader('Content-Disposition', `attachment; filename=business-submissions-${dateStr}.xlsx`);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         
         return res.send(excelBuffer);
       } else if (format === 'pdf') {
         try {
-          const today = new Date();
-          const dateStr = today.toISOString().split('T')[0]; // Use simple date format
-          const refNumber = `MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`;
           
-          // Prepare table headers for PDF
-          const tableHeaders = [
-            'تاريخ التقديم',
-            'الحالة',
-            'المحافظة',
-            'رقم الهاتف',
-            'البريد الإلكتروني',
-            'اسم المسؤول',
-            'نوع النشاط',
-            'اسم الشركة',
-            'رقم الطلب'
-          ];
+          // Get all fields from exportData as headers
+          const tableHeaders = Object.keys(exportData[0]);
           
-          // Format data for PDF
+          // Format data for PDF - include ALL fields
           const tableData = exportData.map(row => {
             // Create a simple accessor with default empty string for missing values
             const get = (key: string): string => {
@@ -287,17 +287,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
             };
             
-            return [
-              get('تاريخ التقديم'),
-              get('الحالة'),
-              get('المحافظة'),
-              get('رقم الهاتف'),
-              get('البريد الإلكتروني'),
-              get('اسم المسؤول'),
-              get('نوع النشاط'),
-              get('اسم الشركة'),
-              get('ID')
-            ];
+            // Return all fields in same order as headers
+            return tableHeaders.map(header => get(header));
           });
           
           // Create the PDF using our simplest, most reliable PDF generator
@@ -319,12 +310,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(500).json({ error: 'Failed to generate PDF' });
         }
       } else if (format === 'csv') {
-        // Generate CSV
+        // Generate CSV with confidentiality notice
         const worksheet = XLSX.utils.json_to_sheet(exportData);
+        
+        // Add confidentiality notice at the end
+        XLSX.utils.sheet_add_aoa(worksheet, [
+          [''], // Blank row
+          ['CONFIDENTIAL - MINISTRY OF COMMUNICATIONS - SYRIAN ARAB REPUBLIC'],
+          ['سري - للاستخدام الرسمي فقط'],
+          [`تاريخ التقرير: ${dateStr}`],
+          [`رقم المرجع: ${refNumber}`]
+        ], { origin: -1 }); // Add at the end
+        
         const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
         
-        // Set headers for file download
-        res.setHeader('Content-Disposition', 'attachment; filename=business-submissions.csv');
+        // Set headers for file download with date in filename
+        res.setHeader('Content-Disposition', `attachment; filename=business-submissions-${dateStr}.csv`);
         res.setHeader('Content-Type', 'text/csv');
         
         return res.send(csvOutput);
