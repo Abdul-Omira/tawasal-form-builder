@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { SearchIcon, DownloadIcon, BarChart4Icon, SettingsIcon, FilePlusIcon } from 'lucide-react';
+import { SearchIcon, DownloadIcon, BarChart4Icon, SettingsIcon, FilePlusIcon, LockIcon, ShieldIcon } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -192,8 +192,17 @@ const Admin: React.FC = () => {
       
       <main className="flex-grow py-6 md:py-12 bg-background">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-foreground">لوحة تحكم المشرف</h2>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-6">
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center">
+                <h2 className="text-2xl font-bold text-foreground">لوحة تحكم المشرف</h2>
+                <Badge className="mr-3 bg-green-100 text-green-800 hover:bg-green-100 px-2 py-1">
+                  <ShieldIcon className="h-3.5 w-3.5 ml-1" />
+                  نظام آمن ومشفر
+                </Badge>
+              </div>
+              <p className="text-muted-foreground text-sm">جميع البيانات الحساسة مشفرة باستخدام خوارزمية AES-256</p>
+            </div>
             <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
@@ -207,6 +216,7 @@ const Admin: React.FC = () => {
                     });
                 }}
               >
+                <LockIcon className="h-3.5 w-3.5 ml-2" />
                 تسجيل الخروج
               </Button>
             </div>
