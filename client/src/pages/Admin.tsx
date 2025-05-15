@@ -92,6 +92,17 @@ const Admin: React.FC = () => {
     });
   };
   
+  // View submission details
+  const viewSubmissionDetails = (submission: BusinessSubmission) => {
+    setSelectedSubmission(submission);
+    setIsDetailsOpen(true);
+  };
+  
+  // Close details dialog
+  const closeDetails = () => {
+    setIsDetailsOpen(false);
+  };
+  
   // Update submission status function
   const updateStatus = async (id: number, newStatus: string) => {
     try {
@@ -364,7 +375,12 @@ const Admin: React.FC = () => {
                             {getStatusBadge(submission.status)}
                           </TableCell>
                           <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                            <Button variant="ghost" size="sm" className="h-8 px-2 text-primary hover:text-primary/80">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 px-2 text-primary hover:text-primary/80"
+                              onClick={() => viewSubmissionDetails(submission)}
+                            >
                               عرض
                             </Button>
                             {submission.status === 'pending' && (
@@ -492,6 +508,157 @@ const Admin: React.FC = () => {
       </main>
 
       <SimpleFooter />
+      
+      {/* Submission Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">تفاصيل الطلب</DialogTitle>
+            <DialogDescription>
+              معلومات مفصلة عن الطلب المقدم
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedSubmission && (
+            <div className="space-y-6 mt-4 rtl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Basic Information */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">معلومات الشركة</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div>
+                      <Label className="font-semibold">اسم الشركة</Label>
+                      <div className="text-foreground">{selectedSubmission.businessName}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">نوع النشاط</Label>
+                      <div className="text-foreground">{selectedSubmission.businessType}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">عدد الموظفين</Label>
+                      <div className="text-foreground">{selectedSubmission.employeesCount}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">تاريخ التأسيس</Label>
+                      <div className="text-foreground">{selectedSubmission.establishmentDate}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">رقم التسجيل</Label>
+                      <div className="text-foreground">{selectedSubmission.registrationNumber}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Contact Information */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">معلومات الاتصال</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div>
+                      <Label className="font-semibold">اسم المسؤول</Label>
+                      <div className="text-foreground">{selectedSubmission.contactName}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">المنصب</Label>
+                      <div className="text-foreground">{selectedSubmission.position}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">البريد الإلكتروني</Label>
+                      <div className="text-foreground">{selectedSubmission.email}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">رقم الهاتف</Label>
+                      <div className="text-foreground">{selectedSubmission.phone}</div>
+                    </div>
+                    <div>
+                      <Label className="font-semibold">العنوان</Label>
+                      <div className="text-foreground">
+                        {selectedSubmission.address}, {selectedSubmission.governorate}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* Sanctions Information */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">معلومات العقوبات والتحديات</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="font-semibold">تفاصيل التحديات</Label>
+                    <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
+                      {selectedSubmission.challengeDetails || "لا توجد تفاصيل"}
+                    </div>
+                  </div>
+                  
+                  {selectedSubmission.sanctionedCompanyName && (
+                    <div>
+                      <Label className="font-semibold">الشركة الأجنبية التي لا يمكن التعامل معها</Label>
+                      <div className="text-foreground">
+                        {selectedSubmission.sanctionedCompanyName}
+                        {selectedSubmission.sanctionedCompanyLink && (
+                          <span className="text-muted-foreground mr-2">
+                            ({selectedSubmission.sanctionedCompanyLink})
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div>
+                    <Label className="font-semibold">الحالة الحالية</Label>
+                    <div className="mt-1">
+                      {getStatusBadge(selectedSubmission.status)}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label className="font-semibold">تاريخ التقديم</Label>
+                    <div className="text-foreground">
+                      {new Date(selectedSubmission.createdAt).toLocaleDateString('ar-SY')}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          
+          <DialogFooter className="mt-6 gap-2">
+            {selectedSubmission && selectedSubmission.status === 'pending' && (
+              <>
+                <Button 
+                  variant="default" 
+                  className="bg-green-600 hover:bg-green-700" 
+                  onClick={() => {
+                    updateStatus(selectedSubmission.id, 'approved');
+                    closeDetails();
+                  }}
+                >
+                  موافقة على الطلب
+                </Button>
+                <Button 
+                  variant="default" 
+                  className="bg-red-600 hover:bg-red-700" 
+                  onClick={() => {
+                    updateStatus(selectedSubmission.id, 'rejected');
+                    closeDetails();
+                  }}
+                >
+                  رفض الطلب
+                </Button>
+              </>
+            )}
+            <Button variant="outline" onClick={closeDetails}>
+              إغلاق
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
