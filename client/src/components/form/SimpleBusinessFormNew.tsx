@@ -55,6 +55,9 @@ const SimpleBusinessFormNew: React.FC = () => {
   });
   
   // Form mutation
+  const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
+  const [submissionId, setSubmissionId] = useState<number | null>(null);
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
       console.log("Submitting form data:", data);
@@ -90,14 +93,26 @@ const SimpleBusinessFormNew: React.FC = () => {
       }
     },
     onSuccess: (data) => {
+      // Update UI state to show success
+      setSubmissionSuccessful(true);
+      setSubmissionId(data.id);
+      
+      // Reset form after successful submission
+      form.reset();
+      
       toast({
         title: "تم إرسال البيانات بنجاح",
         description: "شكراً لتقديم معلومات شركتك. سيتم التواصل معك قريباً.",
         duration: 5000,
       });
       
-      // Redirect to confirmation page with request ID
-      setLocation(`/confirmation?id=${data.id}`);
+      // Try to redirect to confirmation page
+      try {
+        setLocation(`/confirmation?id=${data.id}`);
+      } catch (error) {
+        console.error("Error redirecting to confirmation page:", error);
+        // We'll show success message in-place if redirect fails
+      }
     },
     onError: (error) => {
       toast({
