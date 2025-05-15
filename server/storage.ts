@@ -247,15 +247,27 @@ export class DatabaseStorage implements IStorage {
       // Decrypt the data before returning to client
       const decryptedSubmission = { ...results[0] };
       
-      // Decrypt each sensitive field
+      // Decrypt each sensitive field with improved error handling
       for (const field of SENSITIVE_BUSINESS_FIELDS) {
-        if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
-          try {
-            decryptedSubmission[field] = decrypt(decryptedSubmission[field]);
-          } catch (error) {
-            console.error(`Error decrypting field ${field}:`, error);
-            // Keep the encrypted value if decryption fails
+        try {
+          // Only attempt to decrypt if the field exists and is a non-empty string
+          if (decryptedSubmission[field] && 
+              typeof decryptedSubmission[field] === 'string' && 
+              decryptedSubmission[field].trim() !== '') {
+            
+            const encryptedValue = decryptedSubmission[field];
+            const decryptedValue = decrypt(encryptedValue);
+            
+            // Only use decrypted value if it's not null and not empty
+            if (decryptedValue !== null && 
+                decryptedValue !== undefined && 
+                (typeof decryptedValue !== 'string' || decryptedValue.trim() !== '')) {
+              decryptedSubmission[field] = decryptedValue;
+            }
           }
+        } catch (error) {
+          console.error(`Error handling decryption for field ${field}:`, error);
+          // Keep the original value if anything goes wrong
         }
       }
       
