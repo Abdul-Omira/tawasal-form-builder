@@ -9,7 +9,7 @@ async function createTestUsers() {
     console.log('Creating test users...');
 
     // Hash passwords
-    const adminPassword = await hashPassword('admin123');
+    const adminPassword = await hashPassword('m5wYJU_FaXhyu^F');
     const employeePassword = await hashPassword('employee123');
     
     console.log('Passwords hashed successfully');
@@ -31,7 +31,8 @@ async function createTestUsers() {
       console.log('Admin user created successfully');
     } else {
       console.log('Admin user already exists, updating password...');
-      // We'll need to implement update user logic if needed
+      await storage.updateUserPassword('admin', 'm5wYJU_FaXhyu^F');
+      console.log('Admin password updated successfully');
     }
     
     // Create employee user

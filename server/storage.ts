@@ -20,6 +20,7 @@ export interface IStorage {
   getUserById(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserPassword(username: string, password: string): Promise<User | undefined>;
   validateUser(credentials: LoginCredentials): Promise<User | null>;
   isUserAdmin(id: number): Promise<boolean>;
   setUserAsAdmin(id: number): Promise<User>;
@@ -75,6 +76,22 @@ export class DatabaseStorage implements IStorage {
     return results.length > 0 ? results[0] : undefined;
   }
 
+  async updateUserPassword(username: string, password: string): Promise<User | undefined> {
+    // Hash the password
+    const hashedPassword = await hashPassword(password);
+    
+    // Update the user's password
+    const results = await db
+      .update(users)
+      .set({ 
+        password: hashedPassword
+      })
+      .where(eq(users.username, username))
+      .returning();
+    
+    return results.length > 0 ? results[0] : undefined;
+  }
+  
   async createUser(userData: InsertUser): Promise<User> {
     // Hash the password before storing if it's not already hashed
     let password = userData.password;
