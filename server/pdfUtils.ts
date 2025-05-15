@@ -35,8 +35,8 @@ export function addIBMPlexSansArabicFonts(doc: jsPDF): jsPDF {
     // Add bold font if it exists
     if (fs.existsSync(IBM_PLEX_SANS_ARABIC_BOLD_PATH)) {
       const boldFontData = fs.readFileSync(IBM_PLEX_SANS_ARABIC_BOLD_PATH);
-      doc.addFileToVFS('IBMPlexSansArabic-Bold.ttf', Buffer.from(boldFontData).toString('base64'));
-      doc.addFont('IBMPlexSansArabic-Bold.ttf', 'IBMPlexSansArabic', 'bold');
+      doc.addFileToVFS('IBMPlexSansArabic-Bold.woff', Buffer.from(boldFontData).toString('base64'));
+      doc.addFont('IBMPlexSansArabic-Bold.woff', 'IBMPlexSansArabic', 'bold');
       
       console.log('IBM Plex Sans Arabic Bold font loaded successfully');
     } else {
