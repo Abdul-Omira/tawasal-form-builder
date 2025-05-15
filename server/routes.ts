@@ -281,6 +281,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
           compress: true
         });
         
+        // Register the Arabic font for PDF
+        try {
+          const amiriFontPath = path.join(process.cwd(), 'client/src/assets/fonts/amiri-regular.ttf');
+          const amiriBoldFontPath = path.join(process.cwd(), 'client/src/assets/fonts/amiri-bold.ttf');
+          
+          if (fs.existsSync(amiriFontPath)) {
+            // Read font file to a buffer
+            const fontBuffer = fs.readFileSync(amiriFontPath);
+            // Add the font to the PDF
+            doc.addFileToVFS('Amiri-Regular.ttf', Buffer.from(fontBuffer).toString('base64'));
+            doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+            
+            // Register for bold version as well
+            if (fs.existsSync(amiriBoldFontPath)) {
+              // Read font file to a buffer
+              const fontBoldBuffer = fs.readFileSync(amiriBoldFontPath);
+              // Add the font to the PDF
+              doc.addFileToVFS('Amiri-Bold.ttf', Buffer.from(fontBoldBuffer).toString('base64'));
+              doc.addFont('Amiri-Bold.ttf', 'Amiri', 'bold');
+            } else {
+              // If bold not available, use regular for bold style too
+              doc.addFont('Amiri-Regular.ttf', 'Amiri', 'bold');
+            }
+          } else {
+            // Fallback to standard font if Amiri is not available
+            console.log("Arabic font not found, falling back to standard font");
+          }
+        } catch (error) {
+          console.error("Error loading Arabic fonts:", error);
+          // Continue with default fonts if there's an error
+        }
+        
         // Page dimensions
         const pageWidth = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
@@ -312,24 +344,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         doc.setLineWidth(0.5);
         doc.line(60, 53, pageWidth - 60, 53);
         
-        // Use a workaround for Arabic text - simplified approach
-        // Set font with Arabic support
+        // Configure document for Arabic text rendering
         doc.setFont('Amiri', 'normal');
-        doc.setR2L(true); // Enable right-to-left mode
+        doc.setR2L(true); // Enable right-to-left mode for Arabic text
+        doc.setLanguage('ar-SA'); // Set Arabic language for better text handling
         
-        // Add headers and title
+        // Add headers with bold styling
         doc.setFontSize(18);
+        doc.setFont('Amiri', 'bold');
         doc.text(headerText1, pageWidth / 2, 40, { align: 'center' });
         doc.text(headerText2, pageWidth / 2, 48, { align: 'center' });
         
-        // Add report title
+        // Add report title with bold styling
         doc.setFontSize(16);
         doc.text(reportTitle, pageWidth / 2, 60, { align: 'center' });
         
-        // Add generation date and reference number
+        // Add generation date and reference number with normal font
         doc.setFontSize(10);
+        doc.setFont('Amiri', 'normal');
         const today = new Date();
-        const dateStr = today.toLocaleDateString('ar-SY');
+        
+        // Format the date in Arabic style
+        const dateOptions: Intl.DateTimeFormatOptions = {
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric'
+        };
+        const dateStr = today.toLocaleDateString('ar-SA', dateOptions);
         const refNumber = `MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`;
         
         doc.text(`تاريخ التقرير: ${dateStr}`, pageWidth / 2, 67, { align: 'center' });
@@ -375,11 +416,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cellPadding: 3
           },
           theme: 'grid',
-          // RTL support
+          // RTL support with proper Arabic font
           styles: { 
             halign: 'right', 
             font: 'Amiri',
-            overflow: 'linebreak'
+            overflow: 'linebreak',
+            fontStyle: 'normal'
           },
           alternateRowStyles: {
             fillColor: [240, 240, 240]
@@ -393,6 +435,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Add signature area at bottom
         doc.setFontSize(11);
+        doc.setFont('Amiri', 'normal'); // Set font for the signature area
+        doc.setR2L(true); // Ensure RTL for Arabic text
         doc.text('توقيع المسؤول: ________________', pageWidth - 60, pageHeight - 25, { align: 'right' });
         doc.text('الختم الرسمي:', pageWidth - 60, pageHeight - 15, { align: 'right' });
         
@@ -406,12 +450,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doc.setPage(i);
           doc.setFontSize(8);
           doc.setTextColor(100, 100, 100);
+          
+          // Footer with security notice (in Arabic)
+          doc.setFont('Amiri', 'normal');
           doc.setR2L(true);
-          // Footer with security notice
           doc.text('جميع البيانات في هذا التقرير مشفرة ومؤمنة - للاستخدام الرسمي فقط', pageWidth / 2, pageHeight - 5, { align: 'center' });
-          // Page numbers (LTR)
+          
+          // Page numbers (using Arabic numerals)
           doc.setR2L(false);
-          doc.text(`${pageCount} / ${i}`, 20, pageHeight - 5);
+          // Format page numbers in Arabic
+          const arabicPageNum = i.toLocaleString('ar-SA');
+          const arabicTotalPages = pageCount.toLocaleString('ar-SA');
+          doc.text(`${arabicTotalPages} / ${arabicPageNum}`, 20, pageHeight - 5);
         }
         
         // Generate PDF buffer
