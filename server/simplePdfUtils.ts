@@ -1,4 +1,3 @@
-// Simplified and reliable PDF export utility
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -21,7 +20,7 @@ export function createArabicPDF(
   refNumber: string
 ): Buffer {
   try {
-    // Create a PDF document
+    // Create a PDF document with simple settings
     const doc = new jsPDF({
       orientation: 'landscape',
       unit: 'mm',
@@ -32,30 +31,34 @@ export function createArabicPDF(
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
     
-    // Add header with green background box
+    // Add header bar with simple color
     doc.setFillColor(0, 110, 81); // Ministry green
-    doc.rect(0, 0, pageWidth, 25, 'F');
+    doc.rect(0, 0, pageWidth, 30, 'F');
     
-    // Add white text for the ministry header
+    // Add title text in white
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.text('Ministry of Communications and Technology', pageWidth / 2, 15, { align: 'center' });
-    
-    // Add document title
-    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(18);
+    doc.text('Ministry of Communications', pageWidth / 2, 12, { align: 'center' });
     doc.setFontSize(14);
-    doc.text('Business Information Report', pageWidth / 2, 35, { align: 'center' });
+    doc.text('Syrian Arab Republic', pageWidth / 2, 20, { align: 'center' });
     
-    // Add report metadata
-    doc.setFontSize(10);
-    doc.text(`Syrian Arab Republic`, pageWidth / 2, 45, { align: 'center' });
+    // Reset to black text
+    doc.setTextColor(0, 0, 0);
+    
+    // Add report title
+    doc.setFontSize(16);
+    doc.text('Business Information Report', pageWidth / 2, 45, { align: 'center' });
+    
+    // Add metadata in English only for reliability
+    doc.setFontSize(11);
     doc.text(`Report Date: ${dateStr}`, 20, 55);
     doc.text(`Reference #: ${refNumber}`, pageWidth - 20, 55, { align: 'right' });
     
-    // Translate headers to English for reliability
-    const englishHeaders = headers.map(header => {
-      const headerMap: {[key: string]: string} = {
-        'تاريخ التقديم': 'Submission Date',
+    // Create simple English headers and use built-in fonts
+    const simpleHeaders = headers.map(header => {
+      // Transliteration mapping
+      const headerMap: Record<string, string> = {
+        'تاريخ التقديم': 'Date Submitted',
         'الحالة': 'Status',
         'المحافظة': 'Province',
         'رقم الهاتف': 'Phone',
@@ -63,45 +66,43 @@ export function createArabicPDF(
         'اسم المسؤول': 'Contact Name',
         'نوع النشاط': 'Business Type',
         'اسم الشركة': 'Company Name',
-        'رقم الطلب': 'ID',
-        'ملاحظات': 'Notes'
+        'رقم الطلب': 'ID'
       };
       
       return headerMap[header] || header;
     });
     
-    // Create table
+    // Use autoTable with reliable settings
     autoTable(doc, {
       startY: 65,
-      head: [englishHeaders],
+      head: [simpleHeaders],
       body: data,
-      headStyles: { 
-        fillColor: [0, 110, 81], // Ministry green
-        textColor: [255, 255, 255],
-        fontStyle: 'bold',
-        halign: 'center'
-      },
       theme: 'grid',
-      styles: { 
-        font: 'helvetica',
-        fontSize: 9,
-        cellPadding: 3
+      headStyles: { 
+        fillColor: [0, 110, 81],
+        textColor: [255, 255, 255],
+        halign: 'center',
+        valign: 'middle',
+        fontStyle: 'bold'
       },
-      alternateRowStyles: {
-        fillColor: [240, 240, 240]
+      styles: {
+        font: 'helvetica',
+        fontSize: 10,
+        cellPadding: 3
       }
     });
     
-    // Add footer
+    // Add footer with green line
     doc.setDrawColor(0, 110, 81);
-    doc.setLineWidth(0.5);
+    doc.setLineWidth(1);
     doc.line(10, pageHeight - 15, pageWidth - 10, pageHeight - 15);
     
+    // Add confidential text
     doc.setFontSize(8);
     doc.setTextColor(0, 110, 81);
     doc.text('OFFICIAL DOCUMENT - CONFIDENTIAL', pageWidth / 2, pageHeight - 10, { align: 'center' });
     
-    // Generate PDF buffer
+    // Convert to buffer
     return Buffer.from(doc.output('arraybuffer'));
   } catch (error) {
     console.error('Error generating PDF:', error);
