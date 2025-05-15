@@ -8,6 +8,9 @@ import xss from "xss-clean";
 
 const app = express();
 
+// Enable trust proxy to fix rate limiter in Replit environment
+app.set('trust proxy', 1);
+
 // Set security HTTP headers with appropriate configuration for development
 app.use(helmet({
   contentSecurityPolicy: {

@@ -31,10 +31,8 @@ const Header: React.FC = () => {
           </div>
         </div>
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/">
-            <a className={`text-${isActive('/') ? 'primary' : 'muted-foreground'} hover:text-primary`}>
-              {t('home')}
-            </a>
+          <Link href="/" className={`text-${isActive('/') ? 'primary' : 'muted-foreground'} hover:text-primary`}>
+            {t('home')}
           </Link>
           <a href="/#about" className="text-muted-foreground hover:text-primary">
             {t('about')}
@@ -42,10 +40,8 @@ const Header: React.FC = () => {
           <a href="/#form-section" className="text-muted-foreground hover:text-primary">
             {t('form')}
           </a>
-          <Link href="/admin">
-            <a className={`text-${isActive('/admin') ? 'primary' : 'muted-foreground'} hover:text-primary`}>
-              {t('adminDashboard')}
-            </a>
+          <Link href="/admin" className={`text-${isActive('/admin') ? 'primary' : 'muted-foreground'} hover:text-primary`}>
+            {t('adminDashboard')}
           </Link>
           <Button className="bg-primary text-white hover:bg-secondary transition">
             {t('login')}
@@ -67,10 +63,12 @@ const Header: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-border py-2">
           <div className="container mx-auto px-4">
-            <Link href="/">
-              <a className={`block py-2 text-${isActive('/') ? 'primary' : 'muted-foreground'} hover:text-primary`}>
-                {t('home')}
-              </a>
+            <Link 
+              href="/" 
+              className={`block py-2 text-${isActive('/') ? 'primary' : 'muted-foreground'} hover:text-primary`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('home')}
             </Link>
             <a 
               href="/#about" 
@@ -86,15 +84,19 @@ const Header: React.FC = () => {
             >
               {t('form')}
             </a>
-            <Link href="/admin">
-              <a className={`block py-2 text-${isActive('/admin') ? 'primary' : 'muted-foreground'} hover:text-primary`}>
-                {t('adminDashboard')}
-              </a>
+            <Link 
+              href="/admin" 
+              className={`block py-2 text-${isActive('/admin') ? 'primary' : 'muted-foreground'} hover:text-primary`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('adminDashboard')}
             </Link>
-            <Link href="/login">
-              <a className="block py-2 text-muted-foreground hover:text-primary">
-                {t('login')}
-              </a>
+            <Link 
+              href="/login" 
+              className="block py-2 text-muted-foreground hover:text-primary"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('login')}
             </Link>
           </div>
         </div>
