@@ -1,10 +1,35 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import hpp from "hpp";
+import xss from "xss-clean";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+// Set security HTTP headers
+app.use(helmet());
+
+// Limit requests from same IP
+const limiter = rateLimit({
+  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 60 * 60 * 1000, // 1 hour
+  message: 'لقد تجاوزت الحد المسموح به من الطلبات، يرجى المحاولة مرة أخرى لاحقًا'
+});
+
+// Apply rate limiting to /api routes
+app.use('/api', limiter);
+
+// Data sanitization against XSS
+app.use(xss());
+
+// Prevent parameter pollution
+app.use(hpp());
+
+// Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' })); // Limit body size
+app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 
 app.use((req, res, next) => {
   const start = Date.now();
