@@ -124,10 +124,12 @@ export const AdaptiveCaptcha: React.FC<AdaptiveCaptchaProps> = ({
     };
   }, [value, captchaShown]);
 
-  // If no CAPTCHA needed yet (low risk), return an empty fragment
-  if (!captchaShown) {
-    return null;
-  }
+  // Always show CAPTCHA regardless of risk score
+  useEffect(() => {
+    if (!captchaShown) {
+      setCaptchaShown(true);
+    }
+  }, []);
   
   return (
     <div className="mt-4">
