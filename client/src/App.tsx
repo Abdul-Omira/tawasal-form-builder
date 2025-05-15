@@ -53,11 +53,7 @@ function App() {
     ogType.setAttribute('content', 'website');
     document.head.appendChild(ogType);
     
-    // Add font links
-    const fontLink = document.createElement('link');
-    fontLink.setAttribute('rel', 'stylesheet');
-    fontLink.setAttribute('href', 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
-    document.head.appendChild(fontLink);
+    // IBM Plex Sans font is already loaded in index.html
   }, []);
 
   return (
