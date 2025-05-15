@@ -63,21 +63,18 @@ export const CalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
       animate="visible"
     >
       {words.map((word, index) => (
-        <React.Fragment key={index}>
-          <motion.span
-            className="inline-block"
-            variants={wordVariant}
-            style={{ 
-              display: 'inline-block',
-              marginLeft: '0.25em',
-              marginRight: '0.25em'
-            }}
-          >
-            {word}
-          </motion.span>
-          {/* Don't add a space after the last word */}
-          {index < words.length - 1 ? '' : ''}
-        </React.Fragment>
+        <motion.span
+          key={index}
+          className="inline-block"
+          variants={wordVariant}
+          style={{ 
+            display: 'inline-block',
+            marginLeft: '0.25em',
+            marginRight: '0.25em'
+          }}
+        >
+          {word}
+        </motion.span>
       ))}
     </motion.div>
   );
