@@ -144,6 +144,52 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 stroke="#fff"
                 strokeWidth="2"
               />
+              {/* Arabic-inspired decorative elements */}
+              <circle cx="400" cy="55" r="5" fill="#fff" opacity="0.7" />
+              <circle cx="200" cy="55" r="3" fill="#fff" opacity="0.5" />
+              <circle cx="600" cy="55" r="3" fill="#fff" opacity="0.5" />
+              <polygon points="400,30 410,45 390,45" fill="#fff" opacity="0.3" />
+            </svg>
+          </motion.div>
+          
+          {/* Side Decorative Elements */}
+          <motion.div
+            variants={decorVariants}
+            className="absolute left-8 top-1/2 transform -translate-y-1/2 h-64 w-10 opacity-30"
+          >
+            <svg viewBox="0 0 50 300" className="w-full h-full">
+              <path
+                d="M25,0 Q40,75 25,150 Q10,225 25,300"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+              />
+              <path
+                d="M25,0 Q10,75 25,150 Q40,225 25,300"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+              />
+            </svg>
+          </motion.div>
+          
+          <motion.div
+            variants={decorVariants}
+            className="absolute right-8 top-1/2 transform -translate-y-1/2 h-64 w-10 opacity-30"
+          >
+            <svg viewBox="0 0 50 300" className="w-full h-full">
+              <path
+                d="M25,0 Q40,75 25,150 Q10,225 25,300"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+              />
+              <path
+                d="M25,0 Q10,75 25,150 Q40,225 25,300"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+              />
             </svg>
           </motion.div>
 
@@ -163,13 +209,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 className="block mt-2"
               />
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 font-light mt-6">
+            <div className="text-xl md:text-2xl text-white/90 font-light mt-6">
               <FancyCalligraphyAnimation 
                 text="منصة المعلومات الاقتصادية للشركات السورية" 
                 delay={2.4}
                 duration={0.04}
+                as="span"
               />
-            </p>
+            </div>
           </motion.div>
 
           {/* Decorative Pattern Bottom */}

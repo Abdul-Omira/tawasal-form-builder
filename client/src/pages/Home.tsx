@@ -74,12 +74,17 @@ const Home: React.FC = () => {
                   as="h1"
                 />
               </motion.div>
-              <motion.p 
+              <motion.div 
                 className="mb-6 max-w-2xl mx-auto text-sm md:text-base"
                 variants={textVariants}
               >
-                منصة وزارة الاتصالات السورية لجمع معلومات حول الشركات الناشئة والأعمال المتأثرة بالعقوبات ومساعدتها في التغلب على التحديات
-              </motion.p>
+                <CalligraphyAnimation 
+                  text="منصة وزارة الاتصالات السورية لجمع معلومات حول الشركات الناشئة والأعمال المتأثرة بالعقوبات ومساعدتها في التغلب على التحديات"
+                  duration={0.03}
+                  delay={0.5}
+                  className="inline-block"
+                />
+              </motion.div>
             </motion.div>
           </div>
         </motion.section>
