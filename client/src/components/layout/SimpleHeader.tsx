@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'wouter';
 import { motion } from 'framer-motion';
 import { MenuIcon, XIcon } from 'lucide-react';
-import ministryLogo from '../../assets/ministry-logo.png';
+import syriaLogo from '../../assets/syria-logo.png';
 
 const SimpleHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -15,15 +15,23 @@ const SimpleHeader: React.FC = () => {
     <header className="sticky top-0 z-50 bg-white border-b border-border shadow-sm py-2 md:py-4 animate-smooth">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <motion.img
-              src={ministryLogo}
-              alt="وزارة الاتصالات وتقانة المعلومات"
-              className="h-16 md:h-24 w-auto hover-scale"
+          <div className="flex items-center">
+            <motion.div
+              className="relative flex items-center"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-            />
+            >
+              <img
+                src={syriaLogo}
+                alt="شعار الجمهورية العربية السورية"
+                className="h-20 md:h-28 w-auto hover-scale animate-smooth"
+              />
+              <div className="mr-3 md:mr-4">
+                <h1 className="text-lg md:text-xl font-bold text-foreground">وزارة الاتصالات وتقانة المعلومات</h1>
+                <p className="text-xs md:text-sm text-muted-foreground">الجمهورية العربية السورية</p>
+              </div>
+            </motion.div>
           </div>
           
           {/* Desktop navigation */}

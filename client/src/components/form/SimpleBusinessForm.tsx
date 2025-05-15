@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -87,167 +88,242 @@ const SimpleBusinessForm: React.FC = () => {
     mutate(data);
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const formItemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
+  const buttonVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: 0.6 } },
+    hover: { scale: 1.05, backgroundColor: "#1A4D2E", transition: { duration: 0.2 } }
+  };
+
   return (
-    <Card className="bg-white rounded-lg shadow-md max-w-3xl mx-auto">
-      <CardContent className="p-6 md:p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-foreground">استمارة تقديم المعلومات</h2>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="businessName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-medium">
-                        اسم الشركة <span className="text-destructive">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="أدخل اسم الشركة" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="businessType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-medium">
-                        نوع النشاط <span className="text-destructive">*</span>
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="اختر نوع النشاط" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="technology">تكنولوجيا المعلومات</SelectItem>
-                          <SelectItem value="manufacturing">تصنيع</SelectItem>
-                          <SelectItem value="retail">تجارة تجزئة</SelectItem>
-                          <SelectItem value="services">خدمات</SelectItem>
-                          <SelectItem value="other">أخرى</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="contactName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-medium">
-                        اسم المسؤول <span className="text-destructive">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="أدخل اسم المسؤول" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-medium">
-                        رقم الهاتف <span className="text-destructive">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input type="tel" {...field} placeholder="09xxxxxxxx" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-medium">
-                      البريد الإلكتروني <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} placeholder="example@domain.com" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="challengeDetails"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-medium">
-                      ما هي التحديات الرئيسية التي تواجهها شركتك بسبب العقوبات؟ <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        rows={3} 
-                        {...field} 
-                        placeholder="اشرح بإيجاز التحديات التي تواجهها شركتك..." 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="consentToDataUse"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-2 space-x-reverse space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none mr-2">
-                      <FormLabel className="font-medium">
-                        أوافق على استخدام المعلومات المقدمة لغرض التواصل وتقديم الدعم من قبل وزارة الاتصالات السورية
-                      </FormLabel>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="flex justify-center pt-4">
-              <Button 
-                type="submit" 
-                className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto px-8"
-                disabled={isPending}
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <Card className="bg-white rounded-lg shadow-md max-w-3xl mx-auto animate-smooth">
+        <CardContent className="p-6 md:p-8">
+          <motion.h2
+            className="text-2xl font-bold mb-6 text-center text-foreground"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            استمارة تقديم المعلومات
+          </motion.h2>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <motion.div 
+                className="space-y-6"
+                variants={containerVariants}
               >
-                {isPending ? "جاري الإرسال..." : "إرسال الطلب"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
+                  variants={formItemVariants}
+                >
+                  <FormField
+                    control={form.control}
+                    name="businessName"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          اسم الشركة <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            placeholder="أدخل اسم الشركة" 
+                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="businessType"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          نوع النشاط <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth">
+                              <SelectValue placeholder="اختر نوع النشاط" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="technology">تكنولوجيا المعلومات</SelectItem>
+                            <SelectItem value="manufacturing">تصنيع</SelectItem>
+                            <SelectItem value="retail">تجارة تجزئة</SelectItem>
+                            <SelectItem value="services">خدمات</SelectItem>
+                            <SelectItem value="other">أخرى</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+                
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
+                  variants={formItemVariants}
+                >
+                  <FormField
+                    control={form.control}
+                    name="contactName"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          اسم المسؤول <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            placeholder="أدخل اسم المسؤول" 
+                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          رقم الهاتف <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="tel" 
+                            {...field} 
+                            placeholder="09xxxxxxxx" 
+                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+                
+                <motion.div variants={formItemVariants}>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          البريد الإلكتروني <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="email" 
+                            {...field} 
+                            placeholder="example@domain.com" 
+                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+                
+                <motion.div variants={formItemVariants}>
+                  <FormField
+                    control={form.control}
+                    name="challengeDetails"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          ما هي التحديات الرئيسية التي تواجهها شركتك بسبب العقوبات؟ <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            rows={3} 
+                            {...field} 
+                            placeholder="اشرح بإيجاز التحديات التي تواجهها شركتك..." 
+                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth resize-none md:resize-y"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+                
+                <motion.div variants={formItemVariants}>
+                  <FormField
+                    control={form.control}
+                    name="consentToDataUse"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-2 space-x-reverse space-y-0 rounded-md border p-4 hover:bg-muted/10 animate-smooth">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="animate-smooth data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none mr-2">
+                          <FormLabel className="font-medium text-sm md:text-base">
+                            أوافق على استخدام المعلومات المقدمة لغرض التواصل وتقديم الدعم من قبل وزارة الاتصالات السورية
+                          </FormLabel>
+                          <FormMessage />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+              </motion.div>
+              
+              <motion.div 
+                className="flex justify-center pt-6"
+                variants={buttonVariants}
+                whileHover="hover"
+              >
+                <Button 
+                  type="submit" 
+                  className="bg-primary hover:bg-secondary text-white w-full sm:w-auto px-8 py-6 text-base shadow-md animate-smooth"
+                  disabled={isPending}
+                >
+                  {isPending ? "جاري الإرسال..." : "إرسال الطلب"}
+                </Button>
+              </motion.div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
