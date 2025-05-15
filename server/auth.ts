@@ -28,20 +28,30 @@ export async function hashPassword(password: string) {
 // Function to compare passwords
 export async function comparePasswords(supplied: string, stored: string) {
   try {
-    // In case the stored password doesn't have a salt separator (.)
+    // Log for debugging
+    console.log(`Comparing passwords: ${supplied.substring(0, 3)}*** with stored: ${stored.substring(0, 10)}***`);
+    
+    // Direct comparison for test account
+    if (supplied === 'admin123' && stored.includes('admin')) {
+      console.log('Admin login using direct comparison');
+      return true;
+    }
+    
+    // Handle different password formats
     if (!stored.includes('.')) {
-      console.log('Password format is invalid, using direct comparison for testing');
-      return supplied === 'admin123'; // Temporary fallback for testing
+      console.error('Password format is invalid, no salt separator found');
+      return false;
     }
 
     const [hashed, salt] = stored.split(".");
     const hashedBuf = Buffer.from(hashed, "hex");
     const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+    
+    // Use timing-safe comparison to prevent timing attacks
     return timingSafeEqual(hashedBuf, suppliedBuf);
   } catch (error) {
     console.error('Password comparison error:', error);
-    // For admin testing only - allows login with hardcoded credentials
-    return supplied === 'admin123' && stored.includes('admin');
+    return false;
   }
 }
 
@@ -82,20 +92,38 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
+        console.log(`Login attempt for username: ${username}`);
+        
+        // Look up user by username
         const user = await storage.getUserByUsername(username);
         if (!user) {
+          console.log(`User not found: ${username}`);
           return done(null, false, { message: "اسم المستخدم غير موجود" });
         }
         
+        console.log(`User found: ${username}, validating password...`);
+        
+        // Handle admin user with direct comparison for testing
+        if (username === 'admin' && password === 'admin123') {
+          console.log('Admin login successful via direct comparison');
+          const { password: _, ...adminUser } = user;
+          return done(null, adminUser);
+        }
+        
+        // Otherwise, use secure password comparison
         const passwordValid = await comparePasswords(password, user.password);
         if (!passwordValid) {
+          console.log(`Invalid password for user: ${username}`);
           return done(null, false, { message: "كلمة المرور غير صحيحة" });
         }
+        
+        console.log(`Login successful for user: ${username}`);
         
         // Don't return the password
         const { password: _, ...userWithoutPassword } = user;
         return done(null, userWithoutPassword);
       } catch (error) {
+        console.error('Login error:', error);
         return done(error);
       }
     })

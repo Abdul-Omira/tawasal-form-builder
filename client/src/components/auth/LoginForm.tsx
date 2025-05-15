@@ -38,12 +38,28 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const login = useMutation({
     mutationFn: async (data: LoginFormData) => {
       setIsLoading(true);
-      const res = await apiRequest('POST', '/api/login', data);
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'فشل تسجيل الدخول');
+      try {
+        console.log(`Attempting to login with username: ${data.username}`);
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+          credentials: 'include'
+        });
+        
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error('Login error:', errorData);
+          throw new Error(errorData.message || 'فشل تسجيل الدخول');
+        }
+        
+        const userData = await res.json();
+        console.log('Login successful, user data received');
+        return userData;
+      } catch (error) {
+        console.error('Login error:', error);
+        throw error;
       }
-      return await res.json();
     },
     onSuccess: (data) => {
       // Store JWT token if provided
