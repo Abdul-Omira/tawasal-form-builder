@@ -175,10 +175,23 @@ const SimpleBusinessForm: React.FC = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="technology">تكنولوجيا المعلومات</SelectItem>
-                            <SelectItem value="manufacturing">تصنيع</SelectItem>
-                            <SelectItem value="retail">تجارة تجزئة</SelectItem>
-                            <SelectItem value="services">خدمات</SelectItem>
+                            <SelectItem value="technology">تكنولوجيا المعلومات والاتصالات</SelectItem>
+                            <SelectItem value="software">تطوير البرمجيات</SelectItem>
+                            <SelectItem value="ecommerce">التجارة الإلكترونية</SelectItem>
+                            <SelectItem value="manufacturing">الصناعات التحويلية</SelectItem>
+                            <SelectItem value="agriculture">الزراعة والإنتاج الغذائي</SelectItem>
+                            <SelectItem value="textile">صناعة النسيج والألبسة</SelectItem>
+                            <SelectItem value="retail">تجارة التجزئة</SelectItem>
+                            <SelectItem value="wholesale">تجارة الجملة</SelectItem>
+                            <SelectItem value="healthcare">الرعاية الصحية والطبية</SelectItem>
+                            <SelectItem value="education">التعليم والتدريب</SelectItem>
+                            <SelectItem value="tourism">السياحة والضيافة</SelectItem>
+                            <SelectItem value="transport">النقل واللوجستيات</SelectItem>
+                            <SelectItem value="pharmacy">صناعة الأدوية</SelectItem>
+                            <SelectItem value="construction">البناء والمقاولات</SelectItem>
+                            <SelectItem value="energy">الطاقة والكهرباء</SelectItem>
+                            <SelectItem value="professional_services">خدمات مهنية</SelectItem>
+                            <SelectItem value="financial">الخدمات المالية</SelectItem>
                             <SelectItem value="other">أخرى</SelectItem>
                           </SelectContent>
                         </Select>

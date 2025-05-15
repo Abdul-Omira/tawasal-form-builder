@@ -114,8 +114,7 @@ export class DatabaseStorage implements IStorage {
     const results = await db
       .update(users)
       .set({ 
-        isAdmin: true,
-        updatedAt: new Date() 
+        isAdmin: true
       })
       .where(eq(users.id, id))
       .returning();
@@ -219,8 +218,8 @@ export class DatabaseStorage implements IStorage {
       case 'status':
         orderByField = businessSubmissions.status;
         break;
-      case 'updatedAt':
-        orderByField = businessSubmissions.updatedAt;
+      case 'date':
+        orderByField = businessSubmissions.createdAt;
         break;
       default:
         orderByField = businessSubmissions.createdAt;

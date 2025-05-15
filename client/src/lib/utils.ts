@@ -27,9 +27,18 @@ export function isValidEmail(email: string): boolean {
 
 // Validate phone format (Syrian phone numbers)
 export function isValidPhone(phone: string): boolean {
-  // Syrian phone format: +963 or 00963 followed by 9 digits
-  const phoneRegex = /^(\+963|00963)?[0-9]{9}$/;
-  return phoneRegex.test(phone);
+  // Allow various international formats:
+  // - Standard international format: +[country code][number]
+  // - Local format: 9 or more digits
+  // - Numbers with spaces
+  // - Numbers with dashes
+  if (!phone) return false;
+  
+  // Remove spaces, dashes, parentheses to normalize
+  const normalizedPhone = phone.replace(/[\s\-\(\)]/g, '');
+  
+  // Check for international format or local format
+  return /^(\+|00)?[0-9]{8,15}$/.test(normalizedPhone);
 }
 
 // Format validation errors for form fields
