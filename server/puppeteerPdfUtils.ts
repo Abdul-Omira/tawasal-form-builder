@@ -1,6 +1,4 @@
-import puppeteer from 'puppeteer-core';
-import path from 'path';
-import fs from 'fs';
+import puppeteer from 'puppeteer';
 
 /**
  * Creates a PDF using puppeteer which can properly render Arabic text
@@ -21,46 +19,34 @@ export async function createArabicPDF(
   refNumber: string
 ): Promise<Buffer> {
   try {
-    // Create HTML content with proper Arabic support
     const htmlContent = generateHtml(title, data, headers, dateStr, refNumber);
     
-    // Launch puppeteer with chromium path
+    // Launch puppeteer with minimal settings for Replit environment
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: '/nix/store/p6s9v8kp640jdyj7a82vmxyr5pbqxsrh-chromium-112.0.5615.121/bin/chromium',
-      args: [
-        '--no-sandbox', 
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--single-process'
-      ]
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     
-    try {
-      const page = await browser.newPage();
-      
-      // Set content and wait for rendering
-      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-      
-      // Generate PDF
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        landscape: true,
-        printBackground: true,
-        margin: {
-          top: '10mm',
-          right: '10mm',
-          bottom: '10mm',
-          left: '10mm'
-        }
-      });
-      
-      // Convert to proper NodeJS Buffer
-      return Buffer.from(pdfBuffer as Buffer);
-    } finally {
-      await browser.close();
-    }
+    const page = await browser.newPage();
+    
+    // Set the content and wait for rendering
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    
+    // Generate PDF
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      landscape: true,
+      printBackground: true,
+      margin: {
+        top: '20mm',
+        right: '20mm',
+        bottom: '20mm',
+        left: '20mm'
+      }
+    });
+    
+    await browser.close();
+    return Buffer.from(pdfBuffer);
   } catch (error) {
     console.error('Error generating PDF with puppeteer:', error);
     throw error;
@@ -77,153 +63,145 @@ function generateHtml(
   dateStr: string,
   refNumber: string
 ): string {
-  // Format the data for the table
-  const tableRows = data.map(row => {
-    return `<tr>
-      ${row.map((cell: any) => `<td dir="auto">${escapeHtml(String(cell || ''))}</td>`).join('')}
-    </tr>`;
+  // Generate table rows
+  const rows = data.map(row => {
+    return `<tr>${row.map((cell: any) => `<td>${escapeHtml(String(cell))}</td>`).join('')}</tr>`;
   }).join('');
   
-  // Format the headers
-  const tableHeaders = headers.map(header => {
-    return `<th dir="rtl">${escapeHtml(header)}</th>`;
-  }).join('');
+  // Generate table headers
+  const headerRow = `<tr>${headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr>`;
   
-  // Read emblem image if available
-  let emblemHtml = '';
-  try {
-    const emblemPath = path.join(process.cwd(), 'assets', 'syrian_emblem.png');
-    if (fs.existsSync(emblemPath)) {
-      // Convert to base64
-      const emblemData = fs.readFileSync(emblemPath);
-      const base64Emblem = emblemData.toString('base64');
-      emblemHtml = `<img src="data:image/png;base64,${base64Emblem}" class="emblem" alt="Syrian Emblem" />`;
-    }
-  } catch (error) {
-    console.error('Error with emblem:', error);
-    // Continue without emblem if there's an error
-  }
-  
-  // Generate full HTML document with Arabic support
+  // Return the complete HTML document
   return `<!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>تقرير معلومات الأعمال</title>
+  <title>${escapeHtml(title)}</title>
   <style>
-    @page {
-      size: A4 landscape;
-      margin: 10mm;
-    }
     body {
-      font-family: Arial, sans-serif;
-      direction: rtl;
+      font-family: Arial, Helvetica, sans-serif;
       margin: 0;
       padding: 0;
-      color: #333;
+      direction: rtl;
+      background-color: white;
     }
     .container {
       max-width: 100%;
       margin: 0 auto;
+      padding: 10px;
     }
     .header {
-      background-color: #006E51;
-      color: white;
-      padding: 15px 0;
       text-align: center;
+      margin-bottom: 20px;
       position: relative;
     }
     .emblem {
       width: 80px;
       height: auto;
+      margin: 0 auto;
       display: block;
-      margin: 0 auto 10px;
     }
-    h1, h2 {
-      margin: 5px 0;
+    .title-bar {
+      background-color: #006E51;
+      color: white;
+      padding: 10px;
+      margin: 20px 0;
       text-align: center;
     }
-    .info {
+    .ministry-name {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 0;
+    }
+    .report-title {
+      font-size: 18px;
+      margin: 10px 0;
+      color: #006E51;
+    }
+    .metadata {
       display: flex;
       justify-content: space-between;
-      margin: 15px 0;
-      padding: 0 20px;
+      margin-bottom: 20px;
+    }
+    .metadata div {
+      font-size: 12px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: right;
+      margin-bottom: 30px;
     }
     th {
       background-color: #006E51;
       color: white;
+      text-align: right;
+      padding: 8px;
+    }
+    td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: right;
     }
     tr:nth-child(even) {
       background-color: #f2f2f2;
     }
     .footer {
-      margin-top: 20px;
-      border-top: 2px solid #006E51;
-      padding-top: 10px;
-      text-align: center;
-      font-size: 12px;
-      color: #666;
-    }
-    .signature {
       margin-top: 30px;
+      padding-top: 10px;
+      border-top: 2px solid #006E51;
       display: flex;
       justify-content: space-between;
-      padding: 0 50px;
     }
-    .signature-box {
-      border-top: 1px solid #000;
-      width: 200px;
+    .signature-area {
+      width: 40%;
+    }
+    .signature-area h4 {
+      margin-bottom: 30px;
+    }
+    .confidential {
       text-align: center;
-      padding-top: 5px;
+      font-size: 12px;
+      color: #006E51;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      ${emblemHtml}
-      <h1>وزارة الاتصالات وتقانة المعلومات</h1>
-      <h2>الجمهورية العربية السورية</h2>
+      <h1 style="text-align: center;">الجمهورية العربية السورية</h1>
+      <div class="title-bar">
+        <h2 class="ministry-name">وزارة الاتصالات</h2>
+      </div>
+      <h3 class="report-title">${escapeHtml(title)}</h3>
     </div>
     
-    <h2>${escapeHtml(title)}</h2>
-    
-    <div class="info">
+    <div class="metadata">
       <div>تاريخ التقرير: ${escapeHtml(dateStr)}</div>
       <div>رقم المرجع: ${escapeHtml(refNumber)}</div>
     </div>
     
     <table>
       <thead>
-        <tr>
-          ${tableHeaders}
-        </tr>
+        ${headerRow}
       </thead>
       <tbody>
-        ${tableRows}
+        ${rows}
       </tbody>
     </table>
     
-    <div class="signature">
-      <div class="signature-box">
-        التوقيع الرسمي
+    <div class="footer">
+      <div class="signature-area">
+        <h4>التوقيع الرسمي:</h4>
+        <div style="height: 30px;"></div>
       </div>
-      <div class="signature-box">
-        الختم الرسمي
+      <div class="signature-area">
+        <h4>الختم الرسمي:</h4>
+        <div style="height: 30px;"></div>
       </div>
     </div>
     
-    <div class="footer">
+    <div class="confidential">
       سري - للاستخدام الرسمي فقط
     </div>
   </div>
