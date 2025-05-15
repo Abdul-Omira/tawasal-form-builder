@@ -8,7 +8,7 @@ import { fromZodError } from "zod-validation-error";
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { createArabicSupportedPDF } from './pdfUtils';
+import { createArabicPDF } from './simplePdfUtils';
 import path from 'path';
 import fs from 'fs';
 import { setupAuth, isAuthenticated, isAdmin } from "./auth";
@@ -285,74 +285,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         return res.send(excelBuffer);
       } else if (format === 'pdf') {
-        // Create a PDF with proper Arabic support
-        const doc = createArabicSupportedPDF({
-          orientation: 'landscape', 
-        });
-        
-        // Page dimensions
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-        
-        // Use the SVG version of the emblem if available
         try {
-          const emblemPath = path.join(process.cwd(), 'client/src/assets/syria-emblem-svg.png');
-          if (fs.existsSync(emblemPath)) {
-            const emblemData = fs.readFileSync(emblemPath);
-            const emblemBase64 = Buffer.from(emblemData).toString('base64');
-            // Center the emblem at the top (better quality SVG version)
-            doc.addImage(`data:image/png;base64,${emblemBase64}`, 'PNG', (pageWidth / 2) - 15, 5, 30, 30);
-          } else {
-            console.log('Syrian emblem image not found');
-          }
-        } catch (error) {
-          console.error('Error adding emblem to PDF:', error);
-          // Continue without the emblem if there's an error
-        }
-        
-        // Add gold line under header
-        doc.setDrawColor(184, 134, 11); // Gold color
-        doc.setLineWidth(0.5);
-        doc.line(60, 53, pageWidth - 60, 53);
-        
-        // RTL is already set in createArabicSupportedPDF
-        
-        // Add headers with IBM Plex Sans Arabic font if available
-        doc.setFontSize(18);
-        // Try to use our custom font, but fallback to helvetica if not available
-        try {
-          doc.setFont('IBMPlexSansArabic', 'bold');
-        } catch (error) {
-          console.warn('Falling back to helvetica for headers');
-          doc.setFont('helvetica', 'bold');
-        }
-        doc.text('الجمهورية العربية السورية', pageWidth / 2, 40, { align: 'center' });
-        doc.text('وزارة الاتصالات وتقانة المعلومات', pageWidth / 2, 48, { align: 'center' });
-        
-        // Add report title
-        doc.setFontSize(16);
-        doc.text('تقرير طلبات الشركات المتضررة من العقوبات', pageWidth / 2, 60, { align: 'center' });
-        
-        // Add generation date and reference number
-        doc.setFontSize(10);
-        // Try to use our custom font (regular), but fallback to helvetica if not available
-        try {
-          doc.setFont('IBMPlexSansArabic', 'normal');
-        } catch (error) {
-          console.warn('Falling back to helvetica for normal text');
-          doc.setFont('helvetica', 'normal');
-        }
-        const today = new Date();
-        const dateStr = today.toISOString().split('T')[0]; // Use simple date format
-        const refNumber = `MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`;
-        
-        doc.text(`تاريخ التقرير: ${dateStr}`, pageWidth / 2, 67, { align: 'center' });
-        doc.text(`رقم المرجع: ${refNumber}`, pageWidth / 2, 72, { align: 'center' });
-        
-        // Create table with Arabic column headers
-        autoTable(doc, {
-          startY: 80,
-          head: [[
+          const today = new Date();
+          const dateStr = today.toISOString().split('T')[0]; // Use simple date format
+          const refNumber = `MIN-COM-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${Math.floor(Math.random() * 1000)}`;
+          
+          // Prepare table headers for PDF
+          const tableHeaders = [
             'تاريخ التقديم',
             'الحالة',
             'المحافظة',
@@ -362,9 +301,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'نوع النشاط',
             'اسم الشركة',
             'رقم الطلب'
-          ]],
-          // Simplify table data access to avoid any potential data issues
-          body: exportData.map(row => {
+          ];
+          
+          // Format data for PDF
+          const tableData = exportData.map(row => {
             // Create a simple accessor with default empty string for missing values
             const get = (key: string): string => {
               try {
@@ -388,70 +328,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
               get('اسم الشركة'),
               get('ID')
             ];
-          }),
-          headStyles: { 
-            fillColor: [0, 110, 81], // Ministry green
-            textColor: [255, 255, 255], 
-            fontSize: 10,
-            fontStyle: 'bold',
-            halign: 'center'
-          },
-          bodyStyles: { 
-            fontSize: 9,
-            cellPadding: 3
-          },
-          theme: 'grid',
-          styles: { 
-            halign: 'right', 
-            font: 'IBMPlexSansArabic', // Use our custom font if available
-            overflow: 'linebreak'
-          },
-          alternateRowStyles: {
-            fillColor: [240, 240, 240]
-          }
-        });
-        
-        // Add signature area at bottom
-        doc.setFontSize(11);
-        // Try to use our custom font (normal), but fallback to helvetica if not available
-        try {
-          doc.setFont('IBMPlexSansArabic', 'normal');
+          });
+          
+          // Create the PDF using our simplified Arabic-friendly utility
+          const pdfBuffer = createArabicPDF(
+            'تقرير طلبات الشركات المتضررة من العقوبات',
+            tableData,
+            tableHeaders,
+            dateStr,
+            refNumber
+          );
+          
+          // Set headers for file download with date in filename
+          res.setHeader('Content-Disposition', `attachment; filename=business-submissions-report-${dateStr}.pdf`);
+          res.setHeader('Content-Type', 'application/pdf');
+          
+          return res.send(pdfBuffer);
         } catch (error) {
-          console.warn('Falling back to helvetica for signature');
-          doc.setFont('helvetica', 'normal');
+          console.error('Error generating PDF:', error);
+          return res.status(500).json({ error: 'Failed to generate PDF' });
         }
-        doc.text('توقيع المسؤول: ________________', pageWidth - 60, pageHeight - 25, { align: 'right' });
-        doc.text('الختم الرسمي:', pageWidth - 60, pageHeight - 15, { align: 'right' });
-        
-        // Draw an empty circle for the official stamp
-        doc.setDrawColor(0);
-        doc.circle(pageWidth - 30, pageHeight - 15, 10, 'S');
-        
-        // Add footer with encryption notice and page numbers
-        const pageCount = doc.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
-          doc.setFontSize(8);
-          doc.setTextColor(100, 100, 100);
-          
-          // Footer with security notice
-          doc.setR2L(true);
-          doc.text('جميع البيانات في هذا التقرير مشفرة ومؤمنة - للاستخدام الرسمي فقط', pageWidth / 2, pageHeight - 5, { align: 'center' });
-          
-          // Page numbers
-          doc.setR2L(false);
-          doc.text(`Page ${i} of ${pageCount}`, 20, pageHeight - 5);
-        }
-        
-        // Generate PDF buffer
-        const pdfBuffer = doc.output('arraybuffer');
-        
-        // Set headers for file download with date in filename
-        const outputDateStr = today.toISOString().split('T')[0];
-        res.setHeader('Content-Disposition', `attachment; filename=business-submissions-report-${outputDateStr}.pdf`);
-        res.setHeader('Content-Type', 'application/pdf');
-        
-        return res.send(Buffer.from(pdfBuffer));
       } else if (format === 'csv') {
         // Generate CSV
         const worksheet = XLSX.utils.json_to_sheet(exportData);
