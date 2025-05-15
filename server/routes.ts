@@ -413,7 +413,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Add signature area at bottom
         doc.setFontSize(11);
-        doc.setFont('helvetica', 'normal');
+        // Try to use our custom font (normal), but fallback to helvetica if not available
+        try {
+          doc.setFont('IBMPlexSansArabic', 'normal');
+        } catch (error) {
+          console.warn('Falling back to helvetica for signature');
+          doc.setFont('helvetica', 'normal');
+        }
         doc.text('توقيع المسؤول: ________________', pageWidth - 60, pageHeight - 25, { align: 'right' });
         doc.text('الختم الرسمي:', pageWidth - 60, pageHeight - 15, { align: 'right' });
         

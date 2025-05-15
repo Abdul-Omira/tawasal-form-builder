@@ -5,12 +5,12 @@ import { jsPDF } from 'jspdf';
 // Path to IBM Plex Sans Arabic fonts in node_modules
 const IBM_PLEX_SANS_ARABIC_REGULAR_PATH = path.join(
   process.cwd(),
-  'node_modules/@ibm/plex/IBM-Plex-Sans-Arabic/fonts/complete/ttf/IBMPlexSansArabic-Regular.ttf'
+  'node_modules/@ibm/plex/IBM-Plex-Sans-Arabic/fonts/complete/woff/IBMPlexSansArabic-Regular.woff'
 );
 
 const IBM_PLEX_SANS_ARABIC_BOLD_PATH = path.join(
   process.cwd(),
-  'node_modules/@ibm/plex/IBM-Plex-Sans-Arabic/fonts/complete/ttf/IBMPlexSansArabic-Bold.ttf'
+  'node_modules/@ibm/plex/IBM-Plex-Sans-Arabic/fonts/complete/woff/IBMPlexSansArabic-Bold.woff'
 );
 
 /**
@@ -24,8 +24,8 @@ export function addIBMPlexSansArabicFonts(doc: jsPDF): jsPDF {
     if (fs.existsSync(IBM_PLEX_SANS_ARABIC_REGULAR_PATH)) {
       // Add regular font
       const regularFontData = fs.readFileSync(IBM_PLEX_SANS_ARABIC_REGULAR_PATH);
-      doc.addFileToVFS('IBMPlexSansArabic-Regular.ttf', Buffer.from(regularFontData).toString('base64'));
-      doc.addFont('IBMPlexSansArabic-Regular.ttf', 'IBMPlexSansArabic', 'normal');
+      doc.addFileToVFS('IBMPlexSansArabic-Regular.woff', Buffer.from(regularFontData).toString('base64'));
+      doc.addFont('IBMPlexSansArabic-Regular.woff', 'IBMPlexSansArabic', 'normal');
       
       console.log('IBM Plex Sans Arabic Regular font loaded successfully');
     } else {
