@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Switch, Route } from 'wouter';
 import { queryClient } from './lib/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import Confirmation from '@/pages/Confirmation';
 import AuthPage from '@/pages/AuthPage';
 import NotFound from '@/pages/not-found';
 import { ProtectedRoute } from '@/lib/protected-route';
+import WelcomeScreen from '@/components/animation/WelcomeScreen';
 
 function Router() {
   return (
@@ -27,6 +28,9 @@ function Router() {
 }
 
 function App() {
+  // State to control showing the welcome screen
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
+  
   // Set document title and meta description
   useEffect(() => {
     document.title = 'نظام التواصل - وزارة الاتصالات السورية';
@@ -57,7 +61,18 @@ function App() {
     document.head.appendChild(ogType);
     
     // IBM Plex Sans font is already loaded in index.html
+    
+    // Check if we should skip the welcome screen (for development purposes)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('skipWelcome') === 'true') {
+      setShowWelcomeScreen(false);
+    }
   }, []);
+
+  // Handle when the welcome screen animation completes
+  const handleWelcomeComplete = () => {
+    setShowWelcomeScreen(false);
+  };
 
   return (
     <I18nextProvider i18n={i18n}>
@@ -65,6 +80,12 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
+            {showWelcomeScreen ? (
+              <WelcomeScreen 
+                onComplete={handleWelcomeComplete} 
+                duration={5} // Set welcome screen duration to 5 seconds
+              />
+            ) : null}
             <Router />
           </TooltipProvider>
         </QueryClientProvider>
