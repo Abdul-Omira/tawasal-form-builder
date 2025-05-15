@@ -107,8 +107,7 @@ const SimpleBusinessForm: React.FC = () => {
 
   const buttonVariants = {
     hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: 0.6 } },
-    hover: { scale: 1.05, backgroundColor: "#1A4D2E", transition: { duration: 0.2 } }
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: 0.6 } }
   };
 
   return (
@@ -309,11 +308,10 @@ const SimpleBusinessForm: React.FC = () => {
               <motion.div 
                 className="flex justify-center pt-6"
                 variants={buttonVariants}
-                whileHover="hover"
               >
                 <Button 
                   type="submit" 
-                  className="bg-primary hover:bg-secondary text-white w-full sm:w-auto px-8 py-6 text-base shadow-md animate-smooth"
+                  className="bg-primary text-white w-full sm:w-auto px-8 py-6 text-base shadow-md animate-smooth"
                   disabled={isPending}
                 >
                   {isPending ? "جاري الإرسال..." : "إرسال الطلب"}
