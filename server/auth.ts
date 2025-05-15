@@ -28,14 +28,8 @@ export async function hashPassword(password: string) {
 // Function to compare passwords
 export async function comparePasswords(supplied: string, stored: string) {
   try {
-    // Log for debugging
+    // Log for debugging with partial masking of passwords for security
     console.log(`Comparing passwords: ${supplied.substring(0, 3)}*** with stored: ${stored.substring(0, 10)}***`);
-    
-    // Direct comparison for test account
-    if (supplied === 'admin123' && stored.includes('admin')) {
-      console.log('Admin login using direct comparison');
-      return true;
-    }
     
     // Handle different password formats
     if (!stored.includes('.')) {
@@ -103,14 +97,7 @@ export function setupAuth(app: Express) {
         
         console.log(`User found: ${username}, validating password...`);
         
-        // Handle admin user with direct comparison for testing
-        if (username === 'admin' && password === 'admin123') {
-          console.log('Admin login successful via direct comparison');
-          const { password: _, ...adminUser } = user;
-          return done(null, adminUser);
-        }
-        
-        // Otherwise, use secure password comparison
+        // Use secure password comparison for all users
         const passwordValid = await comparePasswords(password, user.password);
         if (!passwordValid) {
           console.log(`Invalid password for user: ${username}`);
