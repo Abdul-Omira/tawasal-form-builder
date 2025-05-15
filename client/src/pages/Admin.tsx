@@ -184,7 +184,7 @@ const Admin: React.FC = () => {
                 onClick={() => {
                   fetch('/api/logout', { method: 'POST' })
                     .then(() => {
-                      queryClient.invalidateQueries(['/api/user']);
+                      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
                       setLocation('/auth');
                     });
                 }}

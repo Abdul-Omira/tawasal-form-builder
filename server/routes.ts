@@ -16,6 +16,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   await setupAuth(app);
   
+  // Create default admin account if it doesn't exist
+  try {
+    const adminUser = await storage.getUserByUsername("admin");
+    if (!adminUser) {
+      // Create admin user with default credentials
+      const admin = await storage.createUser({
+        username: "admin",
+        password: "admin123", // Storage class will hash the password
+        name: "Admin",
+        isAdmin: true
+      });
+      console.log("Default admin user created with username: admin and password: admin123");
+    }
+  } catch (error) {
+    console.error("Error initializing admin user:", error);
+  }
+  
   // API Routes for business submissions
   app.get("/api/business-submissions", async (req: Request, res: Response) => {
     try {
