@@ -10,13 +10,24 @@ const ENCRYPTION_KEY = process.env.SESSION_SECRET || 'fallback-encryption-key-fo
  * @returns Encrypted string (Base64 encoded)
  */
 export function encrypt(data: any): string {
-  // Convert objects to JSON strings before encryption
-  const dataStr = typeof data === 'string' ? data : JSON.stringify(data);
-  
-  // Encrypt the data
-  const encrypted = CryptoJS.AES.encrypt(dataStr, ENCRYPTION_KEY).toString();
-  
-  return encrypted;
+  try {
+    // Handle null or undefined
+    if (data === null || data === undefined) {
+      return '';
+    }
+    
+    // Convert objects to JSON strings before encryption
+    const dataStr = typeof data === 'string' ? data : JSON.stringify(data);
+    
+    // Encrypt the data
+    const encrypted = CryptoJS.AES.encrypt(dataStr, ENCRYPTION_KEY).toString();
+    
+    return encrypted;
+  } catch (error) {
+    console.error('Encryption error:', error);
+    // Return the original data as a string if encryption fails
+    return String(data);
+  }
 }
 
 /**
@@ -26,9 +37,19 @@ export function encrypt(data: any): string {
  * @returns Decrypted data as string or object
  */
 export function decrypt(encryptedData: string, asObject: boolean = false): any {
+  // If the data is not a string or is empty, return it as is
+  if (!encryptedData || typeof encryptedData !== 'string') {
+    return encryptedData;
+  }
+  
   try {
     // Decrypt the data
     const decrypted = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
+    
+    // If decryption returns empty, it might not have been encrypted properly
+    if (!decrypted || decrypted.length === 0) {
+      return encryptedData; // Return original if decryption resulted in empty string
+    }
     
     // Return as object if requested and possible
     if (asObject) {
@@ -43,7 +64,7 @@ export function decrypt(encryptedData: string, asObject: boolean = false): any {
     return decrypted;
   } catch (error) {
     console.error('Decryption error:', error);
-    return null;
+    return encryptedData; // Return original data instead of null
   }
 }
 

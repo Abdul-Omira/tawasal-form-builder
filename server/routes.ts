@@ -172,26 +172,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         submissions = await storage.getAllBusinessSubmissions();
       }
 
-      // Format data for export with more detailed information
-      const exportData = submissions.map(sub => ({
-        ID: sub.id,
-        'اسم الشركة': sub.businessName,
-        'نوع النشاط': sub.businessType,
-        'عدد الموظفين': sub.employeesCount,
-        'تاريخ التأسيس': sub.establishmentDate,
-        'رقم التسجيل': sub.registrationNumber,
-        'اسم المسؤول': sub.contactName,
-        'المنصب': sub.position,
-        'البريد الإلكتروني': sub.email,
-        'رقم الهاتف': sub.phone,
-        'المحافظة': sub.governorate,
-        'العنوان': sub.address,
-        'تفاصيل التحديات': sub.challengeDetails || '',
-        'اسم الشركة الأجنبية المفروضة عليها عقوبات': sub.sanctionedCompanyName || '',
-        'رابط الشركة الأجنبية': sub.sanctionedCompanyLink || '',
-        'الحالة': getArabicStatus(sub.status),
-        'تاريخ التقديم': new Date(sub.createdAt).toLocaleDateString('ar-SY')
-      }));
+      // Format data for export with more detailed information and safe fallbacks
+      const exportData = submissions.map(sub => {
+        // Create a safe getter function to handle potentially undefined or null values
+        const safeProp = (value: any): string => value ?? '';
+        
+        // Handle date safely
+        let formattedDate = '';
+        try {
+          formattedDate = sub.createdAt ? new Date(sub.createdAt).toLocaleDateString('ar-SY') : '';
+        } catch (e) {
+          console.error('Error formatting date:', e);
+        }
+        
+        return {
+          ID: sub.id || '',
+          'اسم الشركة': safeProp(sub.businessName),
+          'نوع النشاط': safeProp(sub.businessType),
+          'عدد الموظفين': safeProp(sub.employeesCount),
+          'تاريخ التأسيس': safeProp(sub.establishmentDate),
+          'رقم التسجيل': safeProp(sub.registrationNumber),
+          'اسم المسؤول': safeProp(sub.contactName),
+          'المنصب': safeProp(sub.position),
+          'البريد الإلكتروني': safeProp(sub.email),
+          'رقم الهاتف': safeProp(sub.phone),
+          'المحافظة': safeProp(sub.governorate),
+          'العنوان': safeProp(sub.address),
+          'تفاصيل التحديات': safeProp(sub.challengeDetails),
+          'اسم الشركة الأجنبية المفروضة عليها عقوبات': safeProp(sub.sanctionedCompanyName),
+          'رابط الشركة الأجنبية': safeProp(sub.sanctionedCompanyLink),
+          'الحالة': getArabicStatus(safeProp(sub.status)),
+          'تاريخ التقديم': formattedDate
+        };
+      });
 
       if (format === 'xlsx') {
         // Create title rows for ministry branding
@@ -282,13 +295,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const pageWidth = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
         
-        // Use the SVG version of the emblem
-        const emblemPath = path.join(process.cwd(), 'client/src/assets/syria-emblem-svg.png');
-        if (fs.existsSync(emblemPath)) {
-          const emblemData = fs.readFileSync(emblemPath);
-          const emblemBase64 = Buffer.from(emblemData).toString('base64');
-          // Center the emblem at the top (better quality SVG version)
-          doc.addImage(`data:image/png;base64,${emblemBase64}`, 'PNG', (pageWidth / 2) - 15, 5, 30, 30);
+        // Use the SVG version of the emblem if available
+        try {
+          const emblemPath = path.join(process.cwd(), 'client/src/assets/syria-emblem-svg.png');
+          if (fs.existsSync(emblemPath)) {
+            const emblemData = fs.readFileSync(emblemPath);
+            const emblemBase64 = Buffer.from(emblemData).toString('base64');
+            // Center the emblem at the top (better quality SVG version)
+            doc.addImage(`data:image/png;base64,${emblemBase64}`, 'PNG', (pageWidth / 2) - 15, 5, 30, 30);
+          } else {
+            console.log('Syrian emblem image not found');
+          }
+        } catch (error) {
+          console.error('Error adding emblem to PDF:', error);
+          // Continue without the emblem if there's an error
         }
         
         // Add gold line under header
@@ -333,17 +353,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'اسم الشركة',
             'رقم الطلب'
           ]],
-          body: exportData.map(row => [
-            row['تاريخ التقديم'] || '',
-            row['الحالة'] || '',
-            row['المحافظة'] || '',
-            row['رقم الهاتف'] || '',
-            row['البريد الإلكتروني'] || '',
-            row['اسم المسؤول'] || '',
-            row['نوع النشاط'] || '',
-            row['اسم الشركة'] || '',
-            row['ID']?.toString() || ''
-          ]),
+          // Simplify table data access to avoid any potential data issues
+          body: exportData.map(row => {
+            // Create a simple accessor with default empty string for missing values
+            const get = (key) => {
+              const value = row[key];
+              return value !== undefined && value !== null ? String(value) : '';
+            };
+            
+            return [
+              get('تاريخ التقديم'),
+              get('الحالة'),
+              get('المحافظة'),
+              get('رقم الهاتف'),
+              get('البريد الإلكتروني'),
+              get('اسم المسؤول'),
+              get('نوع النشاط'),
+              get('اسم الشركة'),
+              get('ID')
+            ];
+          }),
           headStyles: { 
             fillColor: [0, 110, 81], // Ministry green
             textColor: [255, 255, 255], 
