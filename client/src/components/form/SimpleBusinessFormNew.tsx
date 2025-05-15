@@ -369,7 +369,7 @@ const SimpleBusinessFormNew: React.FC = () => {
                     name="captchaAnswer"
                     render={({ field }) => (
                       <FormItem>
-                        <ClickCaptcha
+                        <AdaptiveCaptcha
                           value={field.value}
                           onChange={field.onChange}
                           error={form.formState.errors.captchaAnswer?.message}
