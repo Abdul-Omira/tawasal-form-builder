@@ -70,6 +70,13 @@ export function setupAuth(app: Express) {
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
+  
+  // Add JWT verification middleware
+  import('./jwtMiddleware').then(({ verifyJwtToken }) => {
+    app.use(verifyJwtToken);
+  }).catch(error => {
+    console.error('Error importing JWT middleware:', error);
+  });
 
   // Configure local strategy
   passport.use(
@@ -149,7 +156,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Login endpoint
+  // Login endpoint with JWT
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
       if (err) {
@@ -158,11 +165,33 @@ export function setupAuth(app: Express) {
       if (!user) {
         return res.status(401).json({ message: info?.message || "فشل تسجيل الدخول" });
       }
-      req.login(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-        return res.status(200).json(user);
+      
+      import('./jwt').then(({ generateToken }) => {
+        // Generate a JWT token
+        const token = generateToken(user);
+        
+        // Login with passport for session-based auth (as a backup)
+        req.login(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          
+          // Return user data with token
+          return res.status(200).json({
+            ...user,
+            token
+          });
+        });
+      }).catch(error => {
+        console.error('Error importing JWT module:', error);
+        
+        // Fallback to regular session-based auth
+        req.login(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          return res.status(200).json(user);
+        });
       });
     })(req, res, next);
   });
@@ -179,9 +208,27 @@ export function setupAuth(app: Express) {
 
   // Get current user endpoint
   app.get("/api/user", (req, res) => {
-    if (!req.isAuthenticated()) {
+    // Already authenticated by session or JWT middleware
+    if (!req.isAuthenticated() && !req.user) {
       return res.status(401).json({ message: "غير مصرح" });
     }
+    
+    // If the user has a JWT token in the Authorization header, refresh it if needed
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      import('./jwt').then(({ refreshTokenIfNeeded, extractTokenFromHeader }) => {
+        const token = extractTokenFromHeader(authHeader);
+        if (token) {
+          const refreshedToken = refreshTokenIfNeeded(token);
+          if (refreshedToken && refreshedToken !== token) {
+            res.setHeader('X-Refresh-Token', refreshedToken);
+          }
+        }
+      }).catch(error => {
+        console.error('Error refreshing token:', error);
+      });
+    }
+    
     res.json(req.user);
   });
 
