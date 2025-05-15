@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { CheckCircle, Printer, PlusCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -37,6 +38,10 @@ const SimpleBusinessFormNew: React.FC = () => {
   const { toast } = useToast();
   const [captchaError, setCaptchaError] = useState('');
   
+  // State to track submission success
+  const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
+  const [submissionId, setSubmissionId] = useState<number | null>(null);
+  
   // Form handling
   const form = useForm({
     resolver: zodResolver(SimpleFormSchema),
@@ -55,9 +60,6 @@ const SimpleBusinessFormNew: React.FC = () => {
   });
   
   // Form mutation
-  const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
-  const [submissionId, setSubmissionId] = useState<number | null>(null);
-
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
       console.log("Submitting form data:", data);
@@ -150,6 +152,57 @@ const SimpleBusinessFormNew: React.FC = () => {
     hidden: { opacity: 0, scale: 0.8 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: 0.6 } }
   };
+
+  // If submission was successful, show success UI
+  if (submissionSuccessful) {
+    return (
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="font-ibm"
+      >
+        <Card className="bg-white rounded-lg shadow-md max-w-3xl mx-auto animate-smooth">
+          <CardContent className="p-6 md:p-8">
+            <div className="my-6 p-6 text-center">
+              <div className="bg-green-50 text-green-700 p-6 rounded-md mb-6 inline-flex items-center justify-center">
+                <CheckCircle className="h-12 w-12" />
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold mb-3 text-primary font-ibm">
+                تم إرسال طلبك بنجاح
+              </h2>
+              <p className="text-muted-foreground mb-4">
+                شكراً لتقديم معلومات شركتك. سيتم مراجعة الطلب والتواصل معك قريباً.
+              </p>
+              {submissionId && (
+                <p className="font-medium mb-6">
+                  رقم الطلب: <span className="font-bold text-primary">SYR-2023-{submissionId}</span>
+                </p>
+              )}
+              <div className="flex gap-4 flex-wrap justify-center">
+                <Button 
+                  className="bg-primary text-white hover:bg-primary/90"
+                  onClick={() => {
+                    setSubmissionSuccessful(false);
+                    setSubmissionId(null);
+                  }}
+                >
+                  <PlusCircle className="ml-2 h-4 w-4" />
+                  تقديم طلب جديد
+                </Button>
+                <Link href={`/confirmation?id=${submissionId}`}>
+                  <Button variant="outline">
+                    <Printer className="ml-2 h-4 w-4" />
+                    طباعة التأكيد
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -377,18 +430,23 @@ const SimpleBusinessFormNew: React.FC = () => {
                   />
                 </motion.div>
                 
-                {/* Click CAPTCHA security verification */}
                 <motion.div variants={formItemVariants}>
                   <FormField
                     control={form.control}
                     name="captchaAnswer"
                     render={({ field }) => (
-                      <FormItem>
-                        <AdaptiveCaptcha
-                          value={field.value}
-                          onChange={field.onChange}
-                          error={form.formState.errors.captchaAnswer?.message}
-                        />
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          التحقق الأمني <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <AdaptiveCaptcha
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={captchaError}
+                          />
+                        </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -399,20 +457,20 @@ const SimpleBusinessFormNew: React.FC = () => {
                     control={form.control}
                     name="consentToDataUse"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-2 space-x-reverse space-y-0 rounded-md border p-4 hover:bg-muted/10 animate-smooth">
+                      <FormItem className="flex flex-row items-start space-x-2 space-x-reverse rtl:space-x-reverse">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
                             onCheckedChange={field.onChange}
-                            className="animate-smooth data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                            className="animate-smooth mt-1"
                           />
                         </FormControl>
-                        <div className="space-y-1 leading-none mr-2">
-                          <FormLabel className="font-medium text-sm md:text-base">
-                            أوافق على استخدام المعلومات المقدمة لغرض التواصل وتقديم الدعم من قبل وزارة الاتصالات السورية
+                        <div className="space-y-1 leading-tight">
+                          <FormLabel className="text-sm font-medium">
+                            أوافق على معالجة بياناتي لغرض التواصل والدعم وفقاً لسياسة الخصوصية <span className="text-destructive">*</span>
                           </FormLabel>
-                          <FormMessage />
                         </div>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
