@@ -1,0 +1,127 @@
+@import '@ibm/plex/css/ibm-plex.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 220 14% 98%;
+  --foreground: 215 28% 17%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215 16% 46.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 28% 17%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 28% 17%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --primary: 159 100% 22%; /* #006E51 */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 148 46% 21%; /* #1A4D2E */
+  --secondary-foreground: 210 40% 98%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 215 28% 17%;
+  --destructive: 0 84% 50%; /* #DC2626 */
+  --destructive-foreground: 210 40% 98%;
+  --ring: 159 100% 22%;
+  --radius: 0.5rem;
+
+  /* Chart colors */
+  --chart-1: 159 100% 22%;
+  --chart-2: 148 46% 21%;
+  --chart-3: 0 84% 50%;
+  --chart-4: 33 98% 50%;
+  --chart-5: 262 83% 58%;
+
+  /* Sidebar colors */
+  --sidebar-background: 148 46% 21%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 159 100% 22%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 40% 90%;
+  --sidebar-accent-foreground: 215 28% 17%;
+  --sidebar-border: 148 30% 30%;
+  --sidebar-ring: 159 100% 22%;
+}
+
+.dark {
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --muted: 223 47% 11%;
+  --muted-foreground: 215.4 16.3% 56.9%;
+  --popover: 224 71% 4%;
+  --popover-foreground: 215 20.2% 65.1%;
+  --card: 224 71% 4%;
+  --card-foreground: 213 31% 91%;
+  --border: 216 34% 17%;
+  --input: 216 34% 17%;
+  --primary: 159 100% 22%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 148 46% 21%;
+  --secondary-foreground: 210 40% 98%;
+  --accent: 216 34% 17%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 159 100% 22%;
+
+  /* Chart colors - dark mode */
+  --chart-1: 159 100% 35%;
+  --chart-2: 148 46% 35%;
+  --chart-3: 0 84% 60%;
+  --chart-4: 33 98% 60%;
+  --chart-5: 262 83% 68%;
+
+  /* Sidebar colors - dark mode */
+  --sidebar-background: 148 46% 15%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 159 100% 22%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 216 34% 17%;
+  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-border: 148 30% 25%;
+  --sidebar-ring: 159 100% 35%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    direction: rtl;
+    text-align: right;
+  }
+
+  /* Arabic specific typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-plex font-bold;
+  }
+
+  /* Form elements in RTL */
+  input, textarea, select {
+    @apply text-right;
+  }
+}
+
+/* Additional custom styles */
+.form-step:not(.active) {
+  @apply hidden;
+}
+
+.progress-bar-item.completed {
+  @apply bg-primary;
+}
+
+.progress-bar-item.active {
+  @apply bg-secondary;
+}
+
+.progress-bar-item.inactive {
+  @apply bg-muted;
+}
