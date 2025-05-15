@@ -327,6 +327,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Password update route
+  app.post("/api/user/change-password", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "كلمة المرور الحالية والجديدة مطلوبة" });
+      }
+      
+      if (newPassword.length < 8) {
+        return res.status(400).json({ message: "يجب أن تكون كلمة المرور الجديدة 8 أحرف على الأقل" });
+      }
+      
+      // Get user from the session
+      const userId = (req.user as any).id;
+      if (!userId) {
+        return res.status(401).json({ message: "المستخدم غير مسجل الدخول" });
+      }
+      
+      // Get user from database to verify current password
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "المستخدم غير موجود" });
+      }
+      
+      // Import the comparePasswords function from auth.ts
+      const { comparePasswords } = await import('./auth');
+      
+      // Verify the current password
+      const isPasswordValid = await comparePasswords(currentPassword, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "كلمة المرور الحالية غير صحيحة" });
+      }
+      
+      // Update the password
+      const updatedUser = await storage.updateUserPassword(user.username, newPassword);
+      
+      if (!updatedUser) {
+        return res.status(500).json({ message: "فشل تحديث كلمة المرور" });
+      }
+      
+      res.status(200).json({ message: "تم تحديث كلمة المرور بنجاح" });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء تغيير كلمة المرور" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
