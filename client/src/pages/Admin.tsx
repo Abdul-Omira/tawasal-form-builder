@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import SimpleHeader from '@/components/layout/SimpleHeader';
@@ -16,6 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'wouter';
 import { queryClient } from '@/lib/queryClient';
 import { BusinessSubmission } from '@shared/schema';
+import ChangePasswordForm from '@/components/auth/ChangePasswordForm';
 
 interface SubmissionsResponse {
   data: BusinessSubmission[];
@@ -447,9 +449,37 @@ const Admin: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="settings" className="p-6">
-              <h3 className="text-xl font-semibold text-foreground mb-6">إعدادات النظام</h3>
-              <div className="text-center text-muted-foreground py-12">
-                سيتم إضافة خيارات الإعدادات هنا قريباً
+              <h3 className="text-xl font-semibold text-foreground mb-6">إعدادات الحساب</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>معلومات الحساب</CardTitle>
+                      <CardDescription>عرض معلومات حسابك الحالية</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid gap-1">
+                        <Label>اسم المستخدم</Label>
+                        <div className="font-medium">{user?.username}</div>
+                      </div>
+                      <div className="grid gap-1">
+                        <Label>الاسم</Label>
+                        <div className="font-medium">{user?.name || "—"}</div>
+                      </div>
+                      <div className="grid gap-1">
+                        <Label>الصلاحيات</Label>
+                        <div className="font-medium">
+                          <Badge variant={user?.isAdmin ? "default" : "secondary"}>
+                            {user?.isAdmin ? "مدير النظام" : "موظف"}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div>
+                  <ChangePasswordForm />
+                </div>
               </div>
             </TabsContent>
           </Tabs>
