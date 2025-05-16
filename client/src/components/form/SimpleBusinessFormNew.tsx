@@ -21,12 +21,12 @@ import { isValidEmail, isValidPhone } from '@/lib/utils';
 
 // Create a simplified schema for the form
 const SimpleFormSchema = z.object({
-  businessName: z.string().min(1, { message: "اسم الشركة مطلوب" }),
-  businessType: z.string().min(1, { message: "نوع النشاط مطلوب" }),
-  contactName: z.string().min(1, { message: "اسم المسؤول مطلوب" }),
+  contactName: z.string().min(1, { message: "الاسم مطلوب" }),
   phone: z.string().min(1, { message: "رقم الهاتف مطلوب" }).refine(isValidPhone, { message: "رقم الهاتف غير صالح" }),
   email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
-  challengeDetails: z.string().min(1, { message: "يرجى وصف التحديات التي تواجهها" }),
+  businessName: z.string().optional(),
+  businessType: z.string().optional(),
+  challengeDetails: z.string().min(1, { message: "يرجى تحديد التحدي الرئيسي للشركات المذكورة" }),
   sanctionedCompanyName: z.string().optional(),
   sanctionedCompanyLink: z.string().optional(),
   captchaAnswer: z.string().min(1, { message: "يرجى التحقق من أنك لست روبوت" }),
@@ -234,16 +234,16 @@ const SimpleBusinessFormNew: React.FC = () => {
                 >
                   <FormField
                     control={form.control}
-                    name="businessName"
+                    name="contactName"
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">
-                          اسم الشركة <span className="text-destructive">*</span>
+                          الاسم <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input 
                             {...field} 
-                            placeholder="أدخل اسم الشركة" 
+                            placeholder="أدخل الاسم" 
                             className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm"
                           />
                         </FormControl>
@@ -251,14 +251,39 @@ const SimpleBusinessFormNew: React.FC = () => {
                       </FormItem>
                     )}
                   />
-                  
+
+                  <FormField
+                    control={form.control}
+                    name="businessName"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium">
+                          اسم الشركة
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            placeholder="أدخل اسم الشركة (اختياري)" 
+                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+                
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
+                  variants={formItemVariants}
+                >
                   <FormField
                     control={form.control}
                     name="businessType"
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">
-                          نوع النشاط <span className="text-destructive">*</span>
+                          نوع النشاط
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
@@ -266,7 +291,7 @@ const SimpleBusinessFormNew: React.FC = () => {
                         >
                           <FormControl>
                             <SelectTrigger className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm">
-                              <SelectValue placeholder="اختر نوع النشاط" />
+                              <SelectValue placeholder="اختر نوع النشاط (اختياري)" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="font-ibm">
@@ -290,31 +315,6 @@ const SimpleBusinessFormNew: React.FC = () => {
                             <SelectItem value="other">أخرى</SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </motion.div>
-                
-                <motion.div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
-                  variants={formItemVariants}
-                >
-                  <FormField
-                    control={form.control}
-                    name="contactName"
-                    render={({ field }) => (
-                      <FormItem className="animate-smooth">
-                        <FormLabel className="font-medium">
-                          اسم المسؤول <span className="text-destructive">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            {...field} 
-                            placeholder="أدخل اسم المسؤول" 
-                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm"
-                          />
-                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -372,13 +372,13 @@ const SimpleBusinessFormNew: React.FC = () => {
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">
-                          ما هي التحديات الرئيسية التي تواجهها شركتك بسبب العقوبات؟ <span className="text-destructive">*</span>
+                          اذكر اسم الشركات التي ترغب بتسريع إتاحتها للخدمات في سورية بعد إيقاف الاجراءات الأميركية <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
                           <Textarea 
                             rows={3} 
                             {...field} 
-                            placeholder="اشرح بإيجاز التحديات التي تواجهها شركتك..." 
+                            placeholder="أدخل أسماء الشركات الأميركية والعالمية التي تود استعادة خدماتها في سورية..." 
                             className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth resize-none md:resize-y font-ibm"
                           />
                         </FormControl>
