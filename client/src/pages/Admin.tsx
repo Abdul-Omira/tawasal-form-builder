@@ -74,24 +74,7 @@ const Admin: React.FC = () => {
     enabled: !!isAuthenticated && !!isAdmin, // Only fetch if user is admin
   });
   
-  // Function to handle data export
-  const handleExport = (format: 'xlsx' | 'pdf' | 'csv') => {
-    const exportUrl = new URL('/api/admin/export', window.location.origin);
-    
-    // Add query parameters
-    exportUrl.searchParams.append('format', format);
-    if (filterStatus !== 'all') {
-      exportUrl.searchParams.append('status', filterStatus);
-    }
-    
-    // Redirect to the export URL (will download the file)
-    window.open(exportUrl.toString(), '_blank');
-    
-    toast({
-      title: "جاري تصدير البيانات",
-      description: `تم بدء تحميل البيانات بتنسيق ${format.toUpperCase()}`,
-    });
-  };
+  // Export functionality removed as requested
   
   // View submission details
   const viewSubmissionDetails = (submission: BusinessSubmission) => {
