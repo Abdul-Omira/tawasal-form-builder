@@ -28,8 +28,6 @@ export const businessSubmissions = pgTable("business_submissions", {
   sanctionedCompanyName: text("sanctioned_company_name"),
   sanctionedCompanyLink: text("sanctioned_company_link"),
   captchaAnswer: text("captcha_answer"),
-  ipAddress: text("ip_address"),
-  deviceInfo: text("device_info"),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

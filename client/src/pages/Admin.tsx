@@ -413,15 +413,16 @@ const Admin: React.FC = () => {
                           </TableCell>
                           <TableCell className="whitespace-normal">
                             <div className="text-sm text-foreground max-w-xs">
-                              {submission.ipAddress ? (
+                              {submission.additionalComments && submission.additionalComments.includes('IP:') ? (
                                 <div>
-                                  <div><span className="font-semibold">IP:</span> {submission.ipAddress}</div>
-                                  {submission.deviceInfo && (
-                                    <div className="mt-1"><span className="font-semibold">الجهاز:</span> {submission.deviceInfo}</div>
-                                  )}
+                                  {submission.additionalComments.split('\n').map((line, idx) => (
+                                    <div key={idx} className={idx > 0 ? "mt-1" : ""}>
+                                      {line}
+                                    </div>
+                                  ))}
                                 </div>
                               ) : (
-                                <span className="text-muted-foreground text-xs">—</span>
+                                <span className="text-muted-foreground text-xs">بيانات الجهاز غير متوفرة</span>
                               )}
                             </div>
                           </TableCell>

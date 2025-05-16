@@ -76,8 +76,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate request body
       const validatedData = BusinessSubmissionSchema.parse(req.body);
       
+      // Collect device information
+      const ipAddress = 
+        req.headers['x-forwarded-for'] || 
+        req.socket.remoteAddress || 
+        req.ip || 
+        '0.0.0.0';
+      
+      const userAgent = req.headers['user-agent'] || '';
+      
+      // Add device information to additionalComments
+      const deviceInfo = `IP: ${Array.isArray(ipAddress) ? ipAddress[0] : ipAddress.toString()}\nالجهاز: ${userAgent}`;
+      
+      // If there are existing comments, preserve them
+      const updatedComments = validatedData.additionalComments 
+        ? `${validatedData.additionalComments}\n\n${deviceInfo}`
+        : deviceInfo;
+      
+      // Update the submission data
+      const enhancedData = {
+        ...validatedData,
+        additionalComments: updatedComments
+      };
+      
       // Create submission
-      const submission = await storage.createBusinessSubmission(validatedData);
+      const submission = await storage.createBusinessSubmission(enhancedData);
       res.status(201).json(submission);
     } catch (error) {
       if (error instanceof ZodError) {
