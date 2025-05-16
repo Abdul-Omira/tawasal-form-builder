@@ -74,8 +74,13 @@ app.use(hpp());
 app.use(express.json({ limit: '10kb' })); // Limit body size
 app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 
-// Parse cookies for CSRF protection
-app.use(cookieParser());
+// Generate a cookie secret for signing cookies
+const COOKIE_SECRET = process.env.COOKIE_SECRET || (process.env.NODE_ENV === 'development'
+  ? 'syrian-ministry-platform-cookie-secret-dev-only'
+  : crypto.randomBytes(16).toString('hex'));
+
+// Parse cookies for CSRF protection with signing secret
+app.use(cookieParser(COOKIE_SECRET));
 
 // CSRF protection
 // Generate a 32-character secret for CSRF protection
