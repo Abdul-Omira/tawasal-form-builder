@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import SimpleBusinessFormNew from '../components/form/SimpleBusinessFormNew';
+import CitizenCommunicationForm from '../components/form/CitizenCommunicationForm';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
 import PageTransition from '../components/ui/page-transition';
@@ -49,7 +49,7 @@ const Home: React.FC = () => {
       {/* Add SEO component with page-specific metadata */}
       <PageSEO 
         pageName="home"
-        customDescription="المنصة الرسمية لوزارة الاتصالات وتقانة المعلومات السورية لجمع معلومات حول الشركات الناشئة والأعمال المتأثرة بالعقوبات وتقديم الدعم اللازم لها"
+        customDescription="المنصة الرسمية لوزارة الاتصالات وتقانة المعلومات السورية للتواصل مع المواطنين وتلقي أفكارهم ومقترحاتهم وشكاواهم وطلباتهم"
       />
       <SimpleHeader />
       
@@ -73,7 +73,7 @@ const Home: React.FC = () => {
                 variants={textVariants}
               >
                 <FancyCalligraphyAnimation 
-                  text="استمارة الشركات المتأثرة بالإجراءات الأميركية"
+                  text="منصة التواصل الرسمية مع وزارة الاتصالات"
                   duration={0.06}
                   delay={0.2}
                   className="inline-block font-ibm"
@@ -85,7 +85,7 @@ const Home: React.FC = () => {
                 variants={textVariants}
               >
                 <CalligraphyAnimation 
-                  text="هدف الاستمارة جمع أسماء الشركات الأميركية والعالمية التي أوقفت خدماتها في سورية أو حدت منها بسبب الإجراءات الأميركية المتعلقة بالعقوبات المفروضة على النظام البائد. شكلت وزارة الاتصالات وتقانة المعلومات مجموعة عمل للتواصل مع الشركات الأميركية والعالمية لتسريع عودة خدماتها إلى السوريين والسوق السوري فور صدور التعليمات التنفيذية لإعلان الرئيس الأميركي."
+                  text="هذه المنصة هي القناة الرسمية للتواصل مع وزارة الاتصالات وتقانة المعلومات. تهدف إلى تمكين المواطنين من التواصل المباشر مع الوزارة لتقديم الأفكار والمشاريع والمقترحات والشكاوى والطلبات. نحن نؤمن بأهمية مشاركة المواطنين في تطوير خدمات الاتصالات وتكنولوجيا المعلومات في سوريا، ونسعى إلى تحسين خدماتنا بشكل مستمر."
                   duration={0.015}
                   delay={0.5}
                   className="inline-block font-ibm"
@@ -105,7 +105,7 @@ const Home: React.FC = () => {
         >
           <div className="container mx-auto px-4">
             <div className="bg-white rounded-lg shadow-md overflow-hidden transition-shadow hover:shadow-lg font-ibm">
-              <SimpleBusinessFormNew />
+              <CitizenCommunicationForm />
             </div>
           </div>
         </motion.section>
