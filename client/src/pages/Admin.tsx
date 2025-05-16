@@ -334,26 +334,7 @@ const Admin: React.FC = () => {
                       <SelectItem value="rejected">مرفوض</SelectItem>
                     </SelectContent>
                   </Select>
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className="border-primary text-primary hover:bg-primary/10"
-                      onClick={() => handleExport('xlsx')}
-                      title="تصدير إلى Excel"
-                    >
-                      <DownloadIcon className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      className="border-primary text-primary hover:bg-primary/10"
-                      onClick={() => handleExport('pdf')}
-                      title="تصدير إلى PDF"
-                    >
-                      <DownloadIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  {/* Export buttons removed as requested */}
                 </div>
               </div>
               
