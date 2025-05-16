@@ -1,1 +1,4 @@
-// PDF export functionality removed as requested
+export function createArabicPDF() {
+  // Empty function to satisfy imports - export functionality removed
+  return Buffer.from('');
+}

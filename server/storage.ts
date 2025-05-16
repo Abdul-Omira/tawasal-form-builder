@@ -67,69 +67,7 @@ function safelyDecryptBusinessSubmission(submission: any): any {
   return decryptedSubmission;
 }
 
-/**
- * Prepares business submissions for export in a standardized format
- * This handles proper decryption and ensures consistent data formatting
- */
-export function prepareBusinessSubmissionsForExport(submissions: BusinessSubmission[]): any[] {
-  return submissions.map(submission => {
-    const decrypted = safelyDecryptBusinessSubmission(submission);
-    
-    // Format for export with all properties in both Arabic and English
-    return {
-      // Direct database fields (keeping original names)
-      'id': decrypted.id,
-      'businessName': decrypted.businessName || '',
-      'businessType': decrypted.businessType || '',
-      'establishmentDate': decrypted.establishmentDate || '',
-      'employeesCount': decrypted.employeesCount || '',
-      'address': decrypted.address || '',
-      'governorate': decrypted.governorate || '',
-      'registrationNumber': decrypted.registrationNumber || '',
-      'contactName': decrypted.contactName || '',
-      'position': decrypted.position || '',
-      'email': decrypted.email || '',
-      'phone': decrypted.phone || '',
-      'alternativeContact': decrypted.alternativeContact || '',
-      'website': decrypted.website || '',
-      'challenges': Array.isArray(decrypted.challenges) ? decrypted.challenges.join(', ') : '',
-      'challengeDetails': decrypted.challengeDetails || '',
-      'techNeeds': Array.isArray(decrypted.techNeeds) ? decrypted.techNeeds.join(', ') : '',
-      'techDetails': decrypted.techDetails || '',
-      'sanctionedCompanyName': decrypted.sanctionedCompanyName || '',
-      'sanctionedCompanyLink': decrypted.sanctionedCompanyLink || '',
-      'status': decrypted.status || '',
-      'createdAt': decrypted.createdAt ? new Date(decrypted.createdAt).toISOString() : '',
-      
-      // Arabic labels (for better readability in exports)
-      'رقم الطلب': decrypted.id,
-      'اسم الشركة': decrypted.businessName || '',
-      'نوع النشاط': decrypted.businessType || '',
-      'تاريخ التأسيس': decrypted.establishmentDate || '',
-      'عدد الموظفين': decrypted.employeesCount || '',
-      'العنوان': decrypted.address || '',
-      'المحافظة': decrypted.governorate || '',
-      'رقم التسجيل': decrypted.registrationNumber || '',
-      'اسم المسؤول': decrypted.contactName || '',
-      'المنصب': decrypted.position || '',
-      'البريد الإلكتروني': decrypted.email || '',
-      'رقم الهاتف': decrypted.phone || '',
-      'الاتصال البديل': decrypted.alternativeContact || '',
-      'الموقع الإلكتروني': decrypted.website || '',
-      'التحديات': Array.isArray(decrypted.challenges) ? decrypted.challenges.join(', ') : '',
-      'تفاصيل التحديات': decrypted.challengeDetails || '',
-      'الاحتياجات التقنية': Array.isArray(decrypted.techNeeds) ? decrypted.techNeeds.join(', ') : '',
-      'تفاصيل الاحتياجات': decrypted.techDetails || '',
-      'معلومات العقوبات': 'بيانات الشركات المتضررة من العقوبات الاقتصادية',
-      'الشركة الأجنبية التي لا يمكن التعامل معها': decrypted.sanctionedCompanyName || '',
-      'رابط العقوبات': decrypted.sanctionedCompanyLink || '',
-      'الحالة': decrypted.status === 'pending' ? 'قيد المراجعة' : 
-               decrypted.status === 'approved' ? 'تمت الموافقة' : 
-               decrypted.status === 'rejected' ? 'مرفوض' : decrypted.status || '',
-      'تاريخ التقديم': decrypted.createdAt ? new Date(decrypted.createdAt).toLocaleDateString('ar-SY') : ''
-    };
-  });
-}
+// Export functionality removed as requested
 
 // Interface for storage operations
 export interface IStorage {
