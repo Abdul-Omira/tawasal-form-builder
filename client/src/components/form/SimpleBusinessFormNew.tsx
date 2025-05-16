@@ -388,39 +388,42 @@ const SimpleBusinessFormNew: React.FC = () => {
                   />
                 </motion.div>
                 
-                <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6" variants={formItemVariants}>
+                <motion.div variants={formItemVariants}>
                   <FormField
                     control={form.control}
                     name="sanctionedCompanyName"
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">
-                          اسم شركة أجنبية لا تستطيع التعامل معها بسبب العقوبات
+                          حدد التحدي الرئيسي الذي ترغب في حله في كل شركة ذكرتها
                         </FormLabel>
                         <FormControl>
-                          <Input 
+                          <Textarea 
+                            rows={3}
                             {...field} 
-                            placeholder="مثال: Google, Microsoft, Oracle..." 
-                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm"
+                            placeholder="اذكر التحديات المرتبطة بكل شركة من الشركات المذكورة أعلاه..." 
+                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth resize-none md:resize-y font-ibm"
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
+                </motion.div>
+                
+                <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6" variants={formItemVariants}>
                   <FormField
                     control={form.control}
                     name="sanctionedCompanyLink"
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">
-                          رابط موقع الشركة (اختياري)
+                          روابط الشركات (اختياري)
                         </FormLabel>
                         <FormControl>
                           <Input 
                             {...field} 
-                            placeholder="https://example.com" 
+                            placeholder="مثال: https://google.com, https://microsoft.com" 
                             className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm"
                           />
                         </FormControl>
