@@ -407,7 +407,7 @@ const Admin: React.FC = () => {
                             )}
                           </TableCell>
                           <TableCell className="whitespace-normal">
-                            <div className="text-sm text-foreground max-w-xs break-words overflow-hidden text-ellipsis">
+                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ minWidth: '250px', maxWidth: '300px' }}>
                               {submission.challengeDetails || <span className="text-muted-foreground text-xs">—</span>}
                             </div>
                           </TableCell>
