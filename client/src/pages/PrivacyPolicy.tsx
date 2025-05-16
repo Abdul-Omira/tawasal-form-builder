@@ -1,8 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
-import { Container } from '../components/ui/container';
 import { Separator } from '@/components/ui/separator';
 import PageSEO from '@/components/seo/PageSEO';
 
@@ -12,12 +10,8 @@ const PrivacyPolicy: React.FC = () => {
       <PageSEO pageName="privacyPolicy" />
       <SimpleHeader />
       
-      <Container className="py-10 min-h-screen">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+      <div className="container mx-auto px-4 py-10 min-h-screen">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-center mb-8">سياسة الخصوصية</h1>
           <Separator className="mb-8" />
 
@@ -102,8 +96,7 @@ const PrivacyPolicy: React.FC = () => {
                 <p className="font-semibold">مكتب حماية البيانات</p>
                 <p>وزارة الاتصالات وتقانة المعلومات</p>
                 <p>دمشق، الجمهورية العربية السورية</p>
-                <p>البريد الإلكتروني: privacy@moct.gov.sy</p>
-                <p>هاتف: 963-11-xxxxxxx+</p>
+                <p>البريد الإلكتروني: info@moct.gov.sy</p>
               </div>
             </section>
 
@@ -111,8 +104,8 @@ const PrivacyPolicy: React.FC = () => {
               <p>تاريخ آخر تحديث: 1 مايو 2025</p>
             </div>
           </div>
-        </motion.div>
-      </Container>
+        </div>
+      </div>
       
       <SimpleFooter />
     </>
