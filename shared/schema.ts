@@ -5,8 +5,8 @@ import { z } from "zod";
 // Business submissions schema
 export const businessSubmissions = pgTable("business_submissions", {
   id: serial("id").primaryKey(),
-  businessName: text("business_name").notNull(),
-  businessType: text("business_type").notNull(),
+  businessName: text("business_name"),
+  businessType: text("business_type"),
   establishmentDate: text("establishment_date"),
   employeesCount: text("employees_count").notNull(),
   address: text("address").notNull(),

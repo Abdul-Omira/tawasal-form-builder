@@ -677,7 +677,7 @@ const Admin: React.FC = () => {
                   </div>
                   
                   <div>
-                    <Label className="font-semibold">تفاصيل التحديات</Label>
+                    <Label className="font-semibold">الشركات المطلوب إتاحتها في سورية</Label>
                     <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
                       {selectedSubmission.challengeDetails || "لا توجد تفاصيل"}
                     </div>
@@ -685,14 +685,18 @@ const Admin: React.FC = () => {
                   
                   {selectedSubmission.sanctionedCompanyName && (
                     <div>
-                      <Label className="font-semibold">الشركة الأجنبية التي لا يمكن التعامل معها</Label>
-                      <div className="text-foreground">
+                      <Label className="font-semibold">التحدي الرئيسي للشركات المذكورة</Label>
+                      <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
                         {selectedSubmission.sanctionedCompanyName}
-                        {selectedSubmission.sanctionedCompanyLink && (
-                          <span className="text-muted-foreground mr-2">
-                            ({selectedSubmission.sanctionedCompanyLink})
-                          </span>
-                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedSubmission.sanctionedCompanyLink && (
+                    <div>
+                      <Label className="font-semibold">روابط الشركات</Label>
+                      <div className="text-foreground">
+                        {selectedSubmission.sanctionedCompanyLink}
                       </div>
                     </div>
                   )}
