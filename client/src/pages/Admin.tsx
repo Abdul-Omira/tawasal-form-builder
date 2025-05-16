@@ -350,6 +350,8 @@ const Admin: React.FC = () => {
                       <TableHead className="text-right">رقم الهاتف</TableHead>
                       <TableHead className="text-right">البريد الإلكتروني</TableHead>
                       <TableHead className="text-right">التحديات</TableHead>
+                      <TableHead className="text-right">تفاصيل التحديات</TableHead>
+                      <TableHead className="text-right">معلومات الجهاز</TableHead>
                       <TableHead className="text-right">تاريخ التقديم</TableHead>
                       <TableHead className="text-right">الحالة</TableHead>
                       <TableHead className="text-right">الإجراءات</TableHead>
