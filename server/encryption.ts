@@ -1,8 +1,13 @@
 import CryptoJS from 'crypto-js';
 
-// Secret key for encryption (in production, this should be stored securely in environment variables)
-// We'll use the session secret for encryption to ensure a consistent approach
-const ENCRYPTION_KEY = process.env.SESSION_SECRET || 'fallback-encryption-key-for-development';
+// In production, SESSION_SECRET must be set in environment variables
+// For development, we provide a fallback value
+const ENCRYPTION_KEY = process.env.SESSION_SECRET || (process.env.NODE_ENV === 'development'
+  ? 'syrian-ministry-tech-platform-session-secret-dev-only'
+  : (()=>{
+      console.error('SESSION_SECRET environment variable is required for encryption in production');
+      process.exit(1);
+    })());
 
 /**
  * Encrypts a string or object using AES encryption

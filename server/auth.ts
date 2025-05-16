@@ -58,8 +58,17 @@ export function setupAuth(app: Express) {
     createTableIfMissing: true
   });
 
+  // In production, SESSION_SECRET must be set in environment variables
+  // For development, we provide a fallback value
+  const SESSION_SECRET = process.env.SESSION_SECRET || (process.env.NODE_ENV === 'development'
+    ? 'syrian-ministry-tech-platform-session-secret-dev-only'
+    : (()=>{
+        console.error('SESSION_SECRET environment variable is required in production');
+        process.exit(1);
+      })());
+
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || 'syrian-ministry-tech-platform-session-secret',
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
@@ -67,6 +76,7 @@ export function setupAuth(app: Express) {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
       httpOnly: true,
+      sameSite: 'strict' // Provides additional CSRF protection
     }
   };
 

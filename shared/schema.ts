@@ -89,8 +89,15 @@ export const insertBusinessSubmissionSchema = createInsertSchema(businessSubmiss
 
 // User validation schema
 export const UserSchema = z.object({
-  username: z.string().min(3, { message: "اسم المستخدم يجب أن يكون 3 أحرف على الأقل" }),
-  password: z.string().min(6, { message: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" }),
+  username: z.string()
+    .min(3, { message: "اسم المستخدم يجب أن يكون 3 أحرف على الأقل" })
+    .max(50, { message: "اسم المستخدم يجب أن لا يتجاوز 50 حرف" }),
+  password: z.string()
+    .min(8, { message: "كلمة المرور يجب أن تكون 8 أحرف على الأقل" })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+      { message: "كلمة المرور يجب أن تحتوي على حرف كبير وحرف صغير ورقم ورمز خاص على الأقل" }
+    ),
   name: z.string().optional(),
   isAdmin: z.boolean().default(false),
 });

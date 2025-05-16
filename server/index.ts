@@ -5,35 +5,64 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import hpp from "hpp";
 import xss from "xss-clean";
+import cookieParser from "cookie-parser";
+import csrf from "tiny-csrf";
+import crypto from "crypto";
 
 const app = express();
 
 // Enable trust proxy for production environments
 app.set('trust proxy', 1);
 
-// Set security HTTP headers with appropriate configuration for development
+// Set security HTTP headers with stronger CSP configuration
+// Different configs for production vs development
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      connectSrc: ["'self'", "wss:", "ws:"],
+      scriptSrc: isProduction 
+        ? ["'self'"] // Production - strict
+        : ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Dev - allow for hot reloading
+      connectSrc: isProduction
+        ? ["'self'"]
+        : ["'self'", "wss:", "ws:"], // Dev needs WebSockets for hot reloading
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"], // Prevent <object>, <embed>, and <applet> elements
+      ...(isProduction ? { upgradeInsecureRequests: [] } : {}), // Auto-upgrade HTTP to HTTPS in production
+      frameAncestors: ["'none'"] // Prevents site from being embedded in iframes (clickjacking protection)
     },
   },
+  // Enable other security headers
+  referrerPolicy: { policy: 'same-origin' },
+  xssFilter: true,
+  hsts: isProduction, // HTTP Strict Transport Security - only in production
 }));
 
-// Limit requests from same IP
-const limiter = rateLimit({
+// General API rate limiting
+const apiLimiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   windowMs: 60 * 60 * 1000, // 1 hour
-  message: 'لقد تجاوزت الحد المسموح به من الطلبات، يرجى المحاولة مرة أخرى لاحقًا'
+  message: 'لقد تجاوزت الحد المسموح به من الطلبات، يرجى المحاولة مرة أخرى لاحقًا',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-// Apply rate limiting to /api routes
-app.use('/api', limiter);
+// Stricter rate limiting for login attempts to prevent brute force attacks
+const loginLimiter = rateLimit({
+  max: 5, // 5 login attempts
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  message: 'تم تجاوز محاولات تسجيل الدخول، يرجى المحاولة مرة أخرى بعد 15 دقيقة',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiting to API routes
+app.use('/api', apiLimiter);
+app.use('/api/login', loginLimiter); // Stricter limits for login endpoint
 
 // Data sanitization against XSS
 app.use(xss());
@@ -45,6 +74,26 @@ app.use(hpp());
 app.use(express.json({ limit: '10kb' })); // Limit body size
 app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 
+// Parse cookies for CSRF protection
+app.use(cookieParser());
+
+// CSRF protection
+// Generate a 32-character secret for CSRF protection
+const CSRF_SECRET = process.env.CSRF_SECRET || 
+  (process.env.NODE_ENV === 'development' 
+    ? 'ab12cd34ef56gh78ij90kl12mn34op56' // Exactly 32 chars for development
+    : crypto.randomBytes(16).toString('hex')); // 16 bytes = 32 hex chars
+
+app.use(csrf(CSRF_SECRET, ['POST', 'PUT', 'DELETE', 'PATCH']));
+
+// Make CSRF token available
+app.use((req, res, next) => {
+  // Add CSRF token to response headers for frontend access
+  res.header('CSRF-Token', req.csrfToken());
+  next();
+});
+
+// Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

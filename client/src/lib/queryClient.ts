@@ -1,6 +1,21 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { getAuthHeader, getToken, handleTokenRefresh, isTokenExpired, removeToken } from "./jwtUtils";
 
+// Function to get CSRF token from response headers
+let csrfToken: string | null = null;
+
+// Initially fetch CSRF token with a GET request
+fetch('/api/user', { credentials: 'include' })
+  .then(response => {
+    const token = response.headers.get('CSRF-Token');
+    if (token) {
+      csrfToken = token;
+    }
+  })
+  .catch(error => {
+    console.error('Error fetching initial CSRF token:', error);
+  });
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     // Check for token expiry response
@@ -22,10 +37,19 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  // Combine content type header with auth header if token exists
+  // Update the CSRF token if present in headers
+  const updateCSRFToken = (res: Response) => {
+    const token = res.headers.get('CSRF-Token');
+    if (token) {
+      csrfToken = token;
+    }
+  };
+
+  // Combine content type and auth headers with CSRF token if available
   const headers: Record<string, string> = {
     ...(data ? { "Content-Type": "application/json" } : {}),
-    ...getAuthHeader()
+    ...getAuthHeader(),
+    ...(csrfToken ? { "CSRF-Token": csrfToken } : {})
   };
   
   const res = await fetch(url, {
@@ -34,6 +58,12 @@ export async function apiRequest(
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include", // Keep cookies for session fallback
   });
+  
+  // Update CSRF token if present in response headers
+  const token = res.headers.get('CSRF-Token');
+  if (token) {
+    csrfToken = token;
+  }
   
   // Check for token refresh in response headers
   handleTokenRefresh(res);
@@ -48,13 +78,22 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    // Add JWT token to headers if it exists
-    const headers = getAuthHeader();
+    // Add JWT token and CSRF token to headers
+    const headers: Record<string, string> = {
+      ...getAuthHeader(),
+      ...(csrfToken ? { "CSRF-Token": csrfToken } : {})
+    };
     
     const res = await fetch(queryKey[0] as string, {
       headers,
       credentials: "include", // Keep cookies for session fallback
     });
+    
+    // Update CSRF token if present in response headers
+    const token = res.headers.get('CSRF-Token');
+    if (token) {
+      csrfToken = token;
+    }
     
     // Check for token refresh in response headers
     handleTokenRefresh(res);
