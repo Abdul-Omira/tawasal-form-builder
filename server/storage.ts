@@ -4,7 +4,10 @@ import {
   User,
   InsertUser,
   LoginCredentials,
+  CitizenCommunication,
+  InsertCitizenCommunication,
   businessSubmissions,
+  citizenCommunications,
   users
 } from "@shared/schema";
 import { db } from "./db";
@@ -101,6 +104,30 @@ export interface IStorage {
     approved: number;
     rejected: number;
     byBusinessType: Record<string, number>;
+  }>;
+  
+  // Citizen communication operations
+  getAllCitizenCommunications(): Promise<CitizenCommunication[]>;
+  getCitizenCommunicationById(id: number): Promise<CitizenCommunication | undefined>;
+  createCitizenCommunication(communication: InsertCitizenCommunication): Promise<CitizenCommunication>;
+  updateCitizenCommunicationStatus(id: number, status: string): Promise<CitizenCommunication | undefined>;
+  
+  // Advanced citizen communication operations for admin panel
+  getCitizenCommunicationsWithFilters(options: {
+    status?: string;
+    communicationType?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{ data: CitizenCommunication[]; total: number }>;
+  getCitizenCommunicationStats(): Promise<{
+    total: number;
+    pending: number;
+    inProgress: number;
+    completed: number;
+    byType: Record<string, number>;
   }>;
 }
 

@@ -2,6 +2,24 @@ import { pgTable, text, serial, integer, boolean, timestamp, varchar, jsonb, ind
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Citizen communications schema
+export const citizenCommunications = pgTable("citizen_communications", {
+  id: serial("id").primaryKey(),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  governorate: text("governorate").notNull(),
+  communicationType: text("communication_type").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  attachmentUrl: text("attachment_url"),
+  captchaAnswer: text("captcha_answer"),
+  consentToDataUse: boolean("consent_to_data_use").notNull(),
+  wantsUpdates: boolean("wants_updates").notNull().default(false),
+  status: text("status").notNull().default("pending"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // Business submissions schema
 export const businessSubmissions = pgTable("business_submissions", {
   id: serial("id").primaryKey(),
@@ -107,15 +125,38 @@ export const LoginSchema = z.object({
   password: z.string().min(1, { message: "كلمة المرور مطلوبة" }),
 });
 
+// Citizen Communication validation schema
+export const CitizenCommunicationSchema = z.object({
+  fullName: z.string().min(1, { message: "الاسم الكامل مطلوب" }),
+  email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
+  phone: z.string().min(1, { message: "رقم الهاتف مطلوب" }),
+  governorate: z.string().min(1, { message: "المحافظة مطلوبة" }),
+  communicationType: z.string().min(1, { message: "نوع التواصل مطلوب" }),
+  subject: z.string().min(1, { message: "الموضوع مطلوب" }),
+  message: z.string().min(10, { message: "الرسالة يجب أن تكون 10 أحرف على الأقل" }),
+  attachmentUrl: z.string().optional(),
+  captchaAnswer: z.string().min(1, { message: "الإجابة على سؤال التحقق مطلوبة" }),
+  consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام البيانات" }),
+  wantsUpdates: z.boolean().default(false),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true
 });
 
+export const insertCitizenCommunicationSchema = createInsertSchema(citizenCommunications).omit({
+  id: true,
+  createdAt: true,
+  status: true
+});
+
 // Types
 export type BusinessSubmission = typeof businessSubmissions.$inferSelect;
 export type InsertBusinessSubmission = z.infer<typeof insertBusinessSubmissionSchema>;
+export type CitizenCommunication = typeof citizenCommunications.$inferSelect;
+export type InsertCitizenCommunication = z.infer<typeof insertCitizenCommunicationSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LoginCredentials = z.infer<typeof LoginSchema>;
