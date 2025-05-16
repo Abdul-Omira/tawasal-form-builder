@@ -24,6 +24,11 @@ function getArabicStatus(status: string): string {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Simple endpoint that just returns the CSRF token in the header
+  // This helps with frontend CSRF token synchronization
+  app.get('/api/csrf-token', (req: Request, res: Response) => {
+    res.status(200).json({ message: 'CSRF token refreshed' });
+  });
   // Set up authentication
   await setupAuth(app);
   

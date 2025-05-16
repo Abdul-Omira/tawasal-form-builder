@@ -4,12 +4,15 @@ import { getAuthHeader, getToken, handleTokenRefresh, isTokenExpired, removeToke
 // Function to get CSRF token from response headers
 let csrfToken: string | null = null;
 
-// Initially fetch CSRF token with a GET request
-fetch('/api/user', { credentials: 'include' })
+// Initially fetch CSRF token with a GET request to a dedicated endpoint
+fetch('/api/csrf-token', { credentials: 'include' })
   .then(response => {
     const token = response.headers.get('CSRF-Token');
     if (token) {
       csrfToken = token;
+      console.log('Initial CSRF token fetched successfully');
+    } else {
+      console.warn('No CSRF token in response headers');
     }
   })
   .catch(error => {
