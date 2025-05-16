@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import PageSEO from '@/components/seo/PageSEO';
 
 const Confirmation: React.FC = () => {
   const { t } = useTranslation();
@@ -29,6 +30,11 @@ const Confirmation: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PageSEO 
+        pageName="confirmation"
+        customTitle={`تأكيد التقديم - طلب رقم SYR-2023-${requestId}`}
+        customDescription="تم تسجيل طلبك بنجاح في منصة وزارة الاتصالات وتقانة المعلومات. يمكنك طباعة هذه الصفحة كإثبات على تقديم الطلب."
+      />
       <Header />
       
       <main className="flex-grow py-12 bg-background">

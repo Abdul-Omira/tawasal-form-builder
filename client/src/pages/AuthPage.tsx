@@ -6,6 +6,7 @@ import LoginForm from '@/components/auth/LoginForm';
 import { motion } from 'framer-motion';
 import emblemSrc from '@assets/Emblem_of_Syria.svg.png';
 import { useAuth } from '@/hooks/useAuth';
+import PageSEO from '@/components/seo/PageSEO';
 
 const AuthPage: React.FC = () => {
   const [location, setLocation] = useLocation();
@@ -27,6 +28,11 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <PageSEO 
+        pageName="auth"
+        customTitle="تسجيل الدخول - وزارة الاتصالات وتقانة المعلومات"
+        customDescription="صفحة تسجيل الدخول إلى منصة وزارة الاتصالات وتقانة المعلومات لإدارة بيانات الشركات المسجلة والوصول إلى لوحة التحكم"
+      />
       <SimpleHeader />
       
       <main className="flex-grow bg-muted/20">
