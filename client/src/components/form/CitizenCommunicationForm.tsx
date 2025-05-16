@@ -70,8 +70,18 @@ const CitizenCommunicationForm: React.FC = () => {
   const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
   const [submissionId, setSubmissionId] = useState<number | null>(null);
   
+  // State for file attachment
+  const [fileAttachment, setFileAttachment] = useState<{
+    url: string;
+    name: string;
+    type: string;
+    size: number;
+  } | null>(null);
+  
+  const [fileUploadError, setFileUploadError] = useState<string | null>(null);
+
   // Form handling
-  const form = useForm({
+  const form = useForm<z.infer<typeof CommunicationFormSchema>>({
     resolver: zodResolver(CommunicationFormSchema),
     defaultValues: {
       fullName: '',
@@ -81,6 +91,10 @@ const CitizenCommunicationForm: React.FC = () => {
       communicationType: '',
       subject: '',
       message: '',
+      attachmentUrl: '',
+      attachmentName: '',
+      attachmentType: '',
+      attachmentSize: undefined,
       captchaAnswer: '',
       consentToDataUse: false,
       wantsUpdates: false,
@@ -367,6 +381,60 @@ const CitizenCommunicationForm: React.FC = () => {
                       </FormItem>
                     )}
                   />
+                </motion.div>
+                
+                <motion.div variants={formItemVariants}>
+                  <div className="animate-smooth">
+                    <label className="font-medium block mb-2">إرفاق ملف (اختياري)</label>
+                    <FileUpload 
+                      onFileUploaded={(fileData) => {
+                        setFileAttachment(fileData);
+                        form.setValue('attachmentUrl', fileData.url);
+                        form.setValue('attachmentName', fileData.name);
+                        form.setValue('attachmentType', fileData.type);
+                        // Convert to number for form
+                        form.setValue('attachmentSize', Number(fileData.size));
+                      }}
+                      onUploadError={(error) => {
+                        setFileUploadError(error);
+                      }}
+                      maxSizeMB={5}
+                      allowedTypes={[
+                        'image/jpeg', 
+                        'image/png', 
+                        'image/gif', 
+                        'application/pdf',
+                        'application/msword',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'text/plain'
+                      ]}
+                    />
+                    {fileUploadError && <p className="text-red-500 text-sm mt-1">{fileUploadError}</p>}
+                    {fileAttachment && fileAttachment.url && (
+                      <div className="mt-2 p-2 border rounded flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Paperclip className="h-4 w-4 ml-2 text-primary" />
+                          <span className="text-sm">{fileAttachment.name} ({(fileAttachment.size / 1024).toFixed(1)} KB)</span>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            // Open file in new tab if it's an image or PDF
+                            if (fileAttachment.type.startsWith('image/') || 
+                                fileAttachment.type === 'application/pdf') {
+                              window.open(fileAttachment.url, '_blank');
+                            }
+                          }}
+                        >
+                          عرض
+                        </Button>
+                      </div>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      يمكنك إرفاق صور أو ملفات PDF أو مستندات لتوضيح رسالتك. الحد الأقصى: 5 ميجابايت.
+                    </p>
+                  </div>
                 </motion.div>
                 
                 <motion.div variants={formItemVariants}>
