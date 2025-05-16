@@ -7,10 +7,11 @@ import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Printer } from 'lucide-react';
+import { CheckCircle, Printer, Paperclip } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { FileUpload } from '@/components/ui/file-upload';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCodeInput } from '@/components/ui/country-code-input';
@@ -28,6 +29,10 @@ const CommunicationFormSchema = z.object({
   communicationType: z.string().min(1, { message: "نوع التواصل مطلوب" }),
   subject: z.string().min(1, { message: "الموضوع مطلوب" }),
   message: z.string().min(10, { message: "الرسالة مطلوبة ويجب أن تكون 10 أحرف على الأقل" }),
+  attachmentUrl: z.string().optional(),
+  attachmentName: z.string().optional(),
+  attachmentType: z.string().optional(),
+  attachmentSize: z.number().optional(),
   captchaAnswer: z.string().min(1, { message: "يرجى التحقق من أنك لست روبوت" }),
   consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام البيانات" }),
   wantsUpdates: z.boolean().default(false),

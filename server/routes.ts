@@ -6,6 +6,7 @@ import { z } from "zod";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { setupAuth, isAuthenticated, isAdmin } from "./auth";
+import { uploadMiddleware, securityScanMiddleware, handleFileUpload } from "./fileUpload";
 
 // Helper function to translate status to Arabic
 function getArabicStatus(status: string): string {
@@ -23,6 +24,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/csrf-token', (req: Request, res: Response) => {
     res.status(200).json({ message: 'CSRF token refreshed' });
   });
+  
+  // File upload API endpoint
+  app.post("/api/uploads", uploadMiddleware, securityScanMiddleware, handleFileUpload);
   
   // API Routes for citizen communications
   app.get("/api/citizen-communications", async (req: Request, res: Response) => {
