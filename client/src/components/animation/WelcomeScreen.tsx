@@ -194,8 +194,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
           </motion.div>
 
           {/* Main Calligraphy Text */}
-          <motion.div variants={textVariants} className="text-center">
-            <h1 className="font-ibm text-5xl md:text-7xl text-white mb-6 leading-tight">
+          <motion.div variants={textVariants} className="text-center px-4">
+            <h1 className="font-ibm text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-4 sm:mb-6 leading-tight">
               <FancyCalligraphyAnimation 
                 text="وزارة الاتصالات" 
                 delay={0.8}
@@ -203,13 +203,13 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 className="block"
               />
               <FancyCalligraphyAnimation 
-                text="والتقانة" 
+                text="وتقانة المعلومات" 
                 delay={1.6}
                 duration={0.1}
-                className="block mt-2"
+                className="block mt-1 sm:mt-2"
               />
             </h1>
-            <div className="text-xl md:text-2xl text-white/90 font-light mt-6">
+            <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light mt-4 sm:mt-6">
               <FancyCalligraphyAnimation 
                 text="منصة المعلومات الاقتصادية للشركات السورية" 
                 delay={2.4}
