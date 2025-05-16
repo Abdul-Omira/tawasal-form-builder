@@ -50,8 +50,8 @@ const SimpleFooter: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <a href="/privacy-policy" className="text-white hover:text-gray-200 text-sm md:text-base animate-theme">سياسة الخصوصية</a>
-            <a href="/terms-of-use" className="text-white hover:text-gray-200 text-sm md:text-base animate-theme">شروط الاستخدام</a>
+            <a href="/privacy-policy" style={{ transition: 'none' }} className="text-white hover:text-gray-200 text-sm md:text-base">سياسة الخصوصية</a>
+            <a href="/terms-of-use" style={{ transition: 'none' }} className="text-white hover:text-gray-200 text-sm md:text-base">شروط الاستخدام</a>
           </motion.div>
         </div>
       </div>

@@ -15,8 +15,8 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children, className = '
   }, []);
   
   const variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
   };
   
   return (
@@ -25,7 +25,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children, className = '
       animate={isVisible ? "visible" : "hidden"}
       exit="hidden"
       variants={variants}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className={className}
     >
       {children}
