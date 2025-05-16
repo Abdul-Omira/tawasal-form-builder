@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
-import { Container } from '@/components/ui/container';
+import { Container } from '../components/ui/container';
 import { Separator } from '@/components/ui/separator';
 import PageSEO from '@/components/seo/PageSEO';
 

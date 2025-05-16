@@ -11,6 +11,8 @@ import Home from '@/pages/Home';
 import Admin from '@/pages/Admin';
 import Confirmation from '@/pages/Confirmation';
 import AuthPage from '@/pages/AuthPage';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfUse from '@/pages/TermsOfUse';
 import NotFound from '@/pages/not-found';
 import { ProtectedRoute } from '@/lib/protected-route';
 import WelcomeScreen from '@/components/animation/WelcomeScreen';
@@ -32,6 +34,10 @@ function Router() {
       currentPage = 'auth';
     } else if (location === '/confirmation') {
       currentPage = 'confirmation';
+    } else if (location === '/privacy-policy') {
+      currentPage = 'privacyPolicy';
+    } else if (location === '/terms-of-use') {
+      currentPage = 'termsOfUse';
     } else {
       currentPage = 'notFound';
     }
@@ -50,6 +56,8 @@ function Router() {
       <ProtectedRoute path="/admin" component={Admin} adminOnly={true} />
       <Route path="/confirmation" component={Confirmation}/>
       <Route path="/auth" component={AuthPage}/>
+      <Route path="/privacy-policy" component={PrivacyPolicy}/>
+      <Route path="/terms-of-use" component={TermsOfUse}/>
       <Route component={NotFound} />
     </Switch>
   );
