@@ -34,31 +34,33 @@ function safelyDecryptBusinessSubmission(submission: any): any {
   // Attempt to decrypt each sensitive field
   for (const field of SENSITIVE_BUSINESS_FIELDS) {
     try {
+      // Only process string fields that are likely encrypted
       if (decryptedSubmission[field] && 
           typeof decryptedSubmission[field] === 'string' && 
           decryptedSubmission[field].length > 0) {
         
-        // Store original value
         const originalValue = decryptedSubmission[field];
         
-        // Skip obviously non-encrypted values to avoid errors
-        if (originalValue.length < 20 || !originalValue.includes('.')) {
-          continue;
-        }
-        
-        // Attempt to decrypt the value
-        const decryptedValue = decrypt(originalValue);
-        
-        // Only use the decrypted value if it's not empty
-        if (decryptedValue !== null && 
-            decryptedValue !== undefined && 
-            (typeof decryptedValue !== 'string' || decryptedValue.trim() !== '')) {
-          decryptedSubmission[field] = decryptedValue;
+        // Try to decrypt all values that might be encrypted
+        // even if they don't have the typical encryption pattern
+        try {
+          const decryptedValue = decrypt(originalValue);
+          
+          // If decryption was successful and returned a meaningful value
+          if (decryptedValue && 
+              decryptedValue !== originalValue && 
+              (typeof decryptedValue !== 'string' || decryptedValue.trim() !== '')) {
+            decryptedSubmission[field] = decryptedValue;
+          }
+        } catch (decryptError) {
+          // If decryption fails, it might not be encrypted
+          // Keep the original value and continue
+          console.log(`Field ${field} might not be encrypted or uses different format`);
         }
       }
     } catch (error) {
-      console.error(`Decryption error for field ${field}:`, error);
-      // Keep original value if decryption fails
+      console.error(`Error processing field ${field}:`, error);
+      // Keep the original value if any error occurs
     }
   }
   
