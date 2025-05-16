@@ -4,8 +4,8 @@ import { Link, useLocation } from 'wouter';
 import { CheckCircle, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import SimpleHeader from '@/components/layout/SimpleHeader';
+import SimpleFooter from '@/components/layout/SimpleFooter';
 import PageSEO from '@/components/seo/PageSEO';
 
 const Confirmation: React.FC = () => {
@@ -35,7 +35,7 @@ const Confirmation: React.FC = () => {
         customTitle={`تأكيد التقديم - طلب رقم SYR-2023-${requestId}`}
         customDescription="تم تسجيل طلبك بنجاح في منصة وزارة الاتصالات وتقانة المعلومات. يمكنك طباعة هذه الصفحة كإثبات على تقديم الطلب."
       />
-      <Header />
+      <SimpleHeader />
       
       <main className="flex-grow py-12 bg-background">
         <div className="container mx-auto px-4">
@@ -71,7 +71,7 @@ const Confirmation: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      <SimpleFooter />
     </div>
   );
 };
