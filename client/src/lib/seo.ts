@@ -46,6 +46,16 @@ export const pageMetadata: Record<string, PageMetadata> = {
     description: 'تم تسجيل بيانات الشركة بنجاح في منصة وزارة الاتصالات وتقانة المعلومات',
     path: '/confirmation'
   },
+  privacyPolicy: {
+    title: 'سياسة الخصوصية',
+    description: 'معلومات حول كيفية جمع واستخدام وحماية البيانات في منصة وزارة الاتصالات وتقانة المعلومات',
+    path: '/privacy-policy'
+  },
+  termsOfUse: {
+    title: 'شروط الاستخدام',
+    description: 'الشروط والأحكام المنظمة لاستخدام منصة وزارة الاتصالات وتقانة المعلومات',
+    path: '/terms-of-use'
+  },
   notFound: {
     title: 'الصفحة غير موجودة',
     description: 'الصفحة المطلوبة غير موجودة في منصة وزارة الاتصالات وتقانة المعلومات',
