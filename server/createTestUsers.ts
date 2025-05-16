@@ -1,5 +1,37 @@
 import { storage } from './storage';
 import { hashPassword } from './auth';
+import crypto from 'crypto';
+
+/**
+ * Generates a cryptographically secure random password
+ * Uses a mix of uppercase, lowercase, numbers, and special characters
+ * @returns A secure random password string
+ */
+function generateSecurePassword(): string {
+  // Define character sets
+  const uppercaseChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // Removed similar looking characters
+  const lowercaseChars = 'abcdefghijkmnopqrstuvwxyz'; // Removed similar looking characters
+  const numberChars = '23456789'; // Removed 0 and 1 (look similar to O and l)
+  const specialChars = '!@#$%^&*-_=+';
+  
+  // Ensure at least one character from each set
+  let password = '';
+  password += uppercaseChars.charAt(Math.floor(crypto.randomInt(0, uppercaseChars.length)));
+  password += lowercaseChars.charAt(Math.floor(crypto.randomInt(0, lowercaseChars.length)));
+  password += numberChars.charAt(Math.floor(crypto.randomInt(0, numberChars.length)));
+  password += specialChars.charAt(Math.floor(crypto.randomInt(0, specialChars.length)));
+  
+  // Add more random characters to reach desired length (12-16 characters)
+  const allChars = uppercaseChars + lowercaseChars + numberChars + specialChars;
+  const remainingLength = 8 + Math.floor(crypto.randomInt(0, 5)); // Random length between 12-16
+  
+  for (let i = 0; i < remainingLength; i++) {
+    password += allChars.charAt(Math.floor(crypto.randomInt(0, allChars.length)));
+  }
+  
+  // Shuffle the password characters to avoid predictable patterns
+  return password.split('').sort(() => 0.5 - Math.random()).join('');
+}
 
 /**
  * Script to create test users with correct password hashing
@@ -11,18 +43,48 @@ async function createTestUsers() {
   try {
     console.log('Creating test users...');
 
-    // Secure admin password using env vars when available
+    // Check for environment mode
+    const isProd = process.env.NODE_ENV === 'production';
+    
+    // Admin credentials
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    // Using a secure, complex password that combines uppercase, lowercase, numbers and special characters
-    // In production, set ADMIN_PASSWORD env var to a secure value
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Sy#Min2024!C0m@7';
+    
+    // In production, ADMIN_PASSWORD is required as an environment variable
+    if (isProd && !process.env.ADMIN_PASSWORD) {
+      console.error('ERROR: ADMIN_PASSWORD environment variable is required in production');
+      process.exit(1);
+    }
+    
+    // Generate a random password if in development and no password is provided
+    const adminPassword = process.env.ADMIN_PASSWORD || 
+      (isProd ? '' : generateSecurePassword());
+      
     const adminName = process.env.ADMIN_NAME || 'مدير النظام';
 
     // Employee credentials
     const employeeUsername = process.env.EMPLOYEE_USERNAME || 'employee';
-    // Also using a secure, complex password for employee accounts
-    const employeePassword = process.env.EMPLOYEE_PASSWORD || 'Emp#Sy2024$Tech!8';
+    
+    // In production, EMPLOYEE_PASSWORD is required as an environment variable
+    if (isProd && !process.env.EMPLOYEE_PASSWORD) {
+      console.error('ERROR: EMPLOYEE_PASSWORD environment variable is required in production');
+      process.exit(1);
+    }
+    
+    // Generate a random password if in development and no password is provided
+    const employeePassword = process.env.EMPLOYEE_PASSWORD || 
+      (isProd ? '' : generateSecurePassword());
+      
     const employeeName = process.env.EMPLOYEE_NAME || 'موظف منصة';
+    
+    // Log generated passwords in development mode only
+    if (!isProd) {
+      if (!process.env.ADMIN_PASSWORD) {
+        console.log(`Generated admin password for development: ${adminPassword}`);
+      }
+      if (!process.env.EMPLOYEE_PASSWORD) {
+        console.log(`Generated employee password for development: ${employeePassword}`);
+      }
+    }
     
     // Hash passwords
     const hashedAdminPassword = await hashPassword(adminPassword);
