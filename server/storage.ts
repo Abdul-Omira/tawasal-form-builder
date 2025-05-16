@@ -19,7 +19,8 @@ import {
   decrypt, 
   encryptSensitiveFields, 
   decryptSensitiveFields,
-  SENSITIVE_BUSINESS_FIELDS
+  SENSITIVE_BUSINESS_FIELDS,
+  SENSITIVE_COMMUNICATION_FIELDS
 } from "./encryption";
 
 const scryptAsync = promisify(scrypt);
@@ -68,6 +69,51 @@ function safelyDecryptBusinessSubmission(submission: any): any {
   }
   
   return decryptedSubmission;
+}
+
+/**
+ * Helper function to safely decrypt citizen communication data
+ * Uses a more resilient approach with detailed error handling
+ */
+function safelyDecryptCitizenCommunication(communication: any): any {
+  if (!communication) return communication;
+  
+  // Create a copy to avoid mutating the original
+  const decryptedCommunication = { ...communication };
+  
+  // Attempt to decrypt each sensitive field
+  for (const field of SENSITIVE_COMMUNICATION_FIELDS) {
+    try {
+      // Only process string fields that are likely encrypted
+      if (decryptedCommunication[field] && 
+          typeof decryptedCommunication[field] === 'string' && 
+          decryptedCommunication[field].length > 0) {
+        
+        const originalValue = decryptedCommunication[field];
+        
+        // Try to decrypt all values that might be encrypted
+        try {
+          const decryptedValue = decrypt(originalValue);
+          
+          // If decryption was successful and returned a meaningful value
+          if (decryptedValue && 
+              decryptedValue !== originalValue && 
+              (typeof decryptedValue !== 'string' || decryptedValue.trim() !== '')) {
+            decryptedCommunication[field] = decryptedValue;
+          }
+        } catch (decryptError) {
+          // If decryption fails, it might not be encrypted
+          // Keep the original value and continue
+          console.log(`Field ${field} might not be encrypted or uses different format`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error processing field ${field}:`, error);
+      // Keep the original value if any error occurs
+    }
+  }
+  
+  return decryptedCommunication;
 }
 
 // Export functionality removed as requested

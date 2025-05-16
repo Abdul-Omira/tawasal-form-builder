@@ -132,5 +132,17 @@ export const SENSITIVE_BUSINESS_FIELDS = [
   'challengeDetails'
 ] as const;
 
+// List of sensitive fields in citizen communications that should be encrypted
+export const SENSITIVE_COMMUNICATION_FIELDS = [
+  'fullName',
+  'email',
+  'phone',
+  'message',
+  'subject'
+] as const;
+
 // Type for sensitive business fields
 export type SensitiveBusinessField = typeof SENSITIVE_BUSINESS_FIELDS[number];
+
+// Type for sensitive communication fields
+export type SensitiveCommunicationField = typeof SENSITIVE_COMMUNICATION_FIELDS[number];
