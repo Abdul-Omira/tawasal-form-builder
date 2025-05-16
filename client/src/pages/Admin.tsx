@@ -343,14 +343,13 @@ const Admin: React.FC = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-right">معرف الطلب</TableHead>
+                      <TableHead className="text-right">اسم المستخدم</TableHead>
                       <TableHead className="text-right">اسم الشركة</TableHead>
-                      <TableHead className="text-right">نوع النشاط</TableHead>
-                      <TableHead className="text-right">اسم المسؤول</TableHead>
-                      <TableHead className="text-right">المحافظة</TableHead>
                       <TableHead className="text-right">رقم الهاتف</TableHead>
                       <TableHead className="text-right">البريد الإلكتروني</TableHead>
-                      <TableHead className="text-right">التحديات</TableHead>
-                      <TableHead className="text-right">تفاصيل التحديات</TableHead>
+                      <TableHead className="text-right">الشركات المطلوبة</TableHead>
+                      <TableHead className="text-right">التحديات المرتبطة</TableHead>
+                      <TableHead className="text-right">روابط الشركات</TableHead>
                       <TableHead className="text-right">معلومات الجهاز</TableHead>
                       <TableHead className="text-right">تاريخ التقديم</TableHead>
                       <TableHead className="text-right">الحالة</TableHead>
@@ -376,16 +375,10 @@ const Admin: React.FC = () => {
                             <div className="text-sm text-foreground">SYR-{submission.id}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            <div className="text-sm text-foreground">{submission.businessName}</div>
-                          </TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            <div className="text-sm text-foreground">{submission.businessType}</div>
-                          </TableCell>
-                          <TableCell className="whitespace-nowrap">
                             <div className="text-sm text-foreground">{submission.contactName}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            <div className="text-sm text-foreground">{submission.governorate}</div>
+                            <div className="text-sm text-foreground">{submission.businessName || <span className="text-muted-foreground text-xs">غير محدد</span>}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
                             <div className="text-sm text-foreground">{submission.phone}</div>
@@ -393,22 +386,19 @@ const Admin: React.FC = () => {
                           <TableCell className="whitespace-nowrap">
                             <div className="text-sm text-foreground">{submission.email}</div>
                           </TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {submission.challenges && submission.challenges.length > 0 ? (
-                              <div className="flex flex-wrap gap-1">
-                                {submission.challenges.map((challenge, idx) => (
-                                  <Badge key={idx} variant="outline" className="text-xs px-1">
-                                    {getChallengeLabel(challenge)}
-                                  </Badge>
-                                ))}
-                              </div>
-                            ) : (
-                              <span className="text-muted-foreground text-xs">—</span>
-                            )}
+                          <TableCell className="whitespace-normal">
+                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ minWidth: '200px', maxWidth: '250px' }}>
+                              {submission.challengeDetails || <span className="text-muted-foreground text-xs">—</span>}
+                            </div>
                           </TableCell>
                           <TableCell className="whitespace-normal">
-                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ minWidth: '250px', maxWidth: '300px' }}>
-                              {submission.challengeDetails || <span className="text-muted-foreground text-xs">—</span>}
+                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ minWidth: '150px', maxWidth: '200px' }}>
+                              {submission.sanctionedCompanyName || <span className="text-muted-foreground text-xs">—</span>}
+                            </div>
+                          </TableCell>
+                          <TableCell className="whitespace-normal">
+                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ maxWidth: '150px' }}>
+                              {submission.sanctionedCompanyLink || <span className="text-muted-foreground text-xs">—</span>}
                             </div>
                           </TableCell>
                           <TableCell className="whitespace-normal">
@@ -676,30 +666,38 @@ const Admin: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div>
-                    <Label className="font-semibold">الشركات المطلوب إتاحتها في سورية</Label>
-                    <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
-                      {selectedSubmission.challengeDetails || "لا توجد تفاصيل"}
+                  <div className="bg-amber-50 p-4 rounded-md border border-amber-200">
+                    <Label className="font-semibold text-lg text-primary pb-2 block border-b border-amber-200 mb-3">
+                      الشركات المتأثرة بالإجراءات الأميركية
+                    </Label>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="font-semibold text-primary/90">اسم الشركات التي ترغب بتسريع إتاحتها للخدمات في سورية</Label>
+                        <div className="text-foreground p-3 bg-white rounded-md mt-1 shadow-sm">
+                          {selectedSubmission.challengeDetails || "لا توجد تفاصيل"}
+                        </div>
+                      </div>
+                      
+                      {selectedSubmission.sanctionedCompanyName && (
+                        <div>
+                          <Label className="font-semibold text-primary/90">التحدي الرئيسي للشركات المذكورة</Label>
+                          <div className="text-foreground p-3 bg-white rounded-md mt-1 shadow-sm">
+                            {selectedSubmission.sanctionedCompanyName}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {selectedSubmission.sanctionedCompanyLink && (
+                        <div>
+                          <Label className="font-semibold text-primary/90">روابط الشركات</Label>
+                          <div className="text-foreground p-3 bg-white rounded-md mt-1 shadow-sm">
+                            {selectedSubmission.sanctionedCompanyLink}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  
-                  {selectedSubmission.sanctionedCompanyName && (
-                    <div>
-                      <Label className="font-semibold">التحدي الرئيسي للشركات المذكورة</Label>
-                      <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
-                        {selectedSubmission.sanctionedCompanyName}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {selectedSubmission.sanctionedCompanyLink && (
-                    <div>
-                      <Label className="font-semibold">روابط الشركات</Label>
-                      <div className="text-foreground">
-                        {selectedSubmission.sanctionedCompanyLink}
-                      </div>
-                    </div>
-                  )}
                   
                   <div>
                     <Label className="font-semibold">الاحتياجات التقنية</Label>
