@@ -1,0 +1,1 @@
+This is a placeholder for the 32x32 favicon PNG. Replace with a real PNG in production.

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background Shield -->
+  <path fill="#e8b53a" d="M50 5 C30 5 10 20 10 40 C10 70 50 95 50 95 C50 95 90 70 90 40 C90 20 70 5 50 5 Z" />
+  
+  <!-- Flag inside shield -->
+  <path fill="#ffffff" d="M30 30 L70 30 L70 70 L30 70 Z" />
+  <path fill="#006E51" d="M50 30 L70 30 L70 70 L50 70 Z" />
+  
+  <!-- Stars -->
+  <path fill="#d81e34" d="M40 37 L42 43 L36 39 L44 39 L38 43 Z" />
+  <path fill="#d81e34" d="M40 50 L42 56 L36 52 L44 52 L38 56 Z" />
+  <path fill="#d81e34" d="M40 63 L42 69 L36 65 L44 65 L38 69 Z" />
+</svg>
