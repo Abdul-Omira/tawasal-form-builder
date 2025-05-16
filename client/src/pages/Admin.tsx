@@ -19,6 +19,7 @@ import { useLocation } from 'wouter';
 import { queryClient } from '@/lib/queryClient';
 import { BusinessSubmission } from '@shared/schema';
 import ChangePasswordForm from '@/components/auth/ChangePasswordForm';
+import PageSEO from '@/components/seo/PageSEO';
 
 interface SubmissionsResponse {
   data: BusinessSubmission[];
@@ -188,6 +189,11 @@ const Admin: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PageSEO 
+        pageName="admin"
+        customTitle="لوحة تحكم المشرف - إدارة الطلبات"
+        customDescription="لوحة تحكم إدارة طلبات الشركات المسجلة في منصة وزارة الاتصالات وتقانة المعلومات وإدارة البيانات والتصدير"
+      />
       <SimpleHeader />
       
       <main className="flex-grow py-6 md:py-12 bg-background">
