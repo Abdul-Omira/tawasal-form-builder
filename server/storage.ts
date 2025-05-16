@@ -11,7 +11,7 @@ import {
   users
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, sql, and, like, or } from "drizzle-orm";
+import { eq, desc, sql, and, like, or, asc } from "drizzle-orm";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { 
@@ -193,6 +193,228 @@ async function comparePasswords(supplied: string, stored: string) {
 
 // Storage class for database operations
 export class DatabaseStorage implements IStorage {
+  // Citizen communication operations
+  async getAllCitizenCommunications(): Promise<CitizenCommunication[]> {
+    const communications = await db
+      .select()
+      .from(citizenCommunications)
+      .orderBy(desc(citizenCommunications.createdAt));
+    
+    // Use our helper function to safely decrypt all communications
+    return communications.map(communication => safelyDecryptCitizenCommunication(communication));
+  }
+  
+  async getCitizenCommunicationById(id: number): Promise<CitizenCommunication | undefined> {
+    const results = await db.select().from(citizenCommunications).where(eq(citizenCommunications.id, id));
+    
+    if (results.length === 0) {
+      return undefined;
+    }
+    
+    // Use our helper function to safely decrypt the communication
+    return safelyDecryptCitizenCommunication(results[0]);
+  }
+  
+  async createCitizenCommunication(communication: InsertCitizenCommunication): Promise<CitizenCommunication> {
+    try {
+      console.log("Creating citizen communication (sensitive info redacted)");
+      
+      // Only include fields that exist in the database schema
+      const sanitizedData = {
+        fullName: communication.fullName,
+        email: communication.email,
+        phone: communication.phone,
+        governorate: communication.governorate,
+        communicationType: communication.communicationType,
+        subject: communication.subject,
+        message: communication.message,
+        attachmentUrl: communication.attachmentUrl,
+        captchaAnswer: communication.captchaAnswer,
+        consentToDataUse: communication.consentToDataUse,
+        wantsUpdates: communication.wantsUpdates ?? false,
+        status: "pending",
+        createdAt: new Date()
+      };
+      
+      // Encrypt sensitive fields before storing in database
+      const encryptedData = { ...sanitizedData };
+      
+      // Encrypt each sensitive field
+      for (const field of SENSITIVE_COMMUNICATION_FIELDS) {
+        const key = field as keyof typeof encryptedData;
+        if (encryptedData[key] && typeof encryptedData[key] === 'string') {
+          const valueToEncrypt = encryptedData[key] as string;
+          (encryptedData as any)[key] = encrypt(valueToEncrypt);
+        }
+      }
+      
+      const results = await db.insert(citizenCommunications).values(encryptedData).returning();
+      
+      // Decrypt the data before returning to client
+      return safelyDecryptCitizenCommunication(results[0]);
+    } catch (error) {
+      console.error("Error creating citizen communication:", error);
+      throw error;
+    }
+  }
+  
+  async updateCitizenCommunicationStatus(id: number, status: string): Promise<CitizenCommunication | undefined> {
+    const results = await db
+      .update(citizenCommunications)
+      .set({ status })
+      .where(eq(citizenCommunications.id, id))
+      .returning();
+    
+    if (results.length === 0) {
+      return undefined;
+    }
+    
+    return safelyDecryptCitizenCommunication(results[0]);
+  }
+  
+  async getCitizenCommunicationsWithFilters(options: {
+    status?: string;
+    communicationType?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{ data: CitizenCommunication[]; total: number }> {
+    const {
+      status,
+      communicationType,
+      search = '',
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = options;
+    
+    // Build where conditions
+    const conditions = [];
+    
+    if (status) {
+      conditions.push(eq(citizenCommunications.status, status));
+    }
+    
+    if (communicationType) {
+      conditions.push(eq(citizenCommunications.communicationType, communicationType));
+    }
+    
+    if (search) {
+      const searchTerm = `%${search}%`;
+      conditions.push(
+        or(
+          like(citizenCommunications.subject, searchTerm),
+          like(citizenCommunications.fullName, searchTerm)
+        )
+      );
+    }
+    
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+    
+    // Count total results
+    const totalResults = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(citizenCommunications)
+      .where(whereClause);
+    
+    const total = Number(totalResults[0].count);
+    
+    // Get paginated results
+    const offset = (page - 1) * limit;
+    
+    // Determine sort column and execute query
+    let data;
+    const query = db
+      .select()
+      .from(citizenCommunications)
+      .where(whereClause)
+      .limit(limit)
+      .offset(offset);
+    
+    // Apply sort based on column and order
+    if (sortBy === 'fullName') {
+      data = sortOrder === 'asc' 
+        ? await query.orderBy(asc(citizenCommunications.fullName)) 
+        : await query.orderBy(desc(citizenCommunications.fullName));
+    } else if (sortBy === 'communicationType') {
+      data = sortOrder === 'asc' 
+        ? await query.orderBy(asc(citizenCommunications.communicationType)) 
+        : await query.orderBy(desc(citizenCommunications.communicationType));
+    } else if (sortBy === 'status') {
+      data = sortOrder === 'asc' 
+        ? await query.orderBy(asc(citizenCommunications.status)) 
+        : await query.orderBy(desc(citizenCommunications.status));
+    } else if (sortBy === 'governorate') {
+      data = sortOrder === 'asc' 
+        ? await query.orderBy(asc(citizenCommunications.governorate)) 
+        : await query.orderBy(desc(citizenCommunications.governorate));
+    } else {
+      // Default to createdAt
+      data = sortOrder === 'asc' 
+        ? await query.orderBy(asc(citizenCommunications.createdAt)) 
+        : await query.orderBy(desc(citizenCommunications.createdAt));
+    }
+    
+    // Decrypt sensitive fields
+    const decryptedData = data.map(item => safelyDecryptCitizenCommunication(item));
+    
+    return { data: decryptedData, total };
+  }
+  
+  async getCitizenCommunicationStats(): Promise<{
+    total: number;
+    pending: number;
+    inProgress: number;
+    completed: number;
+    byType: Record<string, number>;
+  }> {
+    // Get counts by status
+    const totalResults = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(citizenCommunications);
+    
+    const pendingResults = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(citizenCommunications)
+      .where(eq(citizenCommunications.status, 'pending'));
+    
+    const inProgressResults = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(citizenCommunications)
+      .where(eq(citizenCommunications.status, 'in-progress'));
+    
+    const completedResults = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(citizenCommunications)
+      .where(eq(citizenCommunications.status, 'completed'));
+    
+    // Get counts by communication type
+    const communicationTypeResults = await db
+      .select({
+        type: citizenCommunications.communicationType,
+        count: sql<number>`count(*)`
+      })
+      .from(citizenCommunications)
+      .groupBy(citizenCommunications.communicationType);
+    
+    const byType: Record<string, number> = {};
+    
+    communicationTypeResults.forEach(item => {
+      byType[item.type] = Number(item.count);
+    });
+    
+    return {
+      total: Number(totalResults[0].count),
+      pending: Number(pendingResults[0].count),
+      inProgress: Number(inProgressResults[0].count),
+      completed: Number(completedResults[0].count),
+      byType
+    };
+  }
+  
   // User operations for local authentication
   async getUserById(id: number): Promise<User | undefined> {
     const results = await db.select().from(users).where(eq(users.id, id));

@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { BusinessSubmissionSchema, BusinessSubmission } from "@shared/schema";
+import { BusinessSubmissionSchema, BusinessSubmission, CitizenCommunicationSchema, CitizenCommunication } from "@shared/schema";
 import { z } from "zod";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -22,6 +22,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // This helps with frontend CSRF token synchronization
   app.get('/api/csrf-token', (req: Request, res: Response) => {
     res.status(200).json({ message: 'CSRF token refreshed' });
+  });
+  
+  // API Routes for citizen communications
+  app.get("/api/citizen-communications", async (req: Request, res: Response) => {
+    try {
+      const communications = await storage.getAllCitizenCommunications();
+      res.json(communications);
+    } catch (error) {
+      console.error("Error fetching communications:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
+    }
+  });
+
+  app.get("/api/citizen-communications/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "معرف غير صالح" });
+      }
+      
+      const communication = await storage.getCitizenCommunicationById(id);
+      if (!communication) {
+        return res.status(404).json({ message: "لم يتم العثور على الرسالة" });
+      }
+      
+      res.json(communication);
+    } catch (error) {
+      console.error("Error fetching communication:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
+    }
+  });
+
+  app.post("/api/citizen-communications", async (req: Request, res: Response) => {
+    try {
+      const communication = req.body;
+      
+      // Validate the submission data
+      const validationResult = CitizenCommunicationSchema.safeParse(communication);
+      if (!validationResult.success) {
+        const validationError = fromZodError(validationResult.error);
+        return res.status(400).json({ 
+          message: "بيانات غير صالحة", 
+          errors: validationError.details 
+        });
+      }
+      
+      const createdCommunication = await storage.createCitizenCommunication(communication);
+      res.status(201).json(createdCommunication);
+    } catch (error) {
+      console.error("Error creating communication:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء إنشاء الرسالة" });
+    }
+  });
+
+  app.patch("/api/citizen-communications/:id/status", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "معرف غير صالح" });
+      }
+      
+      const { status } = req.body;
+      if (!status || typeof status !== 'string') {
+        return res.status(400).json({ message: "الحالة مطلوبة" });
+      }
+      
+      const updatedCommunication = await storage.updateCitizenCommunicationStatus(id, status);
+      if (!updatedCommunication) {
+        return res.status(404).json({ message: "لم يتم العثور على الرسالة" });
+      }
+      
+      res.json(updatedCommunication);
+    } catch (error) {
+      console.error("Error updating communication status:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء تحديث حالة الرسالة" });
+    }
+  });
+
+  app.get("/api/admin/citizen-communications", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { 
+        status, 
+        communicationType,
+        search, 
+        page = '1', 
+        limit = '10',
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query as Record<string, string>;
+      
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      
+      const result = await storage.getCitizenCommunicationsWithFilters({
+        status,
+        communicationType,
+        search,
+        page: pageNum,
+        limit: limitNum,
+        sortBy,
+        sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc'
+      });
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching filtered communications:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
+    }
+  });
+
+  app.get("/api/admin/communication-statistics", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const stats = await storage.getCitizenCommunicationStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching communication statistics:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب الإحصائيات" });
+    }
   });
   // Set up authentication
   await setupAuth(app);
