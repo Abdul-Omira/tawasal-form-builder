@@ -32,7 +32,7 @@ export const businessSubmissions = pgTable("business_submissions", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Session storage table for Replit Auth
+// Session storage table for authentication
 export const sessions = pgTable(
   "sessions",
   {
