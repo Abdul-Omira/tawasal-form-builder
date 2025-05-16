@@ -406,6 +406,25 @@ const Admin: React.FC = () => {
                               <span className="text-muted-foreground text-xs">—</span>
                             )}
                           </TableCell>
+                          <TableCell className="whitespace-normal">
+                            <div className="text-sm text-foreground max-w-xs break-words overflow-hidden text-ellipsis">
+                              {submission.challengeDetails || <span className="text-muted-foreground text-xs">—</span>}
+                            </div>
+                          </TableCell>
+                          <TableCell className="whitespace-normal">
+                            <div className="text-sm text-foreground max-w-xs">
+                              {submission.ipAddress ? (
+                                <div>
+                                  <div><span className="font-semibold">IP:</span> {submission.ipAddress}</div>
+                                  {submission.deviceInfo && (
+                                    <div className="mt-1"><span className="font-semibold">الجهاز:</span> {submission.deviceInfo}</div>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground text-xs">—</span>
+                              )}
+                            </div>
+                          </TableCell>
                           <TableCell className="whitespace-nowrap">
                             <div className="text-sm text-foreground">{formatDate(new Date(submission.createdAt))}</div>
                           </TableCell>
