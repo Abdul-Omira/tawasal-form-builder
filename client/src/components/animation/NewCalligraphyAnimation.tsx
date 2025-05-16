@@ -40,7 +40,7 @@ export const CalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
     hidden: {
       opacity: 0,
       y: 15,
-      filter: "blur(8px)",
+      filter: "blur(5px)",
     },
     visible: {
       opacity: 1,
@@ -113,7 +113,7 @@ export const FancyCalligraphyAnimation: React.FC<CalligraphyAnimationProps & {
     hidden: {
       opacity: 0,
       y: 20,
-      filter: "blur(10px)",
+      filter: "blur(4px)",
       scale: 1.2
     },
     visible: {
