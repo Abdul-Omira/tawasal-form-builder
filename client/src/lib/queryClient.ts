@@ -52,7 +52,8 @@ export async function apiRequest(
   const headers: Record<string, string> = {
     ...(data ? { "Content-Type": "application/json" } : {}),
     ...getAuthHeader(),
-    ...(csrfToken ? { "CSRF-Token": csrfToken } : {})
+    // Always include CSRF token, even if null - the server will handle this properly
+    "CSRF-Token": csrfToken || ""
   };
   
   const res = await fetch(url, {
@@ -84,7 +85,8 @@ export const getQueryFn: <T>(options: {
     // Add JWT token and CSRF token to headers
     const headers: Record<string, string> = {
       ...getAuthHeader(),
-      ...(csrfToken ? { "CSRF-Token": csrfToken } : {})
+      // Always include CSRF token, even if null - the server will handle this properly
+      "CSRF-Token": csrfToken || ""
     };
     
     const res = await fetch(queryKey[0] as string, {

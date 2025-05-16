@@ -40,18 +40,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       setIsLoading(true);
       try {
         console.log(`Attempting to login with username: ${data.username}`);
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-          credentials: 'include'
-        });
         
-        if (!res.ok) {
-          const errorData = await res.json();
-          console.error('Login error:', errorData);
-          throw new Error(errorData.message || 'فشل تسجيل الدخول');
-        }
+        // Use the apiRequest function that handles CSRF tokens properly
+        const res = await apiRequest('POST', '/api/login', data);
         
         const userData = await res.json();
         console.log('Login successful, user data received');

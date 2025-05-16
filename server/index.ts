@@ -96,12 +96,15 @@ if (process.env.CSRF_SECRET) {
   CSRF_SECRET = randomBytes.toString('hex');
 }
 
-app.use(csrf(CSRF_SECRET, ['POST', 'PUT', 'DELETE', 'PATCH']));
+// Configure CSRF protection
+const csrfProtection = csrf(CSRF_SECRET, ['POST', 'PUT', 'DELETE', 'PATCH']);
+app.use(csrfProtection);
 
-// Make CSRF token available
+// Make CSRF token available in all responses
 app.use((req, res, next) => {
-  // Add CSRF token to response headers for frontend access
-  res.header('CSRF-Token', req.csrfToken());
+  // Generate and add CSRF token to response headers for frontend access
+  const token = req.csrfToken();
+  res.header('CSRF-Token', token);
   next();
 });
 
