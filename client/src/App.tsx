@@ -31,34 +31,10 @@ function App() {
   // State to control showing the welcome screen
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   
-  // Set document title and meta description
+  // No need to dynamically set meta tags since we've updated the index.html file with proper tags
   useEffect(() => {
-    document.title = 'نظام التواصل - وزارة الاتصالات السورية';
-    
-    // Set meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.setAttribute('content', 'منصة وزارة الاتصالات السورية لجمع معلومات حول الشركات الناشئة والأعمال المتأثرة بالعقوبات ومساعدتها في التغلب على التحديات');
-    
-    // Add Open Graph tags
-    const ogTitle = document.createElement('meta');
-    ogTitle.setAttribute('property', 'og:title');
-    ogTitle.setAttribute('content', 'نظام التواصل - وزارة الاتصالات السورية');
-    document.head.appendChild(ogTitle);
-    
-    const ogDescription = document.createElement('meta');
-    ogDescription.setAttribute('property', 'og:description');
-    ogDescription.setAttribute('content', 'منصة وزارة الاتصالات السورية لجمع معلومات حول الشركات الناشئة والأعمال المتأثرة بالعقوبات ومساعدتها في التغلب على التحديات');
-    document.head.appendChild(ogDescription);
-    
-    const ogType = document.createElement('meta');
-    ogType.setAttribute('property', 'og:type');
-    ogType.setAttribute('content', 'website');
-    document.head.appendChild(ogType);
+    // Set default title for the home page
+    document.title = 'منصة دعم الشركات التقنية - وزارة الاتصالات وتقانة المعلومات';
     
     // IBM Plex Sans font is already loaded in index.html
     
