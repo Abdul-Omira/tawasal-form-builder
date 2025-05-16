@@ -7,14 +7,24 @@ import crypto from 'crypto';
 // This approach allows secure deployment without requiring environment variables
 let JWT_SECRET: string;
 
-if (process.env.JWT_SECRET) {
-  JWT_SECRET = process.env.JWT_SECRET;
+// JWT_SECRET must be set in environment variables for all environments
+// No fallback values are used for security reasons
+if (!process.env.JWT_SECRET) {
+  console.error('ERROR: JWT_SECRET environment variable is required for secure token generation');
+  console.error('Please set this environment variable with a secure random value');
+  
+  // In development mode only, we'll generate a temporary secret but log a warning
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('SECURITY WARNING: Generating temporary JWT_SECRET for development only');
+    console.warn('This is NOT secure for production use');
+    const randomBytes = crypto.randomBytes(32);
+    JWT_SECRET = randomBytes.toString('hex');
+  } else {
+    // In production, we'll exit the process to prevent insecure operation
+    process.exit(1);
+  }
 } else {
-  // For a more secure deployment without environment variables,
-  // generate a strong random secret on startup
-  console.log('Generating random JWT_SECRET for this deployment');
-  const randomBytes = crypto.randomBytes(32);
-  JWT_SECRET = randomBytes.toString('hex');
+  JWT_SECRET = process.env.JWT_SECRET;
 }
 // Set token expiration (default: 1 day if not specified)
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
