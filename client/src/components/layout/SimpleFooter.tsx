@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import syrianEmblem from '../../assets/syria-emblem.png';
+import FastLink from '../navigation/FastLink';
 
 const SimpleFooter: React.FC = () => {
   // Get the current year for the copyright
@@ -50,8 +51,8 @@ const SimpleFooter: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <a href="/privacy-policy" style={{ transition: 'none' }} className="text-white hover:text-gray-200 text-sm md:text-base">سياسة الخصوصية</a>
-            <a href="/terms-of-use" style={{ transition: 'none' }} className="text-white hover:text-gray-200 text-sm md:text-base">شروط الاستخدام</a>
+            <FastLink href="/privacy-policy" style={{ transition: 'none' }} className="text-white hover:text-gray-200 text-sm md:text-base">سياسة الخصوصية</FastLink>
+            <FastLink href="/terms-of-use" style={{ transition: 'none' }} className="text-white hover:text-gray-200 text-sm md:text-base">شروط الاستخدام</FastLink>
           </motion.div>
         </div>
       </div>
