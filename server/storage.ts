@@ -28,12 +28,16 @@ const scryptAsync = promisify(scrypt);
 function safelyDecryptBusinessSubmission(submission: any): any {
   if (!submission) return submission;
   
+  // Create a copy to avoid mutating the original
   const decryptedSubmission = { ...submission };
   
-  // Process each sensitive field
+  // Attempt to decrypt each sensitive field
   for (const field of SENSITIVE_BUSINESS_FIELDS) {
-    if (decryptedSubmission[field] && typeof decryptedSubmission[field] === 'string') {
-      try {
+    try {
+      if (decryptedSubmission[field] && 
+          typeof decryptedSubmission[field] === 'string' && 
+          decryptedSubmission[field].length > 0) {
+        
         // Store original value
         const originalValue = decryptedSubmission[field];
         
@@ -42,19 +46,19 @@ function safelyDecryptBusinessSubmission(submission: any): any {
           continue;
         }
         
-        // Try to decrypt
+        // Attempt to decrypt the value
         const decryptedValue = decrypt(originalValue);
         
-        // Only use decrypted value if it's valid
+        // Only use the decrypted value if it's not empty
         if (decryptedValue !== null && 
             decryptedValue !== undefined && 
             (typeof decryptedValue !== 'string' || decryptedValue.trim() !== '')) {
           decryptedSubmission[field] = decryptedValue;
         }
-      } catch (error) {
-        console.error(`Error decrypting field ${field}:`, error);
-        // Keep original value if decryption fails
       }
+    } catch (error) {
+      console.error(`Decryption error for field ${field}:`, error);
+      // Keep original value if decryption fails
     }
   }
   
