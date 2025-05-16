@@ -4,6 +4,7 @@ import SimpleBusinessFormNew from '../components/form/SimpleBusinessFormNew';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
 import PageTransition from '../components/ui/page-transition';
+import PageSEO from '../components/seo/PageSEO';
 import { CalligraphyAnimation, FancyCalligraphyAnimation } from '../components/animation/NewCalligraphyAnimation';
 
 const Home: React.FC = () => {
@@ -45,6 +46,11 @@ const Home: React.FC = () => {
 
   return (
     <PageTransition className="min-h-screen flex flex-col bg-background">
+      {/* Add SEO component with page-specific metadata */}
+      <PageSEO 
+        pageName="home"
+        customDescription="المنصة الرسمية لوزارة الاتصالات وتقانة المعلومات السورية لجمع معلومات حول الشركات الناشئة والأعمال المتأثرة بالعقوبات وتقديم الدعم اللازم لها"
+      />
       <SimpleHeader />
       
       <main className="flex-grow">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Switch, Route } from 'wouter';
+import { Switch, Route, useLocation } from 'wouter';
 import { queryClient } from './lib/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
@@ -14,8 +14,36 @@ import AuthPage from '@/pages/AuthPage';
 import NotFound from '@/pages/not-found';
 import { ProtectedRoute } from '@/lib/protected-route';
 import WelcomeScreen from '@/components/animation/WelcomeScreen';
+import { pageMetadata, setPageTitle, updateMetaTags } from '@/lib/seo';
 
 function Router() {
+  const [location] = useLocation();
+  
+  // Update SEO metadata when location changes
+  useEffect(() => {
+    // Find which page metadata to use based on the current path
+    let currentPage: keyof typeof pageMetadata = 'home';
+    
+    if (location === '/') {
+      currentPage = 'home';
+    } else if (location === '/admin') {
+      currentPage = 'admin';
+    } else if (location === '/auth') {
+      currentPage = 'auth';
+    } else if (location === '/confirmation') {
+      currentPage = 'confirmation';
+    } else {
+      currentPage = 'notFound';
+    }
+    
+    // Get the metadata for the current page
+    const metadata = pageMetadata[currentPage];
+    
+    // Update title and meta tags
+    setPageTitle(metadata.title);
+    updateMetaTags(metadata);
+  }, [location]);
+  
   return (
     <Switch>
       <Route path="/" component={Home}/>
@@ -31,13 +59,7 @@ function App() {
   // State to control showing the welcome screen
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   
-  // No need to dynamically set meta tags since we've updated the index.html file with proper tags
   useEffect(() => {
-    // Set default title for the home page
-    document.title = 'منصة دعم الشركات التقنية - وزارة الاتصالات وتقانة المعلومات';
-    
-    // IBM Plex Sans font is already loaded in index.html
-    
     // Check if we should skip the welcome screen (for development purposes)
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('skipWelcome') === 'true') {
