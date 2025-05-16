@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'wouter';
 import syrianEmblem from '../../assets/syria-emblem.png';
 
 const SimpleFooter: React.FC = () => {
@@ -51,8 +50,8 @@ const SimpleFooter: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <Link href="/privacy-policy" className="text-white hover:text-gray-200 text-sm md:text-base animate-theme">سياسة الخصوصية</Link>
-            <Link href="/terms-of-use" className="text-white hover:text-gray-200 text-sm md:text-base animate-theme">شروط الاستخدام</Link>
+            <a href="/privacy-policy" className="text-white hover:text-gray-200 text-sm md:text-base animate-theme">سياسة الخصوصية</a>
+            <a href="/terms-of-use" className="text-white hover:text-gray-200 text-sm md:text-base animate-theme">شروط الاستخدام</a>
           </motion.div>
         </div>
       </div>
