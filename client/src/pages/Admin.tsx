@@ -382,6 +382,10 @@ const Admin: React.FC = () => {
                       <TableHead className="text-right">اسم الشركة</TableHead>
                       <TableHead className="text-right">نوع النشاط</TableHead>
                       <TableHead className="text-right">اسم المسؤول</TableHead>
+                      <TableHead className="text-right">المحافظة</TableHead>
+                      <TableHead className="text-right">رقم الهاتف</TableHead>
+                      <TableHead className="text-right">البريد الإلكتروني</TableHead>
+                      <TableHead className="text-right">التحديات</TableHead>
                       <TableHead className="text-right">تاريخ التقديم</TableHead>
                       <TableHead className="text-right">الحالة</TableHead>
                       <TableHead className="text-right">الإجراءات</TableHead>
@@ -390,7 +394,7 @@ const Admin: React.FC = () => {
                   <TableBody>
                     {isLoading ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8">
+                        <TableCell colSpan={11} className="text-center py-8">
                           <div className="flex justify-center">
                             <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
