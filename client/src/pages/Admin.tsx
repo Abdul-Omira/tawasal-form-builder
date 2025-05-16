@@ -148,6 +148,36 @@ const Admin: React.FC = () => {
         return <Badge className="bg-gray-100 text-gray-800">{status}</Badge>;
     }
   };
+  
+  // Helper function to get human-readable challenge labels
+  const getChallengeLabel = (challenge: string) => {
+    const challengeLabels: Record<string, string> = {
+      'sanctions': 'العقوبات',
+      'internet': 'مشاكل الإنترنت',
+      'banking': 'صعوبات مصرفية',
+      'software': 'برمجيات محظورة',
+      'hardware': 'معدات محظورة',
+      'shipping': 'شحن وتوصيل',
+      'other': 'أخرى'
+    };
+    
+    return challengeLabels[challenge] || challenge;
+  };
+  
+  // Helper function to get human-readable tech need labels
+  const getTechNeedLabel = (need: string) => {
+    const techNeedLabels: Record<string, string> = {
+      'internet_access': 'وصول للإنترنت',
+      'cloud_services': 'خدمات سحابية',
+      'software_access': 'وصول للبرمجيات',
+      'technical_support': 'دعم فني',
+      'training': 'تدريب',
+      'localization': 'توطين',
+      'other': 'أخرى'
+    };
+    
+    return techNeedLabels[need] || need;
+  };
 
   // Check if data is loading
   const isLoading = isLoadingUser || isLoadingSubmissions;
@@ -589,22 +619,51 @@ const Admin: React.FC = () => {
                       <Label className="font-semibold">رقم الهاتف</Label>
                       <div className="text-foreground">{selectedSubmission.phone}</div>
                     </div>
+                    {selectedSubmission.alternativeContact && (
+                      <div>
+                        <Label className="font-semibold">رقم هاتف بديل</Label>
+                        <div className="text-foreground">{selectedSubmission.alternativeContact}</div>
+                      </div>
+                    )}
                     <div>
                       <Label className="font-semibold">العنوان</Label>
                       <div className="text-foreground">
                         {selectedSubmission.address}, {selectedSubmission.governorate}
                       </div>
                     </div>
+                    {selectedSubmission.website && (
+                      <div>
+                        <Label className="font-semibold">الموقع الإلكتروني</Label>
+                        <div className="text-foreground">{selectedSubmission.website}</div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
               
-              {/* Sanctions Information */}
+              {/* Challenges and Sanctions Information */}
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg">معلومات العقوبات والتحديات</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div>
+                    <Label className="font-semibold">التحديات</Label>
+                    <div className="text-foreground mt-1">
+                      {selectedSubmission.challenges && selectedSubmission.challenges.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {selectedSubmission.challenges.map((challenge, index) => (
+                            <Badge key={index} className="bg-amber-100 text-amber-800 hover:bg-amber-200">
+                              {getChallengeLabel(challenge)}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">لم يتم تحديد تحديات</span>
+                      )}
+                    </div>
+                  </div>
+                  
                   <div>
                     <Label className="font-semibold">تفاصيل التحديات</Label>
                     <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
@@ -625,6 +684,61 @@ const Admin: React.FC = () => {
                       </div>
                     </div>
                   )}
+                  
+                  <div>
+                    <Label className="font-semibold">الاحتياجات التقنية</Label>
+                    <div className="text-foreground mt-1">
+                      {selectedSubmission.techNeeds && selectedSubmission.techNeeds.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {selectedSubmission.techNeeds.map((need, index) => (
+                            <Badge key={index} className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                              {getTechNeedLabel(need)}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">لم يتم تحديد احتياجات تقنية</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {selectedSubmission.techDetails && (
+                    <div>
+                      <Label className="font-semibold">تفاصيل الاحتياجات التقنية</Label>
+                      <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
+                        {selectedSubmission.techDetails}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedSubmission.additionalComments && (
+                    <div>
+                      <Label className="font-semibold">ملاحظات إضافية</Label>
+                      <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
+                        {selectedSubmission.additionalComments}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="font-semibold">الموافقة على استخدام البيانات</Label>
+                      <div className="text-foreground">
+                        {selectedSubmission.consentToDataUse ? 
+                          <Badge variant="outline" className="bg-green-100 text-green-800">نعم</Badge> : 
+                          <Badge variant="outline" className="bg-red-100 text-red-800">لا</Badge>}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="font-semibold">يرغب في تلقي تحديثات</Label>
+                      <div className="text-foreground">
+                        {selectedSubmission.wantsUpdates ? 
+                          <Badge variant="outline" className="bg-green-100 text-green-800">نعم</Badge> : 
+                          <Badge variant="outline" className="bg-red-100 text-red-800">لا</Badge>}
+                      </div>
+                    </div>
+                  </div>
                   
                   <div>
                     <Label className="font-semibold">الحالة الحالية</Label>
