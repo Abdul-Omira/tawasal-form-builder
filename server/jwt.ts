@@ -27,7 +27,8 @@ if (!process.env.JWT_SECRET) {
   JWT_SECRET = process.env.JWT_SECRET;
 }
 // Set token expiration (default: 1 day if not specified)
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
+// Using type compatible with jsonwebtoken library
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d' as const;
 
 // Security settings
 const JWT_ALGORITHM = 'HS256'; // HMAC with SHA-256
@@ -61,7 +62,7 @@ export function generateToken(user: any): string {
   // Cast all to proper types to avoid TS errors
   const secretOrKey = JWT_SECRET as jwt.Secret;
   const options: jwt.SignOptions = {
-    expiresIn: JWT_EXPIRES_IN,
+    expiresIn: JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
     algorithm: JWT_ALGORITHM as jwt.Algorithm,
     issuer: JWT_ISSUER,
     audience: JWT_AUDIENCE,
