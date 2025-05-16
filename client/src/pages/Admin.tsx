@@ -419,6 +419,28 @@ const Admin: React.FC = () => {
                             <div className="text-sm text-foreground">{submission.contactName}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
+                            <div className="text-sm text-foreground">{submission.governorate}</div>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            <div className="text-sm text-foreground">{submission.phone}</div>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            <div className="text-sm text-foreground">{submission.email}</div>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {submission.challenges && submission.challenges.length > 0 ? (
+                              <div className="flex flex-wrap gap-1">
+                                {submission.challenges.map((challenge, idx) => (
+                                  <Badge key={idx} variant="outline" className="text-xs px-1">
+                                    {getChallengeLabel(challenge)}
+                                  </Badge>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">—</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
                             <div className="text-sm text-foreground">{formatDate(new Date(submission.createdAt))}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
@@ -458,7 +480,7 @@ const Admin: React.FC = () => {
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
                           {searchTerm ? 'لا توجد نتائج مطابقة لبحثك' : 'لا توجد طلبات حاليًا'}
                         </TableCell>
                       </TableRow>
