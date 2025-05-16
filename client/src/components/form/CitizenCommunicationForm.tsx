@@ -87,14 +87,16 @@ const CitizenCommunicationForm: React.FC = () => {
     mutationFn: async (data: any) => {
       console.log("Submitting form data:", data);
       
-      return await apiRequest('/api/citizen-communications', 'POST', data);
+      const response = await apiRequest('/api/citizen-communications', 'POST', data);
+      // Parse response to get JSON data
+      return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       console.log("Form submitted successfully:", data);
       
       // Set submission success state
       setSubmissionSuccessful(true);
-      if (data && data.id) {
+      if (data && typeof data === 'object' && 'id' in data) {
         setSubmissionId(data.id);
       }
       
@@ -373,7 +375,7 @@ const CitizenCommunicationForm: React.FC = () => {
                           <AdaptiveCaptcha 
                             value={field.value} 
                             onChange={field.onChange}
-                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth" 
+                            error={form.formState.errors.captchaAnswer?.message?.toString()}
                           />
                         </FormControl>
                         {captchaError && <p className="text-red-500 text-sm mt-1">{captchaError}</p>}
