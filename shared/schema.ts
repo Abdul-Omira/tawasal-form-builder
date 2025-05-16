@@ -55,14 +55,14 @@ export const users = pgTable("users", {
 
 // Business submission validation schema
 export const BusinessSubmissionSchema = z.object({
-  businessName: z.string().min(1, { message: "اسم الشركة مطلوب" }),
-  businessType: z.string().min(1, { message: "نوع النشاط مطلوب" }),
+  businessName: z.string().optional(),
+  businessType: z.string().optional(),
   establishmentDate: z.string().optional(),
   employeesCount: z.string().min(1, { message: "عدد الموظفين مطلوب" }),
   address: z.string().min(1, { message: "العنوان مطلوب" }),
   governorate: z.string().min(1, { message: "المحافظة مطلوبة" }),
   registrationNumber: z.string().optional(),
-  contactName: z.string().min(1, { message: "اسم المسؤول مطلوب" }),
+  contactName: z.string().min(1, { message: "الاسم مطلوب" }),
   position: z.string().min(1, { message: "المنصب مطلوب" }),
   email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
   phone: z.string().min(1, { message: "رقم الهاتف مطلوب" }),
