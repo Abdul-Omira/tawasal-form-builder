@@ -83,11 +83,18 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || (process.env.NODE_ENV === 'de
 app.use(cookieParser(COOKIE_SECRET));
 
 // CSRF protection
-// Generate a 32-character secret for CSRF protection
-const CSRF_SECRET = process.env.CSRF_SECRET || 
-  (process.env.NODE_ENV === 'development' 
-    ? 'ab12cd34ef56gh78ij90kl12mn34op56' // Exactly 32 chars for development
-    : crypto.randomBytes(16).toString('hex')); // 16 bytes = 32 hex chars
+// Generate a strong random CSRF secret
+let CSRF_SECRET: string;
+
+if (process.env.CSRF_SECRET) {
+  CSRF_SECRET = process.env.CSRF_SECRET;
+} else {
+  // Generate a secure random CSRF secret on deployment
+  // This allows secure deployment without requiring environment variables
+  console.log('Generating random CSRF_SECRET for this deployment');
+  const randomBytes = crypto.randomBytes(16); // 16 bytes = 32 hex chars
+  CSRF_SECRET = randomBytes.toString('hex');
+}
 
 app.use(csrf(CSRF_SECRET, ['POST', 'PUT', 'DELETE', 'PATCH']));
 

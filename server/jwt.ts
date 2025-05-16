@@ -2,14 +2,20 @@ import jwt from 'jsonwebtoken';
 import { User } from '@shared/schema';
 import crypto from 'crypto';
 
-// In production, JWT_SECRET must be set in environment variables
-// For development, we provide a fallback value
-const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'development' 
-  ? 'syrian-ministry-tech-platform-jwt-secret-dev-only'
-  : (()=>{
-      console.error('JWT_SECRET environment variable is required in production');
-      process.exit(1);
-    })());
+// Generate a strong random JWT secret if none is provided in environment
+// In production, this will be generated once per deployment
+// This approach allows secure deployment without requiring environment variables
+let JWT_SECRET: string;
+
+if (process.env.JWT_SECRET) {
+  JWT_SECRET = process.env.JWT_SECRET;
+} else {
+  // For a more secure deployment without environment variables,
+  // generate a strong random secret on startup
+  console.log('Generating random JWT_SECRET for this deployment');
+  const randomBytes = crypto.randomBytes(32);
+  JWT_SECRET = randomBytes.toString('hex');
+}
 // Set token expiration (default: 1 day if not specified)
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
 
