@@ -10,22 +10,22 @@ const TermsOfUse: React.FC = () => {
       <PageSEO pageName="termsOfUse" />
       <SimpleHeader />
       
-      <div className="container mx-auto px-4 py-10 min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10 min-h-screen">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">شروط الاستخدام</h1>
-          <Separator className="mb-8" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-8">شروط الاستخدام</h1>
+          <Separator className="mb-6 sm:mb-8" />
 
-          <div className="prose prose-lg max-w-none rtl" dir="rtl">
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">مقدمة</h2>
-              <p>مرحباً بكم في منصة دعم الشركات التقنية التابعة لوزارة الاتصالات وتقانة المعلومات في الجمهورية العربية السورية. تُنظم شروط الاستخدام هذه العلاقة بينكم وبين وزارة الاتصالات وتقانة المعلومات ("الوزارة") فيما يتعلق باستخدام المنصة.</p>
-              <p>باستخدامكم للمنصة، فإنكم توافقون على الالتزام بهذه الشروط. إذا لم توافقوا على هذه الشروط، يرجى عدم استخدام المنصة.</p>
+          <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none rtl" dir="rtl">
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">مقدمة</h2>
+              <p className="text-sm sm:text-base mb-2 sm:mb-3">مرحباً بكم في منصة دعم الشركات التقنية التابعة لوزارة الاتصالات وتقانة المعلومات في الجمهورية العربية السورية. تُنظم شروط الاستخدام هذه العلاقة بينكم وبين وزارة الاتصالات وتقانة المعلومات ("الوزارة") فيما يتعلق باستخدام المنصة.</p>
+              <p className="text-sm sm:text-base">باستخدامكم للمنصة، فإنكم توافقون على الالتزام بهذه الشروط. إذا لم توافقوا على هذه الشروط، يرجى عدم استخدام المنصة.</p>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">الغرض من المنصة</h2>
-              <p>تهدف منصة دعم الشركات التقنية إلى:</p>
-              <ul className="list-disc mr-6 mt-2 space-y-2">
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">الغرض من المنصة</h2>
+              <p className="text-sm sm:text-base">تهدف منصة دعم الشركات التقنية إلى:</p>
+              <ul className="list-disc mr-4 sm:mr-6 mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
                 <li>جمع معلومات عن الشركات والمؤسسات التقنية المتأثرة بالعقوبات</li>
                 <li>تمكين الوزارة من تقييم احتياجات هذه الشركات وتقديم الدعم المناسب</li>
                 <li>تسهيل التواصل بين الحكومة والشركات في قطاع تكنولوجيا المعلومات</li>

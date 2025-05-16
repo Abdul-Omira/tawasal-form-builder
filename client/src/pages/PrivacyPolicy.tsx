@@ -10,21 +10,21 @@ const PrivacyPolicy: React.FC = () => {
       <PageSEO pageName="privacyPolicy" />
       <SimpleHeader />
       
-      <div className="container mx-auto px-4 py-10 min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10 min-h-screen">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">سياسة الخصوصية</h1>
-          <Separator className="mb-8" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-8">سياسة الخصوصية</h1>
+          <Separator className="mb-6 sm:mb-8" />
 
-          <div className="prose prose-lg max-w-none rtl" dir="rtl">
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">مقدمة</h2>
-              <p>ترحب وزارة الاتصالات وتقانة المعلومات السورية بكم في منصة دعم الشركات التقنية. نحن نلتزم بحماية خصوصيتكم وأمان بياناتكم. توضح سياسة الخصوصية هذه كيفية جمع المعلومات واستخدامها وحمايتها عند استخدام منصتنا.</p>
+          <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none rtl" dir="rtl">
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">مقدمة</h2>
+              <p className="text-sm sm:text-base">ترحب وزارة الاتصالات وتقانة المعلومات السورية بكم في منصة دعم الشركات التقنية. نحن نلتزم بحماية خصوصيتكم وأمان بياناتكم. توضح سياسة الخصوصية هذه كيفية جمع المعلومات واستخدامها وحمايتها عند استخدام منصتنا.</p>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">المعلومات التي نجمعها</h2>
-              <p>تقوم وزارة الاتصالات وتقانة المعلومات بجمع البيانات التالية:</p>
-              <ul className="list-disc mr-6 mt-2 space-y-2">
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">المعلومات التي نجمعها</h2>
+              <p className="text-sm sm:text-base">تقوم وزارة الاتصالات وتقانة المعلومات بجمع البيانات التالية:</p>
+              <ul className="list-disc mr-4 sm:mr-6 mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
                 <li>معلومات الشركة أو المؤسسة التي تقدمها عبر نموذج التسجيل، بما في ذلك اسم الشركة وعنوانها ونوع العمل ومعلومات الاتصال</li>
                 <li>البيانات المتعلقة بتأثير العقوبات على عمل الشركة والمؤسسة</li>
                 <li>معلومات الاتصال مثل اسم الشخص المسؤول ورقم الهاتف وعنوان البريد الإلكتروني</li>
