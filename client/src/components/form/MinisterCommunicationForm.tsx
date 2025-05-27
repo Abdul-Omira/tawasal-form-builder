@@ -13,6 +13,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
+import { FileUpload } from '@/components/ui/file-upload';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
@@ -25,6 +27,11 @@ const MinisterCommunicationSchema = z.object({
   fullName: z.string().min(1, { message: "الاسم مطلوب" }),
   email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
   phone: z.string().optional(),
+  attachmentUrl: z.string().optional(),
+  attachmentName: z.string().optional(),
+  attachmentType: z.string().optional(),
+  attachmentSize: z.number().optional(),
+  captchaAnswer: z.string().min(1, { message: "يرجى التحقق من أنك لست روبوت" }),
   consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام المعلومات" }),
 });
 
@@ -34,19 +41,32 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      delayChildren: 0.3,
-      staggerChildren: 0.1
+      delayChildren: 0.2,
+      staggerChildren: 0.08
     }
   }
 };
 
 const formItemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { y: 30, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.5
+      duration: 0.6,
+      ease: "easeOut"
+    }
+  }
+};
+
+const welcomeVariants = {
+  hidden: { scale: 0.95, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut"
     }
   }
 };
@@ -58,6 +78,17 @@ const MinisterCommunicationForm: React.FC = () => {
   // State to track submission success
   const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
   const [submissionId, setSubmissionId] = useState<number | null>(null);
+  const [captchaError, setCaptchaError] = useState('');
+  
+  // State for file attachment
+  const [fileAttachment, setFileAttachment] = useState<{
+    url: string;
+    name: string;
+    type: string;
+    size: number;
+  } | null>(null);
+  
+  const [fileUploadError, setFileUploadError] = useState<string | null>(null);
   
   // Form handling
   const form = useForm<z.infer<typeof MinisterCommunicationSchema>>({
@@ -69,6 +100,11 @@ const MinisterCommunicationForm: React.FC = () => {
       fullName: '',
       email: '',
       phone: '',
+      attachmentUrl: '',
+      attachmentName: '',
+      attachmentType: '',
+      attachmentSize: undefined,
+      captchaAnswer: '',
       consentToDataUse: false,
     }
   });
@@ -156,6 +192,26 @@ const MinisterCommunicationForm: React.FC = () => {
     >
       <Card className="bg-white rounded-lg shadow-md max-w-3xl mx-auto animate-smooth">
         <CardContent className="p-6 md:p-8">
+          
+          {/* رسالة ترحيب من الوزير */}
+          <motion.div 
+            variants={welcomeVariants}
+            className="mb-8 text-center"
+          >
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-100">
+              <h1 className="text-2xl font-bold text-blue-900 mb-4 font-ibm">
+                أهلاً وسهلاً بكم
+              </h1>
+              <p className="text-gray-700 leading-relaxed mb-4 font-ibm">
+                يسعدني أن أستقبل أفكاركم ومشاريعكم واقتراحاتكم وشكاواكم وطلباتكم، 
+                وسأحرص على متابعة كل ما يصلني منكم بشكل شخصي.
+              </p>
+              <div className="text-right mt-6 text-blue-800 font-medium">
+                <p className="font-ibm">المهندس عبد السلام هيكل</p>
+                <p className="text-sm text-blue-600 font-ibm">وزير الاتصالات وتقانة المعلومات</p>
+              </div>
+            </div>
+          </motion.div>
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -312,6 +368,84 @@ const MinisterCommunicationForm: React.FC = () => {
                             placeholder="09XXXXXXXX"
                           />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+                
+                {/* إرفاق ملفات */}
+                <motion.div variants={formItemVariants}>
+                  <div className="animate-smooth">
+                    <label className="font-medium text-lg block mb-2">إرفاق ملف (اختياري):</label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      يمكنك إرفاق ملفات PDF أو عروض PowerPoint لدعم رسالتك
+                    </p>
+                    <FileUpload 
+                      onFileUploaded={(fileData) => {
+                        setFileAttachment(fileData);
+                        form.setValue('attachmentUrl', fileData.url);
+                        form.setValue('attachmentName', fileData.name);
+                        form.setValue('attachmentType', fileData.type);
+                        form.setValue('attachmentSize', Number(fileData.size));
+                      }}
+                      onUploadError={(error) => {
+                        setFileUploadError(error);
+                      }}
+                      maxSizeMB={10}
+                      allowedTypes={[
+                        'application/pdf',
+                        'application/vnd.ms-powerpoint',
+                        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                        'application/msword',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'image/jpeg', 
+                        'image/png'
+                      ]}
+                    />
+                    {fileUploadError && <p className="text-red-500 text-sm mt-1">{fileUploadError}</p>}
+                    {fileAttachment && fileAttachment.url && (
+                      <div className="mt-2 p-2 border rounded flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Send className="h-4 w-4 ml-2 text-primary" />
+                          <span className="text-sm">{fileAttachment.name} ({(fileAttachment.size / 1024).toFixed(1)} KB)</span>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            if (fileAttachment.type.startsWith('image/') || 
+                                fileAttachment.type === 'application/pdf') {
+                              window.open(fileAttachment.url, '_blank');
+                            }
+                          }}
+                        >
+                          عرض
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+                
+                {/* التحقق الأمني */}
+                <motion.div variants={formItemVariants}>
+                  <FormField
+                    control={form.control}
+                    name="captchaAnswer"
+                    render={({ field }) => (
+                      <FormItem className="animate-smooth">
+                        <FormLabel className="font-medium text-lg">التحقق الأمني:</FormLabel>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          يرجى التأكد من أنك لست روبوت
+                        </p>
+                        <FormControl>
+                          <AdaptiveCaptcha 
+                            value={field.value} 
+                            onChange={field.onChange}
+                            error={form.formState.errors.captchaAnswer?.message?.toString()}
+                          />
+                        </FormControl>
+                        {captchaError && <p className="text-red-500 text-sm mt-1">{captchaError}</p>}
                         <FormMessage />
                       </FormItem>
                     )}
