@@ -72,6 +72,17 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Login attempts tracking table
+export const loginAttempts = pgTable("login_attempts", {
+  id: serial("id").primaryKey(),
+  username: varchar("username"),
+  ipAddress: varchar("ip_address"),
+  userAgent: text("user_agent"),
+  deviceFingerprint: text("device_fingerprint"),
+  success: boolean("success").notNull().default(false),
+  attemptTime: timestamp("attempt_time").notNull().defaultNow(),
+});
+
 // Business submission validation schema
 export const BusinessSubmissionSchema = z.object({
   businessName: z.string().optional(),

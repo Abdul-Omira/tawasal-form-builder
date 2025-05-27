@@ -182,13 +182,46 @@ export function setupAuth(app: Express) {
   });
 
   // Login endpoint with JWT
-  app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+  app.post("/api/login", async (req, res, next) => {
+    // Track login attempt
+    const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] as string || 'unknown';
+    const userAgent = req.headers['user-agent'] || 'unknown';
+    const deviceFingerprint = req.headers['x-device-fingerprint'] as string || 'unknown';
+    
+    // Log the attempt to database
+    try {
+      await db.insert(loginAttempts).values({
+        username: req.body.username,
+        ipAddress,
+        userAgent,
+        deviceFingerprint,
+        success: false,
+        attemptTime: new Date()
+      });
+    } catch (error) {
+      console.error('Error logging login attempt:', error);
+    }
+    
+    passport.authenticate("local", async (err, user, info) => {
       if (err) {
         return next(err);
       }
       if (!user) {
         return res.status(401).json({ message: info?.message || "فشل تسجيل الدخول" });
+      }
+      
+      // Update successful login
+      try {
+        await db.insert(loginAttempts).values({
+          username: req.body.username,
+          ipAddress,
+          userAgent,
+          deviceFingerprint,
+          success: true,
+          attemptTime: new Date()
+        });
+      } catch (error) {
+        console.error('Error logging successful login:', error);
       }
       
       import('./jwt').then(({ generateToken }) => {
