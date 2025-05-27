@@ -263,6 +263,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // File upload endpoint for citizen communication attachments
+  app.post('/api/uploads', uploadMiddleware, securityScanMiddleware, handleFileUpload);
+
   // Our new auth.ts file handles these routes:
   // - /api/login
   // - /api/register
