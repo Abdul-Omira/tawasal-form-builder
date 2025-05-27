@@ -390,7 +390,25 @@ const Admin: React.FC = () => {
                           <TableCell className="whitespace-normal">
                             <div className="text-sm text-foreground">
                               {submission.attachmentUrl ? (
-                                <span className="text-green-600">نعم</span>
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-green-600 font-medium">نعم</span>
+                                  <a 
+                                    href={submission.attachmentUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline text-xs truncate max-w-[120px]"
+                                    title={submission.attachmentName || 'عرض الملف'}
+                                  >
+                                    {submission.attachmentName || 'عرض الملف'}
+                                  </a>
+                                  {submission.attachmentType && (
+                                    <span className="text-muted-foreground text-xs">
+                                      {submission.attachmentType.includes('image') ? '📷 صورة' : 
+                                       submission.attachmentType.includes('pdf') ? '📄 PDF' : 
+                                       '📎 ملف'}
+                                    </span>
+                                  )}
+                                </div>
                               ) : (
                                 <span className="text-muted-foreground text-xs">لا</span>
                               )}
@@ -741,6 +759,52 @@ const Admin: React.FC = () => {
                     </div>
                   </div>
                   
+                  {selectedSubmission.attachmentUrl && (
+                    <div>
+                      <Label className="font-semibold">المرفقات</Label>
+                      <div className="mt-2 p-3 bg-muted/30 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="text-2xl">
+                            {selectedSubmission.attachmentType?.includes('image') ? '📷' : 
+                             selectedSubmission.attachmentType?.includes('pdf') ? '📄' : '📎'}
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium text-foreground">
+                              {selectedSubmission.attachmentName || 'ملف مرفق'}
+                            </div>
+                            {selectedSubmission.attachmentType && (
+                              <div className="text-sm text-muted-foreground">
+                                نوع الملف: {selectedSubmission.attachmentType}
+                              </div>
+                            )}
+                            {selectedSubmission.attachmentSize && (
+                              <div className="text-sm text-muted-foreground">
+                                الحجم: {(selectedSubmission.attachmentSize / 1024 / 1024).toFixed(2)} MB
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                          >
+                            <a 
+                              href={selectedSubmission.attachmentUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              تحميل
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <Label className="font-semibold">تاريخ التقديم</Label>
                     <div className="text-foreground">
