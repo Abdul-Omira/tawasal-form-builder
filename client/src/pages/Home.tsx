@@ -100,7 +100,7 @@ const Home: React.FC = () => {
             >
               {/* Main Title */}
               <motion.div 
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 sm:mb-8 animate-theme font-ibm leading-tight px-2"
+                className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 animate-theme font-ibm leading-tight px-2"
                 variants={textVariants}
               >
                 <FancyCalligraphyAnimation 
@@ -114,7 +114,7 @@ const Home: React.FC = () => {
 
               {/* Minister's Message */}
               <motion.div 
-                className="mb-6 sm:mb-8 max-w-4xl mx-auto text-sm sm:text-base md:text-lg font-ibm bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 md:p-8 border border-white/20 mx-2 sm:mx-4"
+                className="mb-4 sm:mb-6 md:mb-8 max-w-4xl mx-auto text-xs sm:text-sm md:text-base lg:text-lg font-ibm bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 lg:p-8 border border-white/20 mx-2 sm:mx-4"
                 variants={textVariants}
               >
                 <CalligraphyAnimation 
@@ -127,20 +127,20 @@ const Home: React.FC = () => {
               
               {/* Minister's Signature */}
               <motion.div 
-                className="text-center text-white/95 font-ibm bg-white/5 backdrop-blur-sm rounded-lg p-4 sm:p-6 inline-block border border-white/10 mx-2"
+                className="text-center text-white/95 font-ibm bg-white/5 backdrop-blur-sm rounded-lg p-3 sm:p-4 md:p-6 inline-block border border-white/10 mx-2 w-full max-w-sm sm:max-w-md"
                 variants={textVariants}
               >
-                <div className="text-sm sm:text-base leading-relaxed">
-                  <p className="mb-2 text-white/80">مع أطيب التمنيات،</p>
-                  <p className="font-semibold text-lg sm:text-xl text-white">عبدالسلام هيكل</p>
-                  <p className="text-sm sm:text-base text-white/90">وزير الاتصالات وتقانة المعلومات</p>
-                  <p className="text-xs sm:text-sm text-white/80">الجمهورية العربية السورية</p>
+                <div className="text-xs sm:text-sm md:text-base leading-relaxed">
+                  <p className="mb-1 sm:mb-2 text-white/80">مع أطيب التمنيات،</p>
+                  <p className="font-semibold text-base sm:text-lg md:text-xl text-white">عبدالسلام هيكل</p>
+                  <p className="text-xs sm:text-sm md:text-base text-white/90">وزير الاتصالات وتقانة المعلومات</p>
+                  <p className="text-xs text-white/80">الجمهورية العربية السورية</p>
                 </div>
               </motion.div>
 
               {/* Call to Action */}
               <motion.div 
-                className="mt-6 sm:mt-8"
+                className="mt-4 sm:mt-6 md:mt-8 px-4"
                 variants={textVariants}
               >
                 <button 
@@ -150,7 +150,7 @@ const Home: React.FC = () => {
                       formSection.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="bg-white/20 hover:bg-white/30 text-white font-medium py-3 px-6 sm:px-8 rounded-full transition-all duration-300 border border-white/30 hover:border-white/50 backdrop-blur-sm text-sm sm:text-base font-ibm shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="w-full sm:w-auto bg-white/20 hover:bg-white/30 active:bg-white/25 text-white font-medium py-3 sm:py-4 px-6 sm:px-8 md:px-10 rounded-full transition-all duration-300 border border-white/30 hover:border-white/50 backdrop-blur-sm text-sm sm:text-base font-ibm shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 min-h-[48px] touch-manipulation"
                 >
                   أرسل رسالتك الآن
                 </button>
@@ -161,22 +161,22 @@ const Home: React.FC = () => {
 
         {/* Form Section with animation */}
         <motion.section 
-          className="py-8 sm:py-10 md:py-12 lg:py-16 font-ibm bg-gray-50 min-h-screen"
+          className="py-6 sm:py-8 md:py-10 lg:py-16 font-ibm bg-gray-50 min-h-screen"
           variants={formVariants}
           initial="hidden"
           animate="visible"
           id="form-section"
         >
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
             {/* Section Header */}
             <motion.div 
-              className="text-center mb-8 sm:mb-10 md:mb-12"
+              className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
               variants={textVariants}
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-ibm">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 font-ibm px-2">
                 أرسل رسالتك إلى الوزير
               </h2>
-              <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-ibm">
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-ibm px-4">
                 استخدم النموذج أدناه لإرسال رسالتك مباشرة إلى وزير الاتصالات وتقانة المعلومات
               </p>
             </motion.div>

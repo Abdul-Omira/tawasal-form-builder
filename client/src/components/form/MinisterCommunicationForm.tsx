@@ -246,7 +246,7 @@ const MinisterCommunicationForm: React.FC = () => {
                         <FormControl>
                           <Input 
                             {...field}
-                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm"
+                            className="focus:border-primary focus:ring-2 focus:ring-primary border-gray-300 rounded-lg h-12 sm:h-14 text-base animate-smooth font-ibm touch-manipulation"
                             placeholder="موضوع الرسالة"
                           />
                         </FormControl>
@@ -270,9 +270,9 @@ const MinisterCommunicationForm: React.FC = () => {
                         <FormControl>
                           <Textarea
                             {...field}
-                            rows={6}
+                            rows={5}
                             placeholder="اكتب رسالتك هنا..." 
-                            className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth resize-none md:resize-y font-ibm"
+                            className="focus:border-primary focus:ring-2 focus:ring-primary border-gray-300 rounded-lg text-base animate-smooth resize-none md:resize-y font-ibm touch-manipulation min-h-[120px] sm:min-h-[140px]"
                           />
                         </FormControl>
                         <FormMessage />
