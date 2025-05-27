@@ -114,7 +114,7 @@ const MinisterCommunicationForm: React.FC = () => {
     mutationFn: async (data: any) => {
       console.log("Submitting minister communication:", data);
       
-      const response = await apiRequest('/api/citizen-communications', 'POST', data);
+      const response = await apiRequest('POST', '/api/citizen-communications', data);
       return response;
     },
     onSuccess: (data: any) => {
