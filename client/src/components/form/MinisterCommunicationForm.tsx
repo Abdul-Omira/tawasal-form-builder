@@ -190,14 +190,14 @@ const MinisterCommunicationForm: React.FC = () => {
       variants={containerVariants}
       className="font-ibm"
     >
-      <Card className="bg-white rounded-lg shadow-md max-w-3xl mx-auto animate-smooth">
-        <CardContent className="p-6 md:p-8">
+      <Card className="bg-white border-0 shadow-none max-w-none mx-auto animate-smooth">
+        <CardContent className="p-4 sm:p-6 md:p-8 lg:p-10">
           
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
               <motion.div 
-                className="space-y-6"
+                className="space-y-6 sm:space-y-8"
                 variants={containerVariants}
               >
                 {/* تصنيفات الرسائل */}
@@ -207,13 +207,13 @@ const MinisterCommunicationForm: React.FC = () => {
                     name="communicationType"
                     render={({ field }) => (
                       <FormItem className="animate-smooth">
-                        <FormLabel className="font-medium text-lg">تصنيفات الرسائل:</FormLabel>
+                        <FormLabel className="font-medium text-base sm:text-lg text-gray-700">تصنيفات الرسائل:</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="focus:ring-1 focus:ring-primary animate-smooth font-ibm">
+                            <SelectTrigger className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-lg h-12 sm:h-14 text-base animate-smooth font-ibm">
                               <SelectValue placeholder="اختر تصنيف الرسالة" />
                             </SelectTrigger>
                           </FormControl>

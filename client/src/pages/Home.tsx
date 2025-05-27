@@ -56,20 +56,33 @@ const Home: React.FC = () => {
       <main className="flex-grow">
         {/* Banner Section with animation */}
         <motion.section 
-          className="bg-primary py-8 md:py-12 overflow-hidden font-ibm"
+          className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-10 sm:py-12 md:py-16 lg:py-20 overflow-hidden font-ibm relative"
           variants={bannerVariants}
           initial="hidden"
           animate="visible"
         >
-          <div className="container mx-auto px-4">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div 
-              className="text-center text-white font-ibm"
+              className="text-center text-white font-ibm max-w-5xl mx-auto"
               variants={textVariants}
               initial="hidden"
               animate="visible"
             >
+              {/* Main Title */}
               <motion.div 
-                className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 animate-theme font-ibm"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 sm:mb-8 animate-theme font-ibm leading-tight px-2"
                 variants={textVariants}
               >
                 <FancyCalligraphyAnimation 
@@ -80,28 +93,49 @@ const Home: React.FC = () => {
                   as="h1"
                 />
               </motion.div>
+
+              {/* Minister's Message */}
               <motion.div 
-                className="mb-6 max-w-2xl mx-auto text-sm md:text-base font-ibm"
+                className="mb-6 sm:mb-8 max-w-4xl mx-auto text-sm sm:text-base md:text-lg font-ibm bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 md:p-8 border border-white/20 mx-2 sm:mx-4"
                 variants={textVariants}
               >
                 <CalligraphyAnimation 
                   text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
                   duration={0.015}
                   delay={0.5}
-                  className="inline-block font-ibm"
+                  className="inline-block font-ibm leading-relaxed"
                 />
               </motion.div>
               
+              {/* Minister's Signature */}
               <motion.div 
-                className="mt-6 text-center text-white/90 font-ibm"
+                className="text-center text-white/95 font-ibm bg-white/5 backdrop-blur-sm rounded-lg p-4 sm:p-6 inline-block border border-white/10 mx-2"
                 variants={textVariants}
               >
-                <div className="text-sm leading-relaxed">
-                  <p className="mb-2">مع أطيب التمنيات،</p>
-                  <p className="font-semibold">عبدالسلام هيكل</p>
-                  <p className="text-sm">وزير الاتصالات وتقانة المعلومات</p>
-                  <p className="text-sm">الجمهورية العربية السورية</p>
+                <div className="text-sm sm:text-base leading-relaxed">
+                  <p className="mb-2 text-white/80">مع أطيب التمنيات،</p>
+                  <p className="font-semibold text-lg sm:text-xl text-white">عبدالسلام هيكل</p>
+                  <p className="text-sm sm:text-base text-white/90">وزير الاتصالات وتقانة المعلومات</p>
+                  <p className="text-xs sm:text-sm text-white/80">الجمهورية العربية السورية</p>
                 </div>
+              </motion.div>
+
+              {/* Call to Action */}
+              <motion.div 
+                className="mt-6 sm:mt-8"
+                variants={textVariants}
+              >
+                <button 
+                  onClick={() => {
+                    const formSection = document.getElementById('form-section');
+                    if (formSection) {
+                      formSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white font-medium py-3 px-6 sm:px-8 rounded-full transition-all duration-300 border border-white/30 hover:border-white/50 backdrop-blur-sm text-sm sm:text-base font-ibm shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  أرسل رسالتك الآن
+                </button>
               </motion.div>
             </motion.div>
           </div>
@@ -109,16 +143,35 @@ const Home: React.FC = () => {
 
         {/* Form Section with animation */}
         <motion.section 
-          className="py-8 md:py-12 font-ibm"
+          className="py-8 sm:py-10 md:py-12 lg:py-16 font-ibm bg-gray-50 min-h-screen"
           variants={formVariants}
           initial="hidden"
           animate="visible"
           id="form-section"
         >
-          <div className="container mx-auto px-4">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-shadow hover:shadow-lg font-ibm">
-              <MinisterCommunicationForm />
-            </div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Section Header */}
+            <motion.div 
+              className="text-center mb-8 sm:mb-10 md:mb-12"
+              variants={textVariants}
+            >
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-ibm">
+                أرسل رسالتك إلى الوزير
+              </h2>
+              <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-ibm">
+                استخدم النموذج أدناه لإرسال رسالتك مباشرة إلى وزير الاتصالات وتقانة المعلومات
+              </p>
+            </motion.div>
+
+            {/* Form Container */}
+            <motion.div 
+              className="max-w-4xl mx-auto"
+              variants={formVariants}
+            >
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 font-ibm">
+                <MinisterCommunicationForm />
+              </div>
+            </motion.div>
           </div>
         </motion.section>
       </main>
