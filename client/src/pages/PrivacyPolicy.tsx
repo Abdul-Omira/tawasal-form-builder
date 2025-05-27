@@ -1,8 +1,6 @@
-import React from 'react';
-import SimpleHeader from '../components/layout/SimpleHeader';
-import SimpleFooter from '../components/layout/SimpleFooter';
-import { Separator } from '@/components/ui/separator';
-import PageSEO from '@/components/seo/PageSEO';
+import { Separator } from "@/components/ui/separator";
+import SimpleHeader from "@/components/layout/SimpleHeader";
+import PageSEO from "@/components/seo/PageSEO";
 
 const PrivacyPolicy: React.FC = () => {
   return (
@@ -18,96 +16,87 @@ const PrivacyPolicy: React.FC = () => {
           <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none rtl" dir="rtl">
             <section className="mb-6 sm:mb-8">
               <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">مقدمة</h2>
-              <p className="text-sm sm:text-base">ترحب وزارة الاتصالات وتقانة المعلومات السورية بكم في منصة دعم الشركات التقنية. نحن نلتزم بحماية خصوصيتكم وأمان بياناتكم. توضح سياسة الخصوصية هذه كيفية جمع المعلومات واستخدامها وحمايتها عند استخدام منصتنا.</p>
+              <p className="text-sm sm:text-base">ترحب وزارة الاتصالات وتقانة المعلومات السورية بكم في منصة التواصل المباشر مع الوزير. نحن نلتزم بحماية خصوصيتكم وأمان بياناتكم الشخصية وفقاً لأعلى المعايير الأمنية. تحدد هذه السياسة كيفية جمع واستخدام وحماية المعلومات التي تقدمونها عبر منصة التواصل مع وزير الاتصالات وتقانة المعلومات.</p>
             </section>
 
             <section className="mb-6 sm:mb-8">
               <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">المعلومات التي نجمعها</h2>
-              <p className="text-sm sm:text-base">تقوم وزارة الاتصالات وتقانة المعلومات بجمع البيانات التالية:</p>
-              <ul className="list-disc mr-4 sm:mr-6 mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
-                <li>معلومات الشركة أو المؤسسة التي تقدمها عبر نموذج التسجيل، بما في ذلك اسم الشركة وعنوانها ونوع العمل ومعلومات الاتصال</li>
-                <li>البيانات المتعلقة بتأثير العقوبات على عمل الشركة والمؤسسة</li>
-                <li>معلومات الاتصال مثل اسم الشخص المسؤول ورقم الهاتف وعنوان البريد الإلكتروني</li>
-                <li>بيانات السجل الإلكتروني التي تُجمع تلقائياً أثناء زيارة الموقع (مثل عنوان IP، نوع المتصفح، وقت الزيارة)</li>
+              <p className="text-sm sm:text-base mb-2 sm:mb-3">عند استخدام منصة التواصل مع الوزير، نقوم بجمع المعلومات التالية:</p>
+              <ul className="text-sm sm:text-base list-disc mr-4 sm:mr-6 space-y-1 sm:space-y-2">
+                <li>الاسم الكامل</li>
+                <li>عنوان البريد الإلكتروني</li>
+                <li>رقم الهاتف (اختياري)</li>
+                <li>نوع التواصل (اقتراح، استفسار، رأي، شكوى، تعاون، طلب)</li>
+                <li>موضوع الرسالة ومحتواها</li>
+                <li>المرفقات (إن وجدت) بصيغ PDF أو PowerPoint</li>
+                <li>معلومات تقنية أساسية مثل عنوان IP وتاريخ ووقت الإرسال</li>
               </ul>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">كيفية استخدام المعلومات</h2>
-              <p>تستخدم وزارة الاتصالات وتقانة المعلومات البيانات المقدمة للأغراض التالية:</p>
-              <ul className="list-disc mr-6 mt-2 space-y-2">
-                <li>تقييم احتياجات الشركات المتأثرة بالعقوبات وتقديم الدعم المناسب</li>
-                <li>تطوير سياسات وبرامج لدعم قطاع تكنولوجيا المعلومات في سوريا</li>
-                <li>التواصل مع الشركات المسجلة حول فرص الدعم والبرامج الحكومية</li>
-                <li>إعداد تقارير إحصائية وتحليلية للاستخدام الحكومي الداخلي (مع إزالة المعلومات الشخصية)</li>
-                <li>تحسين خدمات المنصة وتجربة المستخدم</li>
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">كيفية استخدام المعلومات</h2>
+              <p className="text-sm sm:text-base mb-2 sm:mb-3">نستخدم المعلومات المجمعة للأغراض التالية:</p>
+              <ul className="text-sm sm:text-base list-disc mr-4 sm:mr-6 space-y-1 sm:space-y-2">
+                <li>مراجعة وتقييم الرسائل والمقترحات المرسلة</li>
+                <li>الرد على الاستفسارات والطلبات عند الإمكان</li>
+                <li>تحسين خدمات الوزارة وسياساتها</li>
+                <li>إعداد التقارير الإحصائية الداخلية</li>
+                <li>الامتثال للمتطلبات القانونية والتنظيمية</li>
               </ul>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">حماية البيانات والأمان</h2>
-              <p>تلتزم وزارة الاتصالات وتقانة المعلومات بحماية بياناتكم من خلال:</p>
-              <ul className="list-disc mr-6 mt-2 space-y-2">
-                <li>تطبيق تقنيات التشفير المتقدمة لحماية البيانات الحساسة المخزنة والمتبادلة</li>
-                <li>تنفيذ ضوابط أمنية صارمة للحماية من الوصول غير المصرح به</li>
-                <li>تقييد الوصول إلى البيانات للموظفين المخولين فقط وعلى أساس الحاجة إلى المعرفة</li>
-                <li>الالتزام بمعايير أمان البيانات الحكومية</li>
-                <li>مراجعة وتحديث الإجراءات الأمنية بشكل دوري</li>
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">حماية البيانات</h2>
+              <p className="text-sm sm:text-base mb-2 sm:mb-3">نتخذ إجراءات أمنية صارمة لحماية بياناتكم:</p>
+              <ul className="text-sm sm:text-base list-disc mr-4 sm:mr-6 space-y-1 sm:space-y-2">
+                <li>تشفير جميع البيانات الحساسة باستخدام خوارزميات متقدمة</li>
+                <li>تأمين الخوادم والأنظمة بأحدث التقنيات الأمنية</li>
+                <li>محدودية الوصول للبيانات على الموظفين المخولين فقط</li>
+                <li>نسخ احتياطية منتظمة وآمنة للبيانات</li>
+                <li>مراقبة أمنية مستمرة للأنظمة</li>
               </ul>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">مشاركة البيانات</h2>
-              <p>لا تقوم وزارة الاتصالات وتقانة المعلومات بمشاركة البيانات المقدمة إلا في الحالات التالية:</p>
-              <ul className="list-disc mr-6 mt-2 space-y-2">
-                <li>مع الجهات الحكومية الأخرى المعنية بتقديم الدعم للشركات المتأثرة بالعقوبات</li>
-                <li>عند الالتزام بالمتطلبات القانونية والتنظيمية</li>
-                <li>بموافقة صريحة من الشركة المعنية ولأغراض محددة</li>
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">مشاركة المعلومات</h2>
+              <p className="text-sm sm:text-base">لا نقوم بمشاركة معلوماتكم الشخصية مع أطراف خارجية إلا في الحالات التالية:</p>
+              <ul className="text-sm sm:text-base list-disc mr-4 sm:mr-6 space-y-1 sm:space-y-2 mt-2 sm:mt-3">
+                <li>عند الحصول على موافقتكم الصريحة</li>
+                <li>عند وجود التزام قانوني بالكشف عن المعلومات</li>
+                <li>لحماية حقوق وسلامة الوزارة والمواطنين</li>
+                <li>في حالات الطوارئ الوطنية</li>
               </ul>
-              <p>لن يتم مشاركة البيانات مع أي جهات خارجية لأغراض تجارية أو تسويقية.</p>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">حقوق المستخدمين</h2>
-              <p>تحترم وزارة الاتصالات وتقانة المعلومات حقوق المستخدمين في:</p>
-              <ul className="list-disc mr-6 mt-2 space-y-2">
-                <li>الاطلاع على البيانات المخزنة وطلب نسخة منها</li>
-                <li>تصحيح البيانات غير الدقيقة</li>
-                <li>طلب حذف البيانات (في حدود المتطلبات القانونية للاحتفاظ بالسجلات)</li>
-                <li>تقديم شكوى بشأن استخدام البيانات</li>
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">حقوقكم</h2>
+              <p className="text-sm sm:text-base mb-2 sm:mb-3">لديكم الحقوق التالية فيما يتعلق ببياناتكم:</p>
+              <ul className="text-sm sm:text-base list-disc mr-4 sm:mr-6 space-y-1 sm:space-y-2">
+                <li>طلب الاطلاع على البيانات المحفوظة عنكم</li>
+                <li>طلب تصحيح أي معلومات غير دقيقة</li>
+                <li>طلب حذف بياناتكم (وفقاً للقوانين السارية)</li>
+                <li>الاعتراض على معالجة بياناتكم في ظروف معينة</li>
               </ul>
-              <p>للاستفسارات أو طلبات الوصول إلى البيانات، يرجى التواصل مع مكتب حماية البيانات في وزارة الاتصالات وتقانة المعلومات.</p>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">الاحتفاظ بالبيانات</h2>
-              <p>تحتفظ وزارة الاتصالات وتقانة المعلومات بالبيانات المقدمة طوال فترة تنفيذ برامج الدعم وبعدها لفترة تحددها متطلبات الأرشفة الحكومية والمتطلبات القانونية. بعد انتهاء هذه الفترة، سيتم حذف البيانات بشكل آمن أو جعلها مجهولة المصدر.</p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">تحديثات سياسة الخصوصية</h2>
-              <p>قد يتم تحديث سياسة الخصوصية هذه من وقت لآخر لتعكس التغييرات في الممارسات أو المتطلبات القانونية. سيتم نشر التحديثات على هذه الصفحة وإخطار المستخدمين بالتغييرات الهامة عند الاقتضاء.</p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-primary">التواصل معنا</h2>
-              <p>لأي استفسارات تتعلق بسياسة الخصوصية أو كيفية التعامل مع بياناتكم، يرجى التواصل مع:</p>
-              <div className="p-4 bg-muted rounded-md mt-2">
-                <p className="font-semibold">مكتب حماية البيانات</p>
-                <p>وزارة الاتصالات وتقانة المعلومات</p>
-                <p>دمشق، الجمهورية العربية السورية</p>
-                <p>البريد الإلكتروني: info@moct.gov.sy</p>
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">الاتصال بنا</h2>
+              <p className="text-sm sm:text-base">إذا كان لديكم أي أسئلة أو مخاوف حول سياسة الخصوصية هذه أو ممارساتنا في حماية البيانات، يمكنكم التواصل معنا عبر:</p>
+              <div className="mt-3 sm:mt-4 text-sm sm:text-base">
+                <p><strong>وزارة الاتصالات وتقانة المعلومات</strong></p>
+                <p>الجمهورية العربية السورية</p>
+                <p>دمشق - المالكي</p>
               </div>
             </section>
 
-            <div className="text-sm text-gray-600 mt-12 text-center">
-              <p>تاريخ آخر تحديث: 1 مايو 2025</p>
-            </div>
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-primary">تحديث السياسة</h2>
+              <p className="text-sm sm:text-base">قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. سيتم نشر أي تغييرات على هذه الصفحة مع تاريخ التحديث. ننصحكم بمراجعة هذه السياسة بشكل دوري للبقاء على اطلاع بكيفية حماية معلوماتكم.</p>
+              <p className="text-sm sm:text-base mt-3 sm:mt-4"><strong>تاريخ آخر تحديث:</strong> يناير 2025</p>
+            </section>
           </div>
         </div>
       </div>
-      
-      <SimpleFooter />
     </>
   );
 };
