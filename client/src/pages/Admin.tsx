@@ -17,12 +17,12 @@ import SimpleFooter from '@/components/layout/SimpleFooter';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'wouter';
 import { queryClient } from '@/lib/queryClient';
-import { BusinessSubmission } from '@shared/schema';
+import { CitizenCommunication } from '@shared/schema';
 import ChangePasswordForm from '@/components/auth/ChangePasswordForm';
 import PageSEO from '@/components/seo/PageSEO';
 
 interface SubmissionsResponse {
-  data: BusinessSubmission[];
+  data: CitizenCommunication[];
   total: number;
 }
 
@@ -39,8 +39,8 @@ const Admin: React.FC = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   
-  // Submission details dialog state
-  const [selectedSubmission, setSelectedSubmission] = useState<BusinessSubmission | null>(null);
+  // Communication details dialog state
+  const [selectedSubmission, setSelectedSubmission] = useState<CitizenCommunication | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   // Handle authentication and authorization redirects

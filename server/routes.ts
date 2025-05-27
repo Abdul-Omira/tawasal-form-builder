@@ -269,30 +269,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // - /api/logout
   // - /api/user
 
-  // Admin-only routes (protected)
+  // Admin-only routes (protected) - Updated for Minister communication platform
   app.get("/api/admin/business-submissions", isAdmin, async (req: Request, res: Response) => {
     try {
-      const { status, search, page = '1', limit = '10', sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
+      const { 
+        status, 
+        communicationType,
+        search, 
+        page = '1', 
+        limit = '10',
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query as Record<string, string>;
       
-      const result = await storage.getBusinessSubmissionsWithFilters({
-        status: status as string | undefined,
-        search: search as string | undefined,
-        page: parseInt(page as string),
-        limit: parseInt(limit as string),
-        sortBy: sortBy as string,
-        sortOrder: (sortOrder as 'asc' | 'desc') || 'desc'
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      
+      const result = await storage.getCitizenCommunicationsWithFilters({
+        status,
+        communicationType,
+        search,
+        page: pageNum,
+        limit: limitNum,
+        sortBy,
+        sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc'
       });
       
       res.json(result);
     } catch (error) {
-      console.error("Error fetching business submissions:", error);
+      console.error("Error fetching citizen communications:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
 
   app.get("/api/admin/statistics", isAdmin, async (req: Request, res: Response) => {
     try {
-      const stats = await storage.getBusinessSubmissionStats();
+      const stats = await storage.getCitizenCommunicationStats();
       res.json(stats);
     } catch (error) {
       console.error("Error fetching statistics:", error);
