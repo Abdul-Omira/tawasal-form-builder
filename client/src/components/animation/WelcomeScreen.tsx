@@ -211,7 +211,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             </h1>
             <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light mt-4 sm:mt-6">
               <FancyCalligraphyAnimation 
-                text="منصة المعلومات الاقتصادية للشركات السورية" 
+                text="منصة التواصل المباشر مع الوزير" 
                 delay={2.4}
                 duration={0.04}
                 as="span"
