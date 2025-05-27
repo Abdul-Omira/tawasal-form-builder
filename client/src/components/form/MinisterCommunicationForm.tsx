@@ -193,26 +193,7 @@ const MinisterCommunicationForm: React.FC = () => {
       <Card className="bg-white rounded-lg shadow-md max-w-3xl mx-auto animate-smooth">
         <CardContent className="p-6 md:p-8">
           
-          {/* رسالة ترحيب من الوزير */}
-          <motion.div 
-            variants={welcomeVariants}
-            className="mb-8 text-center"
-          >
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-100">
-              <h1 className="text-2xl font-bold text-blue-900 mb-4 font-ibm">
-                أهلاً وسهلاً بكم
-              </h1>
-              <p className="text-gray-700 leading-relaxed mb-4 font-ibm">
-                يسعدني أن أستقبل أفكاركم ومشاريعكم واقتراحاتكم وشكاواكم وطلباتكم، 
-                وسأحرص على متابعة كل ما يصلني منكم بشكل شخصي.
-              </p>
-              <div className="text-right mt-6 text-blue-800 font-medium">
-                <p className="font-ibm">المهندس عبد السلام هيكل</p>
-                <p className="text-sm text-blue-600 font-ibm">وزير الاتصالات وتقانة المعلومات</p>
-              </div>
-            </div>
-          </motion.div>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <motion.div 
