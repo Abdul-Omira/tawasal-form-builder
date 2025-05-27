@@ -115,7 +115,7 @@ const MinisterCommunicationForm: React.FC = () => {
       console.log("Submitting minister communication:", data);
       
       const response = await apiRequest('/api/citizen-communications', 'POST', data);
-      return response.json();
+      return response;
     },
     onSuccess: (data: any) => {
       console.log("Form submitted successfully:", data);
