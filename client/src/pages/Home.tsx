@@ -80,7 +80,7 @@ const Home: React.FC = () => {
       <main className="flex-grow">
         {/* Hero Section with beautiful gradient */}
         <motion.section 
-          className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 py-16 md:py-24 overflow-hidden"
+          className="relative bg-gradient-to-br from-green-900 via-green-800 to-emerald-900 py-16 md:py-24 overflow-hidden"
           variants={heroVariants}
           initial="hidden"
           animate="visible"
@@ -88,8 +88,8 @@ const Home: React.FC = () => {
           {/* Background decoration */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-20 w-40 h-40 bg-blue-300 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/3 w-20 h-20 bg-indigo-200 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-20 right-20 w-40 h-40 bg-green-300 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/3 w-20 h-20 bg-emerald-200 rounded-full blur-2xl"></div>
           </div>
           
           <div className="container mx-auto px-4 relative z-10">
@@ -165,8 +165,8 @@ const Home: React.FC = () => {
               <motion.div variants={cardVariants} whileHover="hover">
                 <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <MessageSquare className="h-8 w-8 text-blue-600" />
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <MessageSquare className="h-8 w-8 text-green-600" />
                     </div>
                     <h3 className="text-xl font-semibold mb-3 font-ibm">الرسائل المباشرة</h3>
                     <p className="text-gray-600 font-ibm">
@@ -179,8 +179,8 @@ const Home: React.FC = () => {
               <motion.div variants={cardVariants} whileHover="hover">
                 <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Shield className="h-8 w-8 text-green-600" />
+                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Shield className="h-8 w-8 text-emerald-600" />
                     </div>
                     <h3 className="text-xl font-semibold mb-3 font-ibm">أمان وحماية</h3>
                     <p className="text-gray-600 font-ibm">
@@ -193,8 +193,8 @@ const Home: React.FC = () => {
               <motion.div variants={cardVariants} whileHover="hover">
                 <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Users className="h-8 w-8 text-purple-600" />
+                    <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Users className="h-8 w-8 text-teal-600" />
                     </div>
                     <h3 className="text-xl font-semibold mb-3 font-ibm">خدمة المواطنين</h3>
                     <p className="text-gray-600 font-ibm">
