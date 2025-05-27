@@ -112,31 +112,7 @@ const Home: React.FC = () => {
                 />
               </motion.div>
 
-              {/* Minister's Message */}
-              <motion.div 
-                className="mb-4 sm:mb-6 md:mb-8 max-w-4xl mx-auto text-xs sm:text-sm md:text-base lg:text-lg font-ibm bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 lg:p-8 border border-white/20 mx-2 sm:mx-4"
-                variants={textVariants}
-              >
-                <CalligraphyAnimation 
-                  text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
-                  duration={0.015}
-                  delay={0.5}
-                  className="inline-block font-ibm leading-relaxed"
-                />
-              </motion.div>
-              
-              {/* Minister's Signature */}
-              <motion.div 
-                className="text-center text-white/95 font-ibm bg-white/5 backdrop-blur-sm rounded-lg p-3 sm:p-4 md:p-6 inline-block border border-white/10 mx-2 w-full max-w-sm sm:max-w-md"
-                variants={textVariants}
-              >
-                <div className="text-xs sm:text-sm md:text-base leading-relaxed">
-                  <p className="mb-1 sm:mb-2 text-white/80">مع أطيب التمنيات،</p>
-                  <p className="font-semibold text-base sm:text-lg md:text-xl text-white">عبدالسلام هيكل</p>
-                  <p className="text-xs sm:text-sm md:text-base text-white/90">وزير الاتصالات وتقانة المعلومات</p>
-                  <p className="text-xs text-white/80">الجمهورية العربية السورية</p>
-                </div>
-              </motion.div>
+
 
               {/* Call to Action */}
               <motion.div 
