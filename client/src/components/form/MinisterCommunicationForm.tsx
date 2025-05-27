@@ -213,7 +213,7 @@ const MinisterCommunicationForm: React.FC = () => {
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-lg h-12 sm:h-14 text-base animate-smooth font-ibm">
+                            <SelectTrigger className="focus:ring-2 focus:ring-primary focus:border-primary border-gray-300 rounded-lg h-12 sm:h-14 text-base animate-smooth font-ibm">
                               <SelectValue placeholder="اختر تصنيف الرسالة" />
                             </SelectTrigger>
                           </FormControl>

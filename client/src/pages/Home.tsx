@@ -56,7 +56,7 @@ const Home: React.FC = () => {
       <main className="flex-grow">
         {/* Banner Section with animation */}
         <motion.section 
-          className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-10 sm:py-12 md:py-16 lg:py-20 overflow-hidden font-ibm relative"
+          className="bg-primary py-10 sm:py-12 md:py-16 lg:py-20 overflow-hidden font-ibm relative"
           variants={bannerVariants}
           initial="hidden"
           animate="visible"
