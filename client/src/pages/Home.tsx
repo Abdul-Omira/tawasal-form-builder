@@ -114,27 +114,40 @@ const Home: React.FC = () => {
 
               {/* Minister's Message */}
               <motion.div 
-                className="mb-4 sm:mb-6 md:mb-8 max-w-4xl mx-auto text-xs sm:text-sm md:text-base lg:text-lg font-ibm bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 lg:p-8 border border-white/20 mx-2 sm:mx-4"
+                className="mb-6 sm:mb-8 md:mb-10 max-w-5xl mx-auto font-ibm mx-2 sm:mx-4"
                 variants={textVariants}
               >
-                <CalligraphyAnimation 
-                  text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
-                  duration={0.015}
-                  delay={0.5}
-                  className="inline-block font-ibm leading-relaxed"
-                />
+                <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 border border-white/30 shadow-2xl">
+                  {/* Decorative Quote Icon */}
+                  <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/20">
+                    <svg className="w-8 h-8 sm:w-12 sm:h-12" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
+                    </svg>
+                  </div>
+                  
+                  <div className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed text-white/95 text-center">
+                    <CalligraphyAnimation 
+                      text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
+                      duration={0.015}
+                      delay={0.5}
+                      className="inline-block font-ibm"
+                    />
+                  </div>
+                </div>
               </motion.div>
               
               {/* Minister's Signature */}
               <motion.div 
-                className="text-center text-white/95 font-ibm bg-white/5 backdrop-blur-sm rounded-lg p-3 sm:p-4 md:p-6 inline-block border border-white/10 mx-2 w-full max-w-sm sm:max-w-md"
+                className="text-center font-ibm mx-2 sm:mx-4 mb-6 sm:mb-8"
                 variants={textVariants}
               >
-                <div className="text-xs sm:text-sm md:text-base leading-relaxed">
-                  <p className="mb-1 sm:mb-2 text-white/80">مع أطيب التمنيات،</p>
-                  <p className="font-semibold text-base sm:text-lg md:text-xl text-white">عبدالسلام هيكل</p>
-                  <p className="text-xs sm:text-sm md:text-base text-white/90">وزير الاتصالات وتقانة المعلومات</p>
-                  <p className="text-xs text-white/80">الجمهورية العربية السورية</p>
+                <div className="inline-block bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/40 shadow-xl">
+                  <div className="text-white/95 leading-relaxed">
+                    <p className="mb-2 sm:mb-3 text-sm sm:text-base text-white/80 italic">مع أطيب التمنيات،</p>
+                    <p className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white mb-1 sm:mb-2">عبدالسلام هيكل</p>
+                    <p className="text-sm sm:text-base md:text-lg text-white/90 font-medium">وزير الاتصالات وتقانة المعلومات</p>
+                    <p className="text-xs sm:text-sm text-white/80 mt-1">الجمهورية العربية السورية</p>
+                  </div>
                 </div>
               </motion.div>
 
