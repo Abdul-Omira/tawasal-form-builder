@@ -342,16 +342,14 @@ const Admin: React.FC = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-right">معرف الطلب</TableHead>
-                      <TableHead className="text-right">اسم المستخدم</TableHead>
-                      <TableHead className="text-right">اسم الشركة</TableHead>
-                      <TableHead className="text-right">رقم الهاتف</TableHead>
+                      <TableHead className="text-right">معرف الرسالة</TableHead>
+                      <TableHead className="text-right">الاسم الكامل</TableHead>
+                      <TableHead className="text-right">نوع التواصل</TableHead>
+                      <TableHead className="text-right">موضوع الرسالة</TableHead>
                       <TableHead className="text-right">البريد الإلكتروني</TableHead>
-                      <TableHead className="text-right">الشركات المطلوبة</TableHead>
-                      <TableHead className="text-right">التحديات المرتبطة</TableHead>
-                      <TableHead className="text-right">روابط الشركات</TableHead>
-                      <TableHead className="text-right">معلومات الجهاز</TableHead>
-                      <TableHead className="text-right">تاريخ التقديم</TableHead>
+                      <TableHead className="text-right">رقم الهاتف</TableHead>
+                      <TableHead className="text-right">المرفقات</TableHead>
+                      <TableHead className="text-right">تاريخ الإرسال</TableHead>
                       <TableHead className="text-right">الحالة</TableHead>
                       <TableHead className="text-right">الإجراءات</TableHead>
                     </TableRow>
@@ -372,47 +370,29 @@ const Admin: React.FC = () => {
                       submissionsData.data.map((submission) => (
                         <TableRow key={submission.id}>
                           <TableCell className="whitespace-nowrap">
-                            <div className="text-sm text-foreground">SYR-{submission.id}</div>
+                            <div className="text-sm text-foreground">MSG-{submission.id}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            <div className="text-sm text-foreground">{submission.contactName}</div>
+                            <div className="text-sm text-foreground">{submission.fullName}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            <div className="text-sm text-foreground">{submission.businessName || <span className="text-muted-foreground text-xs">غير محدد</span>}</div>
+                            <div className="text-sm text-foreground">{submission.communicationType}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            <div className="text-sm text-foreground">{submission.phone}</div>
+                            <div className="text-sm text-foreground">{submission.subject}</div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
                             <div className="text-sm text-foreground">{submission.email}</div>
                           </TableCell>
-                          <TableCell className="whitespace-normal">
-                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ minWidth: '200px', maxWidth: '250px' }}>
-                              {submission.challengeDetails || <span className="text-muted-foreground text-xs">—</span>}
-                            </div>
+                          <TableCell className="whitespace-nowrap">
+                            <div className="text-sm text-foreground">{submission.phone || <span className="text-muted-foreground text-xs">غير محدد</span>}</div>
                           </TableCell>
                           <TableCell className="whitespace-normal">
-                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ minWidth: '150px', maxWidth: '200px' }}>
-                              {submission.sanctionedCompanyName || <span className="text-muted-foreground text-xs">—</span>}
-                            </div>
-                          </TableCell>
-                          <TableCell className="whitespace-normal">
-                            <div className="text-sm text-foreground max-w-md break-words overflow-hidden text-ellipsis" style={{ maxWidth: '150px' }}>
-                              {submission.sanctionedCompanyLink || <span className="text-muted-foreground text-xs">—</span>}
-                            </div>
-                          </TableCell>
-                          <TableCell className="whitespace-normal">
-                            <div className="text-sm text-foreground max-w-xs">
-                              {submission.additionalComments && submission.additionalComments.includes('IP:') ? (
-                                <div>
-                                  {submission.additionalComments.split('\n').map((line, idx) => (
-                                    <div key={idx} className={idx > 0 ? "mt-1" : ""}>
-                                      {line}
-                                    </div>
-                                  ))}
-                                </div>
+                            <div className="text-sm text-foreground">
+                              {submission.attachmentUrl ? (
+                                <span className="text-green-600">نعم</span>
                               ) : (
-                                <span className="text-muted-foreground text-xs">بيانات الجهاز غير متوفرة</span>
+                                <span className="text-muted-foreground text-xs">لا</span>
                               )}
                             </div>
                           </TableCell>
