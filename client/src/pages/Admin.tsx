@@ -204,8 +204,8 @@ const Admin: React.FC = () => {
     <div className="min-h-screen flex flex-col">
       <PageSEO 
         pageName="admin"
-        customTitle="لوحة تحكم المشرف - إدارة الطلبات"
-        customDescription="لوحة تحكم إدارة طلبات الشركات المسجلة في منصة وزارة الاتصالات وتقانة المعلومات وإدارة البيانات والتصدير"
+        customTitle="لوحة تحكم المشرف - إدارة رسائل المواطنين"
+        customDescription="لوحة تحكم إدارة رسائل المواطنين في منصة التواصل المباشر مع وزير الاتصالات وتقانة المعلومات"
       />
       <SimpleHeader />
       
@@ -288,7 +288,7 @@ const Admin: React.FC = () => {
             <TabsList className="w-full md:w-auto grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-white">
               <TabsTrigger value="submissions" className="data-[state=active]:bg-primary data-[state=active]:text-white">
                 <FilePlusIcon className="ml-2 h-4 w-4" />
-                طلبات الشركات
+                رسائل المواطنين
               </TabsTrigger>
               <TabsTrigger value="statistics" className="data-[state=active]:bg-primary data-[state=active]:text-white">
                 <BarChart4Icon className="ml-2 h-4 w-4" />
@@ -302,7 +302,7 @@ const Admin: React.FC = () => {
             
             <TabsContent value="submissions" className="p-6">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <h3 className="text-xl font-semibold text-foreground">طلبات الشركات</h3>
+                <h3 className="text-xl font-semibold text-foreground">رسائل المواطنين</h3>
                 <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
                   <div className="relative w-full md:w-64">
                     <SearchIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
