@@ -61,15 +61,33 @@ const Home: React.FC = () => {
           initial="hidden"
           animate="visible"
         >
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {/* Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            {/* Subtle geometric shapes */}
+            <div className="absolute top-10 right-10 w-32 h-32 bg-white/5 rounded-full blur-xl"></div>
+            <div className="absolute bottom-20 left-10 w-48 h-48 bg-white/3 rounded-full blur-2xl"></div>
+            <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-white/4 rounded-full blur-lg"></div>
+            
+            {/* Flowing lines */}
+            <svg className="absolute inset-0 w-full h-full opacity-5" viewBox="0 0 400 300" preserveAspectRatio="none">
               <defs>
-                <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
-                </pattern>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="white" stopOpacity="0.1"/>
+                  <stop offset="100%" stopColor="white" stopOpacity="0.3"/>
+                </linearGradient>
               </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
+              <path 
+                d="M0,150 Q100,50 200,150 T400,150" 
+                fill="none" 
+                stroke="url(#lineGradient)" 
+                strokeWidth="2"
+              />
+              <path 
+                d="M0,200 Q150,100 300,200 T400,200" 
+                fill="none" 
+                stroke="url(#lineGradient)" 
+                strokeWidth="1.5"
+              />
             </svg>
           </div>
 
