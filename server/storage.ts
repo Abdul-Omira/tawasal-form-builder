@@ -224,14 +224,15 @@ export class DatabaseStorage implements IStorage {
         fullName: communication.fullName,
         email: communication.email,
         phone: communication.phone,
-        governorate: communication.governorate,
         communicationType: communication.communicationType,
         subject: communication.subject,
         message: communication.message,
         attachmentUrl: communication.attachmentUrl,
+        attachmentName: communication.attachmentName,
+        attachmentType: communication.attachmentType,
+        attachmentSize: communication.attachmentSize,
         captchaAnswer: communication.captchaAnswer,
         consentToDataUse: communication.consentToDataUse,
-        wantsUpdates: communication.wantsUpdates ?? false,
         status: "pending",
         createdAt: new Date()
       };
