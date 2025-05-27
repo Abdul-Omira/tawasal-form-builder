@@ -104,7 +104,7 @@ const Home: React.FC = () => {
                 variants={textVariants}
               >
                 <FancyCalligraphyAnimation 
-                  text="التواصل مع وزير الاتصالات وتقانة المعلومات"
+                  text="صفحة التواصل مع وزير الاتصالات وتقانة المعلومات"
                   duration={0.06}
                   delay={0.2}
                   className="inline-block font-ibm"
