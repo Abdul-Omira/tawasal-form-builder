@@ -100,7 +100,7 @@ const Home: React.FC = () => {
             >
               {/* Main Title */}
               <motion.div 
-                className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 animate-theme font-ibm leading-tight px-2"
+                className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 animate-theme font-ibm leading-tight px-2"
                 variants={textVariants}
               >
                 <FancyCalligraphyAnimation 
