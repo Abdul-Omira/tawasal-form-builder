@@ -21,21 +21,18 @@ import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 
 // Create a schema for the form
-const CommunicationFormSchema = z.object({
-  fullName: z.string().min(1, { message: "الاسم الكامل مطلوب" }),
-  phone: z.string().min(1, { message: "رقم الهاتف مطلوب" }).refine(isValidPhone, { message: "رقم الهاتف غير صالح" }),
-  email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
-  governorate: z.string().min(1, { message: "المحافظة مطلوبة" }),
-  communicationType: z.string().min(1, { message: "نوع التواصل مطلوب" }),
+const MinisterCommunicationSchema = z.object({
+  communicationType: z.string().min(1, { message: "تصنيف الرسالة مطلوب" }),
   subject: z.string().min(1, { message: "الموضوع مطلوب" }),
-  message: z.string().min(10, { message: "الرسالة مطلوبة ويجب أن تكون 10 أحرف على الأقل" }),
+  message: z.string().min(10, { message: "نص الرسالة مطلوب ويجب أن يكون 10 أحرف على الأقل" }),
+  fullName: z.string().min(1, { message: "الاسم مطلوب" }),
+  email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
+  phone: z.string().optional(),
   attachmentUrl: z.string().optional(),
   attachmentName: z.string().optional(),
   attachmentType: z.string().optional(),
   attachmentSize: z.number().optional(),
-  captchaAnswer: z.string().min(1, { message: "يرجى التحقق من أنك لست روبوت" }),
-  consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام البيانات" }),
-  wantsUpdates: z.boolean().default(false),
+  consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام المعلومات" }),
 });
 
 // Animation variants
@@ -81,23 +78,20 @@ const CitizenCommunicationForm: React.FC = () => {
   const [fileUploadError, setFileUploadError] = useState<string | null>(null);
 
   // Form handling
-  const form = useForm<z.infer<typeof CommunicationFormSchema>>({
-    resolver: zodResolver(CommunicationFormSchema),
+  const form = useForm<z.infer<typeof MinisterCommunicationSchema>>({
+    resolver: zodResolver(MinisterCommunicationSchema),
     defaultValues: {
-      fullName: '',
-      phone: '',
-      email: '',
-      governorate: '',
       communicationType: '',
       subject: '',
       message: '',
+      fullName: '',
+      email: '',
+      phone: '',
       attachmentUrl: '',
       attachmentName: '',
       attachmentType: '',
       attachmentSize: undefined,
-      captchaAnswer: '',
       consentToDataUse: false,
-      wantsUpdates: false,
     }
   });
   

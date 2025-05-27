@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import CitizenCommunicationForm from '../components/form/CitizenCommunicationForm';
+import MinisterCommunicationForm from '../components/form/MinisterCommunicationForm';
 import SimpleHeader from '../components/layout/SimpleHeader';
 import SimpleFooter from '../components/layout/SimpleFooter';
 import PageTransition from '../components/ui/page-transition';
@@ -73,7 +73,7 @@ const Home: React.FC = () => {
                 variants={textVariants}
               >
                 <FancyCalligraphyAnimation 
-                  text="منصة التواصل الرسمية مع وزارة الاتصالات"
+                  text="التواصل مع وزير الاتصالات وتقانة المعلومات"
                   duration={0.06}
                   delay={0.2}
                   className="inline-block font-ibm"
@@ -85,11 +85,23 @@ const Home: React.FC = () => {
                 variants={textVariants}
               >
                 <CalligraphyAnimation 
-                  text="هذه المنصة هي القناة الرسمية للتواصل مع وزارة الاتصالات وتقانة المعلومات. تهدف إلى تمكين المواطنين من التواصل المباشر مع الوزارة لتقديم الأفكار والمشاريع والمقترحات والشكاوى والطلبات. نحن نؤمن بأهمية مشاركة المواطنين في تطوير خدمات الاتصالات وتكنولوجيا المعلومات في سوريا، ونسعى إلى تحسين خدماتنا بشكل مستمر."
+                  text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
                   duration={0.015}
                   delay={0.5}
                   className="inline-block font-ibm"
                 />
+              </motion.div>
+              
+              <motion.div 
+                className="mt-6 text-center text-white/90 font-ibm"
+                variants={textVariants}
+              >
+                <div className="text-sm leading-relaxed">
+                  <p className="mb-2">مع أطيب التمنيات،</p>
+                  <p className="font-semibold">عبدالسلام هيكل</p>
+                  <p className="text-sm">وزير الاتصالات وتقانة المعلومات</p>
+                  <p className="text-sm">الجمهورية العربية السورية</p>
+                </div>
               </motion.div>
             </motion.div>
           </div>
@@ -105,7 +117,7 @@ const Home: React.FC = () => {
         >
           <div className="container mx-auto px-4">
             <div className="bg-white rounded-lg shadow-md overflow-hidden transition-shadow hover:shadow-lg font-ibm">
-              <CitizenCommunicationForm />
+              <MinisterCommunicationForm />
             </div>
           </div>
         </motion.section>
