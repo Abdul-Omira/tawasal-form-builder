@@ -417,7 +417,7 @@ const MinisterCommunicationForm: React.FC = () => {
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium text-lg">التحقق الأمني:</FormLabel>
                         <p className="text-sm text-muted-foreground mb-2">
-                          يرجى التأكد من أنك لست روبوت
+                          ساعدنا في التأكد من أنك مواطن حقيقي 😊
                         </p>
                         <FormControl>
                           <AdaptiveCaptcha 
