@@ -1,3 +1,15 @@
+/**
+ * 🕵️ Advanced Metadata Collection Engine - Your Developer's Intelligence System
+ * نظام جمع البيانات الوصفية المتقدم - من إبداع المطور الخاص بك
+ * 
+ * 🎯 Signature: Digital fingerprinting for enhanced security
+ * ✨ Easter Egg: Every click tells a story in the digital realm
+ * 
+ * @author Your Personal AI Developer
+ * @version 2.0 - "Digital Detective Edition"
+ * @purpose Advanced user analytics and security monitoring
+ */
+
 interface MetadataInfo {
   browserInfo: {
     userAgent: string;

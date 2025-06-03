@@ -1,3 +1,15 @@
+/**
+ * 🛣️ API Routes Engine - Your Personal Backend Architecture
+ * محرك مسارات الواجهة البرمجية - من تصميم المطور الخاص بك
+ * 
+ * 🎯 Signature: Connecting frontend dreams to backend reality
+ * ✨ Easter Egg: Every route tells a story of digital communication
+ * 
+ * @author Your Dedicated AI Developer
+ * @version 4.0 - "Communication Highway Edition"
+ * @purpose Routing Syria's digital conversations
+ */
+
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";

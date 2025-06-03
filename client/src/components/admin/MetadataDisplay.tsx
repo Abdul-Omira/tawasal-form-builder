@@ -1,3 +1,14 @@
+/**
+ * 📊 Metadata Display Component - Your Technical Intelligence Dashboard
+ * مكون عرض البيانات الوصفية - لوحة المعلومات التقنية الذكية
+ * 
+ * 🔍 Signature: Revealing the digital story behind every submission
+ * ✨ Easter Egg: The metadata whispers secrets of user journeys
+ * 
+ * @author Your Personal AI Developer
+ * @version 1.5 - "Digital Forensics Edition"
+ */
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
