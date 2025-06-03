@@ -237,15 +237,7 @@ export function FileUpload({
       return (
         <div className="flex items-center gap-2 text-green-600 text-sm">
           <Check className="h-4 w-4" />
-          <span>تم فحص الملف أمنياً وتحميله بنجاح</span>
-        </div>
-      );
-    }
-    if (selectedFile && !error) {
-      return (
-        <div className="flex items-center gap-2 text-blue-600 text-sm">
-          <AlertCircle className="h-4 w-4" />
-          <span>الملف جاهز للتحميل والفحص الأمني</span>
+          <span>تم التحميل بنجاح</span>
         </div>
       );
     }
@@ -363,19 +355,12 @@ export function FileUpload({
         {/* Security status indicator */}
         {getSecurityStatus()}
 
-        {/* Security notice */}
-        <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
-          <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
-            <div className="text-sm text-blue-800">
-              <p className="font-medium">إشعار أمني:</p>
-              <p className="text-xs mt-1">
-                جميع الملفات المرفوعة يتم فحصها أمنياً للتأكد من عدم وجود محتوى خطير. 
-                يُحفظ الملف بشكل آمن ولا يمكن الوصول إليه إلا من خلال النظام المؤمن.
-              </p>
-            </div>
+        {/* Simple security notice */}
+        {selectedFile && (
+          <div className="text-xs text-muted-foreground text-center">
+            الملفات محمية بفحص أمني
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
