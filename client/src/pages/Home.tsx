@@ -117,25 +117,59 @@ const Home: React.FC = () => {
                 className="mb-6 sm:mb-8 md:mb-10 max-w-5xl mx-auto font-ibm mx-2 sm:mx-4"
                 variants={textVariants}
               >
-                <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-8 sm:p-10 md:p-12 border border-white/30 shadow-2xl">
-                  <div className="text-white/95 leading-relaxed text-right">
-                    {/* Main Message */}
-                    <div className="text-base mb-8">
-                      <CalligraphyAnimation 
-                        text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
-                        duration={0.015}
-                        delay={0.5}
-                        className="inline-block font-ibm"
-                      />
+                <div className="relative overflow-hidden">
+                  {/* Creative geometric background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-green-600/15 to-teal-700/20 rounded-3xl"></div>
+                  
+                  {/* Animated floating shapes */}
+                  <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+                  <div className="absolute bottom-10 left-10 w-16 h-16 bg-white/8 rounded-full blur-lg animate-pulse delay-1000"></div>
+                  <div className="absolute top-1/2 left-1/4 w-12 h-12 bg-white/6 rounded-full blur-md animate-pulse delay-500"></div>
+                  
+                  {/* Main content container */}
+                  <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl p-8 sm:p-10 md:p-12 border border-white/20 shadow-2xl">
+                    {/* Elegant top accent */}
+                    <div className="absolute top-0 right-1/4 left-1/4 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"></div>
+                    
+                    <div className="text-white/95 leading-relaxed text-right">
+                      {/* Main Message with creative styling */}
+                      <div className="relative">
+                        <div className="text-base mb-8 relative z-10">
+                          <CalligraphyAnimation 
+                            text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
+                            duration={0.015}
+                            delay={0.5}
+                            className="inline-block font-ibm"
+                          />
+                        </div>
+                        
+                        {/* Creative divider */}
+                        <div className="flex items-center justify-center mb-6">
+                          <div className="flex-1 h-px bg-gradient-to-r from-transparent to-white/30"></div>
+                          <div className="px-4">
+                            <div className="w-2 h-2 bg-white/40 rounded-full"></div>
+                          </div>
+                          <div className="flex-1 h-px bg-gradient-to-l from-transparent to-white/30"></div>
+                        </div>
+                        
+                        {/* Signature with creative layout */}
+                        <div className="text-base space-y-3">
+                          <p className="text-white/80 italic text-center">مع أطيب التمنيات،</p>
+                          
+                          {/* Minister name with special background */}
+                          <div className="relative text-center">
+                            <div className="absolute inset-0 bg-white/5 rounded-xl blur-sm"></div>
+                            <p className="relative text-white font-medium py-2 px-4">عبدالسلام هيكل</p>
+                          </div>
+                          
+                          <p className="text-white/90 text-center">وزير الاتصالات وتقانة المعلومات</p>
+                          <p className="text-white/80 text-center text-sm">الجمهورية العربية السورية</p>
+                        </div>
+                      </div>
                     </div>
                     
-                    {/* Simple Signature */}
-                    <div className="text-base space-y-2 border-t border-white/20 pt-6">
-                      <p className="text-white/80 italic">مع أطيب التمنيات،</p>
-                      <p className="text-white font-medium">عبدالسلام هيكل</p>
-                      <p className="text-white/90">وزير الاتصالات وتقانة المعلومات</p>
-                      <p className="text-white/80">الجمهورية العربية السورية</p>
-                    </div>
+                    {/* Bottom accent */}
+                    <div className="absolute bottom-0 right-1/3 left-1/3 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full"></div>
                   </div>
                 </div>
               </motion.div>
