@@ -20,6 +20,8 @@ import { queryClient } from '@/lib/queryClient';
 import { CitizenCommunication } from '@shared/schema';
 import ChangePasswordForm from '@/components/auth/ChangePasswordForm';
 import PageSEO from '@/components/seo/PageSEO';
+import { MetadataDisplay } from '@/components/admin/MetadataDisplay';
+import { AttachmentPreview } from '@/components/admin/AttachmentPreview';
 
 interface SubmissionsResponse {
   data: CitizenCommunication[];
@@ -571,45 +573,12 @@ const Admin: React.FC = () => {
                 {/* Basic Information */}
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">معلومات الشركة</CardTitle>
+                    <CardTitle className="text-lg">معلومات المرسل</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <Label className="font-semibold">اسم الشركة</Label>
-                      <div className="text-foreground">{selectedSubmission.businessName}</div>
-                    </div>
-                    <div>
-                      <Label className="font-semibold">نوع النشاط</Label>
-                      <div className="text-foreground">{selectedSubmission.businessType}</div>
-                    </div>
-                    <div>
-                      <Label className="font-semibold">عدد الموظفين</Label>
-                      <div className="text-foreground">{selectedSubmission.employeesCount}</div>
-                    </div>
-                    <div>
-                      <Label className="font-semibold">تاريخ التأسيس</Label>
-                      <div className="text-foreground">{selectedSubmission.establishmentDate}</div>
-                    </div>
-                    <div>
-                      <Label className="font-semibold">رقم التسجيل</Label>
-                      <div className="text-foreground">{selectedSubmission.registrationNumber}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Contact Information */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">معلومات الاتصال</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div>
-                      <Label className="font-semibold">اسم المسؤول</Label>
-                      <div className="text-foreground">{selectedSubmission.contactName}</div>
-                    </div>
-                    <div>
-                      <Label className="font-semibold">المنصب</Label>
-                      <div className="text-foreground">{selectedSubmission.position}</div>
+                      <Label className="font-semibold">الاسم الكامل</Label>
+                      <div className="text-foreground">{selectedSubmission.fullName}</div>
                     </div>
                     <div>
                       <Label className="font-semibold">البريد الإلكتروني</Label>
@@ -617,122 +586,54 @@ const Admin: React.FC = () => {
                     </div>
                     <div>
                       <Label className="font-semibold">رقم الهاتف</Label>
-                      <div className="text-foreground">{selectedSubmission.phone}</div>
+                      <div className="text-foreground">{selectedSubmission.phone || "غير محدد"}</div>
                     </div>
-                    {selectedSubmission.alternativeContact && (
-                      <div>
-                        <Label className="font-semibold">رقم هاتف بديل</Label>
-                        <div className="text-foreground">{selectedSubmission.alternativeContact}</div>
-                      </div>
-                    )}
                     <div>
-                      <Label className="font-semibold">العنوان</Label>
-                      <div className="text-foreground">
-                        {selectedSubmission.address}, {selectedSubmission.governorate}
-                      </div>
+                      <Label className="font-semibold">نوع الرسالة</Label>
+                      <div className="text-foreground">{selectedSubmission.communicationType}</div>
                     </div>
-                    {selectedSubmission.website && (
-                      <div>
-                        <Label className="font-semibold">الموقع الإلكتروني</Label>
-                        <div className="text-foreground">{selectedSubmission.website}</div>
-                      </div>
-                    )}
+                    <div>
+                      <Label className="font-semibold">موضوع الرسالة</Label>
+                      <div className="text-foreground">{selectedSubmission.subject}</div>
+                    </div>
                   </CardContent>
                 </Card>
+                
+                {/* Attachment Preview */}
+                <AttachmentPreview
+                  attachmentUrl={selectedSubmission.attachmentUrl || undefined}
+                  attachmentName={selectedSubmission.attachmentName || undefined}
+                  attachmentType={selectedSubmission.attachmentType || undefined}
+                  attachmentSize={selectedSubmission.attachmentSize || undefined}
+                />
               </div>
               
-              {/* Challenges and Sanctions Information */}
+              {/* Message Section */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">معلومات العقوبات والتحديات</CardTitle>
+                  <CardTitle className="text-lg">محتوى الرسالة</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="font-semibold">التحديات</Label>
-                    <div className="text-foreground mt-1">
-                      {selectedSubmission.challenges && selectedSubmission.challenges.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {selectedSubmission.challenges.map((challenge, index) => (
-                            <Badge key={index} className="bg-amber-100 text-amber-800 hover:bg-amber-200">
-                              {getChallengeLabel(challenge)}
-                            </Badge>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">لم يتم تحديد تحديات</span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="bg-amber-50 p-4 rounded-md border border-amber-200">
-                    <Label className="font-semibold text-lg text-primary pb-2 block border-b border-amber-200 mb-3">
-                      الشركات المتأثرة بالإجراءات الأميركية
-                    </Label>
-                    
-                    <div className="space-y-3">
-                      <div>
-                        <Label className="font-semibold text-primary/90">اسم الشركات التي ترغب بتسريع إتاحتها للخدمات في سورية</Label>
-                        <div className="text-foreground p-3 bg-white rounded-md mt-1 shadow-sm">
-                          {selectedSubmission.challengeDetails || "لا توجد تفاصيل"}
-                        </div>
-                      </div>
-                      
-                      {selectedSubmission.sanctionedCompanyName && (
-                        <div>
-                          <Label className="font-semibold text-primary/90">التحدي الرئيسي للشركات المذكورة</Label>
-                          <div className="text-foreground p-3 bg-white rounded-md mt-1 shadow-sm">
-                            {selectedSubmission.sanctionedCompanyName}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {selectedSubmission.sanctionedCompanyLink && (
-                        <div>
-                          <Label className="font-semibold text-primary/90">روابط الشركات</Label>
-                          <div className="text-foreground p-3 bg-white rounded-md mt-1 shadow-sm">
-                            {selectedSubmission.sanctionedCompanyLink}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label className="font-semibold">الاحتياجات التقنية</Label>
-                    <div className="text-foreground mt-1">
-                      {selectedSubmission.techNeeds && selectedSubmission.techNeeds.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {selectedSubmission.techNeeds.map((need, index) => (
-                            <Badge key={index} className="bg-blue-100 text-blue-800 hover:bg-blue-200">
-                              {getTechNeedLabel(need)}
-                            </Badge>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">لم يتم تحديد احتياجات تقنية</span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {selectedSubmission.techDetails && (
+                <CardContent>
+                  <div className="text-foreground whitespace-pre-wrap">{selectedSubmission.message}</div>
+                </CardContent>
+              </Card>
+              
+              {/* Status and Metadata */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">الحالة والتحديثات</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
                     <div>
-                      <Label className="font-semibold">تفاصيل الاحتياجات التقنية</Label>
-                      <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
-                        {selectedSubmission.techDetails}
+                      <Label className="font-semibold">الحالة الحالية</Label>
+                      <div className="mt-1">
+                        <Badge variant={selectedSubmission.status === 'completed' ? 'default' : 
+                                       selectedSubmission.status === 'rejected' ? 'destructive' : 'secondary'}>
+                          {getArabicStatus(selectedSubmission.status)}
+                        </Badge>
                       </div>
                     </div>
-                  )}
-                  
-                  {selectedSubmission.additionalComments && (
-                    <div>
-                      <Label className="font-semibold">ملاحظات إضافية</Label>
-                      <div className="text-foreground p-2 bg-muted/30 rounded mt-1">
-                        {selectedSubmission.additionalComments}
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="font-semibold">الموافقة على استخدام البيانات</Label>
                       <div className="text-foreground">
@@ -741,78 +642,19 @@ const Admin: React.FC = () => {
                           <Badge variant="outline" className="bg-red-100 text-red-800">لا</Badge>}
                       </div>
                     </div>
-                    
                     <div>
-                      <Label className="font-semibold">يرغب في تلقي تحديثات</Label>
-                      <div className="text-foreground">
-                        {selectedSubmission.wantsUpdates ? 
-                          <Badge variant="outline" className="bg-green-100 text-green-800">نعم</Badge> : 
-                          <Badge variant="outline" className="bg-red-100 text-red-800">لا</Badge>}
-                      </div>
+                      <Label className="font-semibold">تاريخ الإرسال</Label>
+                      <div className="text-foreground">{formatDate(selectedSubmission.createdAt)}</div>
                     </div>
-                  </div>
-                  
-                  <div>
-                    <Label className="font-semibold">الحالة الحالية</Label>
-                    <div className="mt-1">
-                      {getStatusBadge(selectedSubmission.status)}
-                    </div>
-                  </div>
-                  
-                  {selectedSubmission.attachmentUrl && (
-                    <div>
-                      <Label className="font-semibold">المرفقات</Label>
-                      <div className="mt-2 p-3 bg-muted/30 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="text-2xl">
-                            {selectedSubmission.attachmentType?.includes('image') ? '📷' : 
-                             selectedSubmission.attachmentType?.includes('pdf') ? '📄' : '📎'}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium text-foreground">
-                              {selectedSubmission.attachmentName || 'ملف مرفق'}
-                            </div>
-                            {selectedSubmission.attachmentType && (
-                              <div className="text-sm text-muted-foreground">
-                                نوع الملف: {selectedSubmission.attachmentType}
-                              </div>
-                            )}
-                            {selectedSubmission.attachmentSize && (
-                              <div className="text-sm text-muted-foreground">
-                                الحجم: {(selectedSubmission.attachmentSize / 1024 / 1024).toFixed(2)} MB
-                              </div>
-                            )}
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            asChild
-                          >
-                            <a 
-                              href={selectedSubmission.attachmentUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
-                              تحميل
-                            </a>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  </CardContent>
+                </Card>
+                
+                {/* Metadata Display */}
+                <div>
+                  <MetadataDisplay communication={selectedSubmission} />
+                </div>
+              </div>
 
-                  <div>
-                    <Label className="font-semibold">تاريخ التقديم</Label>
-                    <div className="text-foreground">
-                      {new Date(selectedSubmission.createdAt).toLocaleDateString('ar-SY')}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           )}
           
