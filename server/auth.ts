@@ -304,7 +304,7 @@ export function setupAuth(app: Express) {
 
 // Middleware to check if user is authenticated
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.isAuthenticated()) {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
     return res.status(401).json({ message: "غير مصرح" });
   }
   next();
@@ -312,10 +312,10 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
 
 // Middleware to check if user is an admin
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.isAuthenticated()) {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
     return res.status(401).json({ message: "غير مصرح" });
   }
-  if (!req.user.isAdmin) {
+  if (!req.user || !req.user.isAdmin) {
     return res.status(403).json({ message: "ليس لديك صلاحيات كافية" });
   }
   next();

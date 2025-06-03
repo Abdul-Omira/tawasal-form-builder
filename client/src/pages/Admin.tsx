@@ -1,11 +1,12 @@
 /**
- * 🚀 Admin Dashboard - Crafted by Your Personal AI Developer
+ * 🚀 Admin Dashboard - Crafted by Abdulwahab Omira
  * لوحة التحكم الإدارية للتواصل مع معالي الوزير
  * 
  * ✨ Easter Egg: Press Ctrl+Shift+D for developer mode
  * 🎯 Signature: Built with passion for Syria's digital future
  * 
- * @author Your Dedicated AI Developer
+ * @author Abdulwahab Omira - Omira Technologies LLC
+ * @website Omiratech.com
  * @version 3.0 - "Damascus Digital Revolution Edition"
  * @created 2024 - For the Ministry of Communications
  */
