@@ -117,34 +117,10 @@ const Home: React.FC = () => {
                 className="mb-6 sm:mb-8 md:mb-10 max-w-5xl mx-auto font-ibm mx-2 sm:mx-4"
                 variants={textVariants}
               >
-                <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 border border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:border-white/40">
-                  {/* Enhanced Decorative Elements */}
-                  <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/20">
-                    <svg className="w-8 h-8 sm:w-12 sm:h-12" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
-                    </svg>
-                  </div>
-                  
-                  {/* Elegant decorative corner elements */}
-                  <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20">
-                    <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-white/20 rounded-tr-lg"></div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-20 sm:h-20">
-                    <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-white/20 rounded-bl-lg"></div>
-                  </div>
-                  
-                  {/* Subtle pattern overlay */}
-                  <div className="absolute inset-0 opacity-5">
-                    <div className="w-full h-full" style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                      backgroundSize: '30px 30px'
-                    }}>
-                    </div>
-                  </div>
-                  
-                  <div className="relative z-10 text-white/95 leading-relaxed text-right">
+                <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-8 sm:p-10 md:p-12 border border-white/30 shadow-2xl">
+                  <div className="text-white/95 leading-relaxed text-right">
                     {/* Main Message */}
-                    <div className="text-base mb-8 relative">
+                    <div className="text-base mb-8">
                       <CalligraphyAnimation 
                         text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
                         duration={0.015}
@@ -153,33 +129,12 @@ const Home: React.FC = () => {
                       />
                     </div>
                     
-                    {/* Enhanced Signature with decorative elements */}
-                    <div className="relative">
-                      {/* Decorative line above signature */}
-                      <div className="w-24 h-px bg-gradient-to-l from-white/40 to-transparent mb-4 mr-auto"></div>
-                      
-                      <div className="text-base space-y-2 relative">
-                        <p className="text-white/80 italic font-light">مع أطيب التمنيات،</p>
-                        
-                        {/* Minister name with special styling */}
-                        <div className="relative">
-                          <p className="text-white font-medium text-lg relative">
-                            عبدالسلام هيكل
-                            {/* Subtle underline decoration */}
-                            <span className="absolute bottom-0 right-0 w-16 h-px bg-gradient-to-l from-white/30 to-transparent"></span>
-                          </p>
-                        </div>
-                        
-                        <p className="text-white/90 font-medium">وزير الاتصالات وتقانة المعلومات</p>
-                        <p className="text-white/80 text-sm">الجمهورية العربية السورية</p>
-                        
-                        {/* Official seal icon */}
-                        <div className="absolute bottom-0 left-0 opacity-10">
-                          <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                          </svg>
-                        </div>
-                      </div>
+                    {/* Simple Signature */}
+                    <div className="text-base space-y-2 border-t border-white/20 pt-6">
+                      <p className="text-white/80 italic">مع أطيب التمنيات،</p>
+                      <p className="text-white font-medium">عبدالسلام هيكل</p>
+                      <p className="text-white/90">وزير الاتصالات وتقانة المعلومات</p>
+                      <p className="text-white/80">الجمهورية العربية السورية</p>
                     </div>
                   </div>
                 </div>
