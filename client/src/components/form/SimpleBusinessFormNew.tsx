@@ -18,6 +18,7 @@ import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
+import { getMetadataForSubmission } from '@/lib/metadataCapture';
 
 // Create a simplified schema for the form
 const SimpleFormSchema = z.object({
@@ -64,9 +65,12 @@ const SimpleBusinessFormNew: React.FC = () => {
     mutationFn: async (data: any) => {
       console.log("Submitting form data:", data);
       
+      // Extract clientMetadata if present
+      const { clientMetadata, ...formData } = data;
+      
       // Need to add these fields to comply with the backend schema
       const formattedData = {
-        ...data,
+        ...formData,
         employeesCount: "1-10", // default value
         address: "سوريا", // default value
         governorate: "دمشق", // default value
@@ -80,12 +84,14 @@ const SimpleBusinessFormNew: React.FC = () => {
         techDetails: "",
         additionalComments: "",
         wantsUpdates: true,
+        // Include metadata if available
+        ...(clientMetadata && { clientMetadata })
       };
       
       console.log("Formatted data:", formattedData);
       
       try {
-        const response = await apiRequest('POST', '/api/business-submissions', formattedData);
+        const response = await apiRequest('/api/business-submissions', 'POST', formattedData);
         const jsonResponse = await response.json();
         console.log("Submit response:", jsonResponse);
         return jsonResponse;
@@ -127,8 +133,29 @@ const SimpleBusinessFormNew: React.FC = () => {
   });
 
   // Handle form submission
-  const onSubmit = (data: any) => {
-    mutate(data);
+  const onSubmit = async (data: any) => {
+    console.log("Form data:", data);
+    
+    // Capture client-side metadata
+    try {
+      const clientMetadata = await getMetadataForSubmission();
+      console.log("Captured client metadata:", clientMetadata);
+      
+      // Combine form data with metadata
+      const submissionData = {
+        ...data,
+        clientMetadata
+      };
+      
+      console.log("Submitting business submission:", submissionData);
+      
+      // Submit form with metadata
+      mutate(submissionData);
+    } catch (error) {
+      console.warn("Failed to capture metadata, submitting without it:", error);
+      // Submit form without metadata if capture fails
+      mutate(data);
+    }
   };
 
   // Animation variants

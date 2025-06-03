@@ -33,6 +33,7 @@ const MinisterCommunicationSchema = z.object({
   attachmentName: z.string().optional(),
   attachmentType: z.string().optional(),
   attachmentSize: z.number().optional(),
+  captchaAnswer: z.string().min(1, { message: "الإجابة على سؤال التحقق مطلوبة" }),
   consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام المعلومات" }),
 });
 
@@ -92,6 +93,7 @@ const CitizenCommunicationForm: React.FC = () => {
       attachmentName: '',
       attachmentType: '',
       attachmentSize: undefined,
+      captchaAnswer: '',
       consentToDataUse: false,
     }
   });
@@ -140,8 +142,26 @@ const CitizenCommunicationForm: React.FC = () => {
     // Reset captcha error
     setCaptchaError('');
     
-    // Submit form
-    mutate(data);
+    // Capture client-side metadata
+    try {
+      const clientMetadata = await getMetadataForSubmission();
+      console.log("Captured client metadata:", clientMetadata);
+      
+      // Combine form data with metadata
+      const submissionData = {
+        ...data,
+        clientMetadata
+      };
+      
+      console.log("Submitting minister communication:", submissionData);
+      
+      // Submit form with metadata
+      mutate(submissionData);
+    } catch (error) {
+      console.warn("Failed to capture metadata, submitting without it:", error);
+      // Submit form without metadata if capture fails
+      mutate(data);
+    }
   };
   
   // Render success view
