@@ -25,12 +25,18 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt update && sudo apt install -y nodejs nginx postgresql postgresql-contrib
 sudo npm install -g pm2
 
-# Copy application files (assuming they're in current directory)
+# Copy application files from deployment package
 echo "📁 Setting up application..."
-cp -r /tmp/ministry-app/* . 2>/dev/null || echo "Files will be uploaded manually"
+cp -r * . 2>/dev/null || echo "Using current directory files"
 
-# Install app dependencies
-npm install --production
+# Install app dependencies (skip if no package.json yet)
+if [ -f "package.json" ]; then
+    npm install --production
+else
+    echo "⚠️  No package.json found - application files need to be uploaded"
+    echo "Please run: scp -P 3322 -r /path/to/app/* root@185.216.134.79:/var/www/tawasal/"
+    exit 1
+fi
 
 # Setup database
 echo "🗄️ Setting up database..."

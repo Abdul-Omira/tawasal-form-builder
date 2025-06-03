@@ -1,0 +1,206 @@
+root@ubuntu:/tmp/deployment-package# chmod +x quick-deploy.sh
+root@ubuntu:/tmp/deployment-package# ./quick-deploy.sh
+🚀 Quick deployment for tawasal.moct.gov.sy starting...
+📦 Installing system dependencies...
+2025-06-03 11:22:13 - Installing pre-requisites
+Hit:1 http://sy.archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://sy.archive.ubuntu.com/ubuntu focal-updates InRelease [128 kB]
+Hit:3 http://sy.archive.ubuntu.com/ubuntu focal-backports InRelease
+Hit:4 http://sy.archive.ubuntu.com/ubuntu focal-security InRelease
+Fetched 128 kB in 1s (169 kB/s)
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+ca-certificates is already the newest version (20240203~20.04.1).
+ca-certificates set to manually installed.
+curl is already the newest version (7.68.0-1ubuntu2.25).
+curl set to manually installed.
+gnupg is already the newest version (2.2.19-3ubuntu2.4).
+gnupg set to manually installed.
+The following NEW packages will be installed:
+  apt-transport-https
+0 upgraded, 1 newly installed, 0 to remove and 62 not upgraded.
+Need to get 1,704 B of archives.
+After this operation, 162 kB of additional disk space will be used.
+Get:1 http://sy.archive.ubuntu.com/ubuntu focal-updates/universe amd64 apt-transport-https all 2.0.11 [1,704 B]
+Fetched 1,704 B in 0s (5,051 B/s)               
+Selecting previously unselected package apt-transport-https.
+(Reading database ... 72583 files and directories currently installed.)
+Preparing to unpack .../apt-transport-https_2.0.11_all.deb ...
+Unpacking apt-transport-https (2.0.11) ...
+Setting up apt-transport-https (2.0.11) ...
+Hit:1 http://sy.archive.ubuntu.com/ubuntu focal InRelease
+Hit:2 http://sy.archive.ubuntu.com/ubuntu focal-updates InRelease
+Get:3 https://deb.nodesource.com/node_20.x nodistro InRelease [12.1 kB]
+Hit:4 http://sy.archive.ubuntu.com/ubuntu focal-backports InRelease
+Get:5 https://deb.nodesource.com/node_20.x nodistro/main amd64 Packages [11.5 kB]
+Hit:6 http://sy.archive.ubuntu.com/ubuntu focal-security InRelease
+Fetched 23.7 kB in 1s (29.1 kB/s)
+Reading package lists... Done
+2025-06-03 11:22:25 - Repository configured successfully.
+2025-06-03 11:22:25 - To install Node.js, run: apt-get install nodejs -y
+2025-06-03 11:22:25 - You can use N|solid Runtime as a node.js alternative
+2025-06-03 11:22:25 - To install N|solid Runtime, run: apt-get install nsolid -y 
+
+Hit:1 https://deb.nodesource.com/node_20.x nodistro InRelease
+Hit:2 http://sy.archive.ubuntu.com/ubuntu focal InRelease
+Hit:3 http://sy.archive.ubuntu.com/ubuntu focal-updates InRelease
+Hit:4 http://sy.archive.ubuntu.com/ubuntu focal-backports InRelease
+Hit:5 http://sy.archive.ubuntu.com/ubuntu focal-security InRelease
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+62 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+nginx is already the newest version (1.18.0-0ubuntu1.7).
+The following additional packages will be installed:
+  libllvm10 libpq5 libsensors-config libsensors5 postgresql-12
+  postgresql-client-12 postgresql-client-common postgresql-common ssl-cert
+  sysstat
+Suggested packages:
+  lm-sensors postgresql-doc postgresql-doc-12 libjson-perl openssl-blacklist
+  isag
+The following NEW packages will be installed:
+  libllvm10 libpq5 libsensors-config libsensors5 nodejs postgresql
+  postgresql-12 postgresql-client-12 postgresql-client-common
+  postgresql-common postgresql-contrib ssl-cert sysstat
+0 upgraded, 13 newly installed, 0 to remove and 62 not upgraded.
+Need to get 62.8 MB of archives.
+After this operation, 321 MB of additional disk space will be used.
+Get:1 http://sy.archive.ubuntu.com/ubuntu focal/main amd64 libllvm10 amd64 1:10.0.0-4ubuntu1 [15.3 MB]
+Get:2 https://deb.nodesource.com/node_20.x nodistro/main amd64 nodejs amd64 20.19.2-1nodesource1 [32.0 MB]
+Get:3 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 libpq5 amd64 12.22-0ubuntu0.20.04.4 [119 kB]
+Get:4 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 libsensors-config all 1:3.6.0-2ubuntu1.1 [6,052 B]
+Get:5 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 libsensors5 amd64 1:3.6.0-2ubuntu1.1 [27.2 kB]
+Get:6 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 postgresql-client-common all 214ubuntu0.1 [28.2 kB]
+Get:7 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 postgresql-client-12 amd64 12.22-0ubuntu0.20.04.4 [1,073 kB]
+Get:8 http://sy.archive.ubuntu.com/ubuntu focal/main amd64 ssl-cert all 1.0.39 [17.0 kB]
+Get:9 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 postgresql-common all 214ubuntu0.1 [169 kB]
+Get:10 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 postgresql-12 amd64 12.22-0ubuntu0.20.04.4 [13.6 MB]
+Get:11 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 postgresql all 12+214ubuntu0.1 [3,924 B]
+Get:12 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 postgresql-contrib all 12+214ubuntu0.1 [3,932 B]
+Get:13 http://sy.archive.ubuntu.com/ubuntu focal-updates/main amd64 sysstat amd64 12.2.0-2ubuntu0.3 [448 kB]
+Fetched 62.8 MB in 5s (12.5 MB/s)
+Preconfiguring packages ...
+Selecting previously unselected package libllvm10:amd64.
+(Reading database ... 72587 files and directories currently installed.)
+Preparing to unpack .../00-libllvm10_1%3a10.0.0-4ubuntu1_amd64.deb ...
+Unpacking libllvm10:amd64 (1:10.0.0-4ubuntu1) ...
+Selecting previously unselected package libpq5:amd64.
+Preparing to unpack .../01-libpq5_12.22-0ubuntu0.20.04.4_amd64.deb ...
+Unpacking libpq5:amd64 (12.22-0ubuntu0.20.04.4) ...
+Selecting previously unselected package libsensors-config.
+Preparing to unpack .../02-libsensors-config_1%3a3.6.0-2ubuntu1.1_all.deb ...
+Unpacking libsensors-config (1:3.6.0-2ubuntu1.1) ...
+Selecting previously unselected package libsensors5:amd64.
+Preparing to unpack .../03-libsensors5_1%3a3.6.0-2ubuntu1.1_amd64.deb ...
+Unpacking libsensors5:amd64 (1:3.6.0-2ubuntu1.1) ...
+Selecting previously unselected package nodejs.
+Preparing to unpack .../04-nodejs_20.19.2-1nodesource1_amd64.deb ...
+Unpacking nodejs (20.19.2-1nodesource1) ...
+Selecting previously unselected package postgresql-client-common.
+Preparing to unpack .../05-postgresql-client-common_214ubuntu0.1_all.deb ...
+Unpacking postgresql-client-common (214ubuntu0.1) ...
+Selecting previously unselected package postgresql-client-12.
+Preparing to unpack .../06-postgresql-client-12_12.22-0ubuntu0.20.04.4_amd64.deb ...
+Unpacking postgresql-client-12 (12.22-0ubuntu0.20.04.4) ...
+Selecting previously unselected package ssl-cert.
+Preparing to unpack .../07-ssl-cert_1.0.39_all.deb ...
+Unpacking ssl-cert (1.0.39) ...
+Selecting previously unselected package postgresql-common.
+Preparing to unpack .../08-postgresql-common_214ubuntu0.1_all.deb ...
+Adding 'diversion of /usr/bin/pg_config to /usr/bin/pg_config.libpq-dev by postgresql-common'
+Unpacking postgresql-common (214ubuntu0.1) ...
+Selecting previously unselected package postgresql-12.
+Preparing to unpack .../09-postgresql-12_12.22-0ubuntu0.20.04.4_amd64.deb ...
+Unpacking postgresql-12 (12.22-0ubuntu0.20.04.4) ...
+Selecting previously unselected package postgresql.
+Preparing to unpack .../10-postgresql_12+214ubuntu0.1_all.deb ...
+Unpacking postgresql (12+214ubuntu0.1) ...
+Selecting previously unselected package postgresql-contrib.
+Preparing to unpack .../11-postgresql-contrib_12+214ubuntu0.1_all.deb ...
+Unpacking postgresql-contrib (12+214ubuntu0.1) ...
+Selecting previously unselected package sysstat.
+Preparing to unpack .../12-sysstat_12.2.0-2ubuntu0.3_amd64.deb ...
+Unpacking sysstat (12.2.0-2ubuntu0.3) ...
+Setting up postgresql-client-common (214ubuntu0.1) ...
+Setting up libsensors-config (1:3.6.0-2ubuntu1.1) ...
+Setting up libpq5:amd64 (12.22-0ubuntu0.20.04.4) ...
+Setting up nodejs (20.19.2-1nodesource1) ...
+Setting up libllvm10:amd64 (1:10.0.0-4ubuntu1) ...
+Setting up postgresql-client-12 (12.22-0ubuntu0.20.04.4) ...
+update-alternatives: using /usr/share/postgresql/12/man/man1/psql.1.gz to provide /usr/share/man/man1/psql.1.gz (psql.1.gz) in auto mode
+Setting up ssl-cert (1.0.39) ...
+Setting up postgresql-common (214ubuntu0.1) ...
+Adding user postgres to group ssl-cert
+
+Creating config file /etc/postgresql-common/createcluster.conf with new version
+Building PostgreSQL dictionaries from installed myspell/hunspell packages...
+Removing obsolete dictionary files:
+Created symlink /etc/systemd/system/multi-user.target.wants/postgresql.service → /lib/systemd/system/postgresql.service.
+Setting up libsensors5:amd64 (1:3.6.0-2ubuntu1.1) ...
+Setting up postgresql-12 (12.22-0ubuntu0.20.04.4) ...
+Creating new PostgreSQL cluster 12/main ...
+/usr/lib/postgresql/12/bin/initdb -D /var/lib/postgresql/12/main --auth-local peer --auth-host md5
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.UTF-8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/12/main ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Etc/UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    pg_ctlcluster 12 main start
+
+Ver Cluster Port Status Owner    Data directory              Log file
+12  main    5432 down   postgres /var/lib/postgresql/12/main /var/log/postgresql/postgresql-12-main.log
+update-alternatives: using /usr/share/postgresql/12/man/man1/postmaster.1.gz to provide /usr/share/man/man1/postmaster.1.gz (postmaster.1.gz) in auto mode
+Setting up sysstat (12.2.0-2ubuntu0.3) ...
+
+Creating config file /etc/default/sysstat with new version
+update-alternatives: using /usr/bin/sar.sysstat to provide /usr/bin/sar (sar) in auto mode
+Created symlink /etc/systemd/system/multi-user.target.wants/sysstat.service → /lib/systemd/system/sysstat.service.
+Setting up postgresql-contrib (12+214ubuntu0.1) ...
+Setting up postgresql (12+214ubuntu0.1) ...
+Processing triggers for systemd (245.4-4ubuntu3.20) ...
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.18) ...
+
+added 135 packages in 15s
+
+13 packages are looking for funding
+  run `npm fund` for details
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.4.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.4.1
+npm notice To update run: npm install -g npm@11.4.1
+npm notice
+📁 Setting up application...
+Files will be uploaded manually
+npm warn config production Use `--omit=dev` instead.
+npm error code ENOENT
+npm error syscall open
+npm error path /var/www/tawasal/package.json
+npm error errno -2
+npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/var/www/tawasal/package.json'
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: /root/.npm/_logs/2025-06-03T11_23_09_175Z-debug-0.log
+root@ubuntu:/tmp/deployment-package# 
