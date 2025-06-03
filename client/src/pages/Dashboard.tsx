@@ -257,7 +257,7 @@ export default function Dashboard() {
                         <h4 className="font-medium text-gray-900">{activity.title}</h4>
                         <p className="text-sm text-gray-600">{activity.description}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <Badge variant={getStatusBadgeVariant(activity.status)}>
+                          <Badge variant={getStatusBadgeVariant(activity.status) as any}>
                             {getStatusText(activity.status)}
                           </Badge>
                           <span className="text-xs text-gray-500">

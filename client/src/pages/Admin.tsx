@@ -226,6 +226,15 @@ const Admin: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
+                className="border-green-600 text-green-600 hover:bg-green-50"
+                onClick={() => setLocation('/dashboard')}
+              >
+                <BarChart4Icon className="h-3.5 w-3.5 ml-2" />
+                لوحة التفاعل
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
                 className="border-primary text-primary hover:bg-primary/10"
                 onClick={() => {
                   fetch('/api/logout', { method: 'POST' })
