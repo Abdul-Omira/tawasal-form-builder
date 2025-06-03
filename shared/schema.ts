@@ -19,6 +19,31 @@ export const citizenCommunications = pgTable("citizen_communications", {
   consentToDataUse: boolean("consent_to_data_use").notNull(),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  // Network & Location Metadata
+  ipAddress: text("ip_address"),
+  geolocation: jsonb("geolocation"), // city, region, country, timezone
+  ispInfo: jsonb("isp_info"), // ISP name, ASN
+  vpnDetection: jsonb("vpn_detection"), // VPN/proxy detection results
+  hostingProvider: text("hosting_provider"),
+  // Device & Browser Metadata
+  userAgent: text("user_agent"),
+  browserInfo: jsonb("browser_info"), // type, version, OS
+  deviceType: text("device_type"), // mobile, desktop, tablet
+  language: text("language"),
+  screenResolution: text("screen_resolution"),
+  timezone: text("timezone"),
+  touchSupport: boolean("touch_support"),
+  batteryStatus: jsonb("battery_status"),
+  installedFonts: text("installed_fonts").array(),
+  // Browser Environment Metadata
+  referrerUrl: text("referrer_url"),
+  pageUrl: text("page_url"),
+  pageLoadTime: integer("page_load_time"), // in milliseconds
+  javascriptEnabled: boolean("javascript_enabled"),
+  cookiesEnabled: boolean("cookies_enabled"),
+  doNotTrack: boolean("do_not_track"),
+  browserPlugins: text("browser_plugins").array(),
+  webglFingerprint: text("webgl_fingerprint"),
 });
 
 // Business submissions schema
@@ -49,6 +74,31 @@ export const businessSubmissions = pgTable("business_submissions", {
   captchaAnswer: text("captcha_answer"),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  // Network & Location Metadata
+  ipAddress: text("ip_address"),
+  geolocation: jsonb("geolocation"), // city, region, country, timezone
+  ispInfo: jsonb("isp_info"), // ISP name, ASN
+  vpnDetection: jsonb("vpn_detection"), // VPN/proxy detection results
+  hostingProvider: text("hosting_provider"),
+  // Device & Browser Metadata
+  userAgent: text("user_agent"),
+  browserInfo: jsonb("browser_info"), // type, version, OS
+  deviceType: text("device_type"), // mobile, desktop, tablet
+  language: text("language"),
+  screenResolution: text("screen_resolution"),
+  timezone: text("timezone"),
+  touchSupport: boolean("touch_support"),
+  batteryStatus: jsonb("battery_status"),
+  installedFonts: text("installed_fonts").array(),
+  // Browser Environment Metadata
+  referrerUrl: text("referrer_url"),
+  pageUrl: text("page_url"),
+  pageLoadTime: integer("page_load_time"), // in milliseconds
+  javascriptEnabled: boolean("javascript_enabled"),
+  cookiesEnabled: boolean("cookies_enabled"),
+  doNotTrack: boolean("do_not_track"),
+  browserPlugins: text("browser_plugins").array(),
+  webglFingerprint: text("webgl_fingerprint"),
 });
 
 // Session storage table for authentication
