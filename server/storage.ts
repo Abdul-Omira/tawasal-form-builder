@@ -175,6 +175,26 @@ export interface IStorage {
     completed: number;
     byType: Record<string, number>;
   }>;
+  
+  // Dashboard-specific methods for citizen engagement
+  getDashboardStats(fromDate: Date): Promise<{
+    totalCommunications: number;
+    pendingCommunications: number;
+    completedCommunications: number;
+    responseRate: number;
+    avgResponseTime: string;
+  }>;
+  
+  getRecentCommunications(limit: number): Promise<CitizenCommunication[]>;
+  
+  getRecentActivity(limit: number): Promise<Array<{
+    id: number;
+    type: 'communication' | 'response' | 'update';
+    title: string;
+    description: string;
+    date: string;
+    status: string;
+  }>>;
 }
 
 // Helper functions for password hashing

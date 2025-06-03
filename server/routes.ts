@@ -390,6 +390,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dashboard API endpoints for citizen engagement
+  app.get("/api/dashboard/stats", async (req: Request, res: Response) => {
+    try {
+      const { timeframe = 'month' } = req.query;
+      
+      // Calculate date range based on timeframe
+      const now = new Date();
+      let fromDate: Date;
+      
+      switch (timeframe) {
+        case 'week':
+          fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'year':
+          fromDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+          break;
+        default: // month
+          fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+
+      const stats = await storage.getDashboardStats(fromDate);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب الإحصائيات" });
+    }
+  });
+
+  app.get("/api/dashboard/recent-communications", async (req: Request, res: Response) => {
+    try {
+      const { limit = '5' } = req.query;
+      const limitNum = parseInt(limit as string);
+      
+      const communications = await storage.getRecentCommunications(limitNum);
+      res.json(communications);
+    } catch (error) {
+      console.error("Error fetching recent communications:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب الرسائل الأخيرة" });
+    }
+  });
+
+  app.get("/api/dashboard/activity", async (req: Request, res: Response) => {
+    try {
+      const { limit = '10' } = req.query;
+      const limitNum = parseInt(limit as string);
+      
+      const activity = await storage.getRecentActivity(limitNum);
+      res.json(activity);
+    } catch (error) {
+      console.error("Error fetching recent activity:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب النشاط الأخير" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
