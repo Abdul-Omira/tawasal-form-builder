@@ -1,3 +1,12 @@
+/**
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * Business Submission Form Component
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
 import React, { useState } from 'react';
 import { useLocation, Link } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
@@ -18,7 +27,6 @@ import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { getMetadataForSubmission } from '@/lib/metadataCapture';
 
 // Create a simplified schema for the form
 const SimpleFormSchema = z.object({

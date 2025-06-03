@@ -1,5 +1,10 @@
 /**
- * Simple, reliable metadata capture
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * Simple, reliable metadata capture for submission tracking
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
  */
 
 export function captureBasicMetadata() {
@@ -17,6 +22,5 @@ export function captureBasicMetadata() {
     timestamp: new Date().toISOString()
   };
   
-  console.log("Basic metadata captured:", metadata);
   return metadata;
 }

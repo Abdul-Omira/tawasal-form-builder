@@ -1,3 +1,12 @@
+/**
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * Citizen Communication Form Component
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
 import React, { useState } from 'react';
 import { useLocation, Link } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
@@ -19,7 +28,6 @@ import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { captureBasicMetadata } from '@/lib/simpleMetadata';
 
 // Create a schema for the form
 const MinisterCommunicationSchema = z.object({
@@ -101,9 +109,7 @@ const CitizenCommunicationForm: React.FC = () => {
   // Form mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
-      console.log("Mutation received data:", data);
-      
-      // Always capture metadata directly in the mutation
+      // Capture metadata for submission tracking
       const clientMetadata = {
         pageUrl: window.location.href,
         referrerUrl: document.referrer || '',
@@ -118,22 +124,15 @@ const CitizenCommunicationForm: React.FC = () => {
         timestamp: new Date().toISOString()
       };
       
-      console.log("Captured metadata in mutation:", clientMetadata);
-      
-      // Add metadata to data
       const dataWithMetadata = {
         ...data,
         clientMetadata
       };
       
-      console.log("Sending data with metadata:", dataWithMetadata);
-      
       const response = await apiRequest('/api/citizen-communications', 'POST', dataWithMetadata);
       return response.json();
     },
     onSuccess: (data: any) => {
-      console.log("Form submitted successfully:", data);
-      
       // Set submission success state
       setSubmissionSuccessful(true);
       if (data && typeof data === 'object' && 'id' in data) {
@@ -148,8 +147,6 @@ const CitizenCommunicationForm: React.FC = () => {
       });
     },
     onError: (error) => {
-      console.error("Error submitting form:", error);
-      
       // Show error toast
       toast({
         title: "خطأ في إرسال الرسالة",
@@ -161,13 +158,10 @@ const CitizenCommunicationForm: React.FC = () => {
   
   // Form submission handler
   const onSubmit = async (data: any) => {
-    console.log("Form data:", data);
-    
     // Reset captcha error
     setCaptchaError('');
     
-    // Submit form directly - metadata will be captured in mutation
-    console.log("Submitting form data:", data);
+    // Submit form - metadata captured in mutation
     mutate(data);
   };
   
