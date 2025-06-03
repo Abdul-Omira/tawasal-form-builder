@@ -1,3 +1,12 @@
+/**
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * Authentication and Authorization Layer
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Express, Request, Response, NextFunction } from "express";

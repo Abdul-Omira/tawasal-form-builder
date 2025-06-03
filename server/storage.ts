@@ -1,3 +1,12 @@
+/**
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * Data Storage Layer with Encryption and User Management
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
 import { 
   BusinessSubmission, 
   InsertBusinessSubmission, 

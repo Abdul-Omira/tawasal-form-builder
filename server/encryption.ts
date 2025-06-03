@@ -1,3 +1,12 @@
+/**
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * Data Encryption and Security Utilities
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
 import CryptoJS from 'crypto-js';
 
 // ENCRYPTION_KEY must be set in environment variables for all environments

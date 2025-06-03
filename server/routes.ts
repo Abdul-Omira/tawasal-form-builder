@@ -116,12 +116,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         webglFingerprint: sanitizedMetadata.webglFingerprint,
       };
       
-      console.log("Final communication data with metadata:", JSON.stringify(communicationWithMetadata, null, 2));
-      
       const createdCommunication = await storage.createCitizenCommunication(communicationWithMetadata);
       res.status(201).json(createdCommunication);
     } catch (error) {
-      console.error("Error creating communication:", error);
       res.status(500).json({ message: "حدث خطأ أثناء إنشاء الرسالة" });
     }
   });
@@ -145,7 +142,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updatedCommunication);
     } catch (error) {
-      console.error("Error updating communication status:", error);
       res.status(500).json({ message: "حدث خطأ أثناء تحديث حالة الرسالة" });
     }
   });
@@ -177,7 +173,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(result);
     } catch (error) {
-      console.error("Error fetching filtered communications:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
@@ -187,7 +182,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const stats = await storage.getCitizenCommunicationStats();
       res.json(stats);
     } catch (error) {
-      console.error("Error fetching communication statistics:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب الإحصائيات" });
     }
   });
@@ -202,11 +196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Create test users
     await createTestUsers();
     
-    console.log("Test users created successfully. Use:");
-    console.log("1. Admin: username='admin', password='m5wYJU_FaXhyu^F'");
-    console.log("2. Employee: username='employee', password='employee123'");
   } catch (error) {
-    console.error("Error creating test users:", error);
   }
   
   // API Routes for business submissions
@@ -215,7 +205,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const submissions = await storage.getAllBusinessSubmissions();
       res.json(submissions);
     } catch (error) {
-      console.error("Error fetching submissions:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
@@ -234,7 +223,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(submission);
     } catch (error) {
-      console.error("Error fetching submission:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
@@ -295,7 +283,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.error("Error creating submission:", error);
       res.status(500).json({ message: "حدث خطأ أثناء حفظ البيانات" });
     }
   });
@@ -319,7 +306,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(submission);
     } catch (error) {
-      console.error("Error updating submission status:", error);
       res.status(500).json({ message: "حدث خطأ أثناء تحديث الحالة" });
     }
   });
@@ -364,7 +350,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(result);
     } catch (error) {
-      console.error("Error fetching citizen communications:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
@@ -374,7 +359,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const stats = await storage.getCitizenCommunicationStats();
       res.json(stats);
     } catch (error) {
-      console.error("Error fetching statistics:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب الإحصائيات" });
     }
   });
@@ -398,7 +382,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(user);
     } catch (error) {
-      console.error("Error promoting user to admin:", error);
       res.status(500).json({ message: "حدث خطأ أثناء ترقية المستخدم إلى مدير" });
     }
   });
@@ -446,7 +429,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json({ message: "تم تحديث كلمة المرور بنجاح" });
     } catch (error) {
-      console.error("Error changing password:", error);
       res.status(500).json({ message: "حدث خطأ أثناء تغيير كلمة المرور" });
     }
   });
@@ -474,7 +456,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const stats = await storage.getDashboardStats(fromDate);
       res.json(stats);
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب الإحصائيات" });
     }
   });
@@ -487,7 +468,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const communications = await storage.getRecentCommunications(limitNum);
       res.json(communications);
     } catch (error) {
-      console.error("Error fetching recent communications:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب الرسائل الأخيرة" });
     }
   });
@@ -500,7 +480,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activity = await storage.getRecentActivity(limitNum);
       res.json(activity);
     } catch (error) {
-      console.error("Error fetching recent activity:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب النشاط الأخير" });
     }
   });
