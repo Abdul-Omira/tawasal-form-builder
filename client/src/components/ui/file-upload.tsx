@@ -24,8 +24,22 @@ const defaultAllowedTypes = [
   'application/pdf',
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   'text/plain'
 ];
+
+const FILE_TYPE_LIMITS = {
+  'image/jpeg': 5,
+  'image/png': 5,
+  'image/gif': 5,
+  'application/pdf': 10,
+  'application/msword': 10,
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 10,
+  'application/vnd.ms-powerpoint': 10,
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 10,
+  'text/plain': 2
+};
 
 export function FileUpload({
   onFileUploaded,
@@ -39,6 +53,7 @@ export function FileUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploaded, setUploaded] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   // Format file size to human readable format
   const formatFileSize = (bytes: number) => {
@@ -47,28 +62,58 @@ export function FileUpload({
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
   
-  // Validate file type and size
+  // Enhanced file validation with specific type limits
   const validateFile = (file: File): boolean => {
     // Check file type
     if (!allowedTypes.includes(file.type)) {
-      setError(`نوع الملف غير مسموح به. الأنواع المسموح بها: ${allowedTypes.join(', ')}`);
+      setError(`نوع الملف غير مسموح به. يُسمح بالصور (JPG, PNG, GIF) والمستندات (PDF, Word, PowerPoint) والملفات النصية فقط`);
       return false;
     }
     
-    // Check file size
-    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    // Check file extension for additional security
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.txt'];
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    if (!allowedExtensions.includes(fileExtension)) {
+      setError(`امتداد الملف غير مسموح به: ${fileExtension}`);
+      return false;
+    }
+    
+    // Check file size based on type-specific limits
+    const typeLimit = FILE_TYPE_LIMITS[file.type as keyof typeof FILE_TYPE_LIMITS] || maxSizeMB;
+    const maxSizeBytes = typeLimit * 1024 * 1024;
     if (file.size > maxSizeBytes) {
-      setError(`حجم الملف يتجاوز الحد المسموح به (${maxSizeMB} ميجابايت)`);
+      setError(`حجم الملف يتجاوز الحد المسموح به لهذا النوع (${typeLimit} ميجابايت)`);
+      return false;
+    }
+    
+    // Additional security checks
+    const dangerousExtensions = ['.exe', '.bat', '.cmd', '.sh', '.js', '.php', '.jsp', '.asp'];
+    if (dangerousExtensions.includes(fileExtension)) {
+      setError('نوع الملف خطير وغير مسموح');
       return false;
     }
     
     return true;
   };
   
+  // Generate image preview for supported formats
+  const generateImagePreview = (file: File) => {
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     setUploaded(false);
+    setImagePreview(null);
     
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -76,6 +121,7 @@ export function FileUpload({
     const file = files[0];
     if (validateFile(file)) {
       setSelectedFile(file);
+      generateImagePreview(file);
     } else {
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -111,7 +157,7 @@ export function FileUpload({
       
       const progressInterval = simulateProgress();
       
-      // Send file to server
+      // Send file to server with enhanced error handling
       const response = await fetch('/api/uploads', {
         method: 'POST',
         body: formData,
@@ -121,7 +167,27 @@ export function FileUpload({
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'فشل تحميل الملف');
+        let errorMessage = 'فشل تحميل الملف';
+        
+        // Handle specific security errors
+        switch (errorData.error) {
+          case 'MIME_TYPE_MISMATCH':
+            errorMessage = 'نوع الملف الحقيقي لا يطابق امتداده';
+            break;
+          case 'DANGEROUS_EXTENSION':
+            errorMessage = 'امتداد الملف خطير وغير مسموح';
+            break;
+          case 'MALICIOUS_CONTENT':
+            errorMessage = 'تم اكتشاف محتوى خطير في الملف';
+            break;
+          case 'SIZE_MISMATCH':
+            errorMessage = 'حجم الملف غير متطابق';
+            break;
+          default:
+            errorMessage = errorData.message || 'فشل تحميل الملف';
+        }
+        
+        throw new Error(errorMessage);
       }
       
       setUploadProgress(100);
@@ -137,10 +203,19 @@ export function FileUpload({
       });
       
       setUploaded(true);
+      
+      // Log successful upload for audit
+      console.log('File uploaded successfully:', {
+        original: data.file.originalname,
+        secure: data.file.filename,
+        size: formatFileSize(data.file.size)
+      });
+      
     } catch (error) {
       console.error('Upload error:', error);
-      setError(error instanceof Error ? error.message : 'حدث خطأ أثناء تحميل الملف');
-      onUploadError(error instanceof Error ? error.message : 'حدث خطأ أثناء تحميل الملف');
+      const errorMessage = error instanceof Error ? error.message : 'حدث خطأ أثناء تحميل الملف';
+      setError(errorMessage);
+      onUploadError(errorMessage);
     } finally {
       setIsUploading(false);
     }
@@ -152,7 +227,29 @@ export function FileUpload({
     setError(null);
     setUploaded(false);
     setUploadProgress(0);
+    setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // Get security status indicator
+  const getSecurityStatus = () => {
+    if (uploaded) {
+      return (
+        <div className="flex items-center gap-2 text-green-600 text-sm">
+          <Check className="h-4 w-4" />
+          <span>تم فحص الملف أمنياً وتحميله بنجاح</span>
+        </div>
+      );
+    }
+    if (selectedFile && !error) {
+      return (
+        <div className="flex items-center gap-2 text-blue-600 text-sm">
+          <AlertCircle className="h-4 w-4" />
+          <span>الملف جاهز للتحميل والفحص الأمني</span>
+        </div>
+      );
+    }
+    return null;
   };
   
   // Get file icon based on mime type
@@ -190,28 +287,42 @@ export function FileUpload({
               </p>
             </div>
           ) : (
-            <div className="flex items-center gap-2 justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{getFileIcon(selectedFile.type)}</span>
-                <div className="text-start">
-                  <p className="text-sm font-medium truncate">{selectedFile.name}</p>
-                  <p className="text-xs text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
+            <div className="space-y-3">
+              {/* File info and controls */}
+              <div className="flex items-center gap-2 justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{getFileIcon(selectedFile.type)}</span>
+                  <div className="text-start">
+                    <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+                    <p className="text-xs text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
+                  </div>
                 </div>
+                {!uploaded ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFile();
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Check className="h-5 w-5 text-green-600" />
+                )}
               </div>
-              {!uploaded ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveFile();
-                  }}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Check className="h-5 w-5 text-green-600" />
+              
+              {/* Image preview */}
+              {imagePreview && (
+                <div className="mt-3">
+                  <img 
+                    src={imagePreview} 
+                    alt="معاينة الصورة" 
+                    className="max-h-32 max-w-full object-contain rounded border"
+                  />
+                </div>
               )}
             </div>
           )}
@@ -248,6 +359,23 @@ export function FileUpload({
             <AlertDescription className="mr-2">{error}</AlertDescription>
           </Alert>
         )}
+
+        {/* Security status indicator */}
+        {getSecurityStatus()}
+
+        {/* Security notice */}
+        <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
+            <div className="text-sm text-blue-800">
+              <p className="font-medium">إشعار أمني:</p>
+              <p className="text-xs mt-1">
+                جميع الملفات المرفوعة يتم فحصها أمنياً للتأكد من عدم وجود محتوى خطير. 
+                يُحفظ الملف بشكل آمن ولا يمكن الوصول إليه إلا من خلال النظام المؤمن.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

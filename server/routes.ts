@@ -6,7 +6,7 @@ import { z } from "zod";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { setupAuth, isAuthenticated, isAdmin } from "./auth";
-import { uploadMiddleware, securityScanMiddleware, handleFileUpload } from "./fileUpload";
+import { uploadMiddleware, securityScanMiddleware, handleFileUpload, serveFile } from "./fileUpload";
 
 // Helper function to translate status to Arabic
 function getArabicStatus(status: string): string {
@@ -265,6 +265,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // File upload endpoint for citizen communication attachments
   app.post('/api/uploads', uploadMiddleware, securityScanMiddleware, handleFileUpload);
+  
+  // Secure file serving endpoint
+  app.get('/api/files/:filename', serveFile);
 
   // Our new auth.ts file handles these routes:
   // - /api/login
