@@ -129,8 +129,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Temporary admin endpoint for testing - Abdulwahab Omira
-  app.get("/api/admin/citizen-communications", async (req: Request, res: Response) => {
+  // Admin endpoint for citizen communications - Abdulwahab Omira
+  app.get("/api/admin/citizen-communications", isAdmin, async (req: Request, res: Response) => {
     try {
       // Directly fetch all communications from storage
       const allCommunications = await storage.getAllCitizenCommunications();

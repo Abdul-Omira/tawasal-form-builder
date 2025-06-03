@@ -84,13 +84,6 @@ export function setupAuth(app: Express) {
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
-  
-  // Add JWT verification middleware
-  import('./jwtMiddleware').then(({ verifyJwtToken }) => {
-    app.use(verifyJwtToken);
-  }).catch(error => {
-    console.error('Error importing JWT middleware:', error);
-  });
 
   // Configure local strategy
   passport.use(
