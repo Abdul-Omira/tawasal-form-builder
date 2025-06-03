@@ -19,7 +19,7 @@ import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
-import { getMetadataForSubmission } from '@/lib/metadataCapture';
+import { captureBasicMetadata } from '@/lib/simpleMetadata';
 
 // Create a schema for the form
 const MinisterCommunicationSchema = z.object({
@@ -146,20 +146,7 @@ const CitizenCommunicationForm: React.FC = () => {
     console.log("Starting metadata capture process...");
     
     try {
-      // Simple metadata capture for testing
-      const clientMetadata = {
-        pageUrl: window.location.href,
-        referrerUrl: document.referrer,
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        screenResolution: `${screen.width}x${screen.height}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        javascriptEnabled: true,
-        cookiesEnabled: navigator.cookieEnabled,
-        touchSupport: 'ontouchstart' in window,
-        pageLoadTime: Math.round(performance.now()),
-      };
-      
+      const clientMetadata = captureBasicMetadata();
       console.log("Captured client metadata:", clientMetadata);
       
       // Combine form data with metadata
