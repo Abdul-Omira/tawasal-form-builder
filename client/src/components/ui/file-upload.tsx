@@ -202,20 +202,11 @@ export function FileUpload({
         size: data.file.size
       };
       
-      console.log('FileUpload: Calling onFileUploaded with data:', fileData);
       onFileUploaded(fileData);
       
       setUploaded(true);
       
-      // Log successful upload for audit
-      console.log('File uploaded successfully:', {
-        original: data.file.originalname,
-        secure: data.file.filename,
-        size: formatFileSize(data.file.size)
-      });
-      
     } catch (error) {
-      console.error('Upload error:', error);
       const errorMessage = error instanceof Error ? error.message : 'حدث خطأ أثناء تحميل الملف';
       setError(errorMessage);
       onUploadError(errorMessage);

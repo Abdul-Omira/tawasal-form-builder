@@ -112,14 +112,10 @@ const MinisterCommunicationForm: React.FC = () => {
   // Form mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
-      console.log("Submitting minister communication:", data);
-      
       const response = await apiRequest('POST', '/api/citizen-communications', data);
       return response;
     },
     onSuccess: (data: any) => {
-      console.log("Form submitted successfully:", data);
-      
       // Set submission success state
       setSubmissionSuccessful(true);
       if (data && typeof data === 'object' && 'id' in data) {
@@ -134,8 +130,6 @@ const MinisterCommunicationForm: React.FC = () => {
       });
     },
     onError: (error) => {
-      console.error("Error submitting form:", error);
-      
       // Show error toast
       toast({
         title: "خطأ في إرسال الرسالة",
@@ -153,12 +147,8 @@ const MinisterCommunicationForm: React.FC = () => {
       data.attachmentName = fileAttachment.name;
       data.attachmentType = fileAttachment.type;
       data.attachmentSize = Number(fileAttachment.size);
-      console.log("Adding attachment data to submission:", fileAttachment);
-    } else {
-      console.log("No file attachment found");
     }
     
-    console.log("Form data with attachment:", data);
     mutate(data);
   };
   
@@ -375,16 +365,13 @@ const MinisterCommunicationForm: React.FC = () => {
                     </p>
                     <FileUpload 
                       onFileUploaded={(fileData) => {
-                        console.log("File uploaded callback received:", fileData);
                         setFileAttachment(fileData);
                         form.setValue('attachmentUrl', fileData.url);
                         form.setValue('attachmentName', fileData.name);
                         form.setValue('attachmentType', fileData.type);
                         form.setValue('attachmentSize', Number(fileData.size));
-                        console.log("Form values updated with attachment data");
                       }}
                       onUploadError={(error) => {
-                        console.error("File upload error:", error);
                         setFileUploadError(error);
                       }}
                       maxSizeMB={10}
