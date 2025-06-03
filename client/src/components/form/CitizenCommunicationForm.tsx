@@ -101,7 +101,7 @@ const CitizenCommunicationForm: React.FC = () => {
   // Form mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
-      console.log("Submitting form data:", data);
+      console.log("Mutation received data:", data);
       
       const response = await apiRequest('/api/citizen-communications', 'POST', data);
       // Parse response to get JSON data
