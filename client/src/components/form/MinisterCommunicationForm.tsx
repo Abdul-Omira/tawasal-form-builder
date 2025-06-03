@@ -17,6 +17,7 @@ import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { FileUpload } from '@/components/ui/file-upload';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { collectMetadata } from '@/lib/metadataCollector';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 
 // Create schema for minister communication form
@@ -149,7 +150,16 @@ const MinisterCommunicationForm: React.FC = () => {
       data.attachmentSize = Number(fileAttachment.size);
     }
     
-    mutate(data);
+    // Collect comprehensive metadata
+    const metadata = collectMetadata();
+    const submissionData = {
+      ...data,
+      browserInfo: metadata.browserInfo,
+      deviceInfo: metadata.deviceInfo,
+      pageInfo: metadata.pageInfo,
+    };
+    
+    mutate(submissionData);
   };
   
   // Render success view

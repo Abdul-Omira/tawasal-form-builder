@@ -72,7 +72,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const createdCommunication = await storage.createCitizenCommunication(communication);
+      // Add IP address and user agent from request headers
+      const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'Unknown';
+      const userAgent = req.headers['user-agent'] || 'Unknown';
+      const referrer = req.headers['referer'] || req.headers['referrer'] || 'Direct';
+      
+      // Combine form data with server-captured metadata
+      const dataWithMetadata = {
+        ...communication,
+        ipAddress: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress,
+        userAgent,
+        referrer,
+      };
+      
+      const createdCommunication = await storage.createCitizenCommunication(dataWithMetadata);
       res.status(201).json(createdCommunication);
     } catch (error) {
       console.error("Error creating communication:", error);
