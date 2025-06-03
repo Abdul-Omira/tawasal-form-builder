@@ -112,7 +112,7 @@ const Home: React.FC = () => {
                 />
               </motion.div>
 
-              {/* Minister's Message */}
+              {/* Minister's Complete Message */}
               <motion.div 
                 className="mb-6 sm:mb-8 md:mb-10 max-w-5xl mx-auto font-ibm mx-2 sm:mx-4"
                 variants={textVariants}
@@ -125,28 +125,24 @@ const Home: React.FC = () => {
                     </svg>
                   </div>
                   
-                  <div className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed text-white/95 text-right">
-                    <CalligraphyAnimation 
-                      text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
-                      duration={0.015}
-                      delay={0.5}
-                      className="inline-block font-ibm"
-                    />
-                  </div>
-                </div>
-              </motion.div>
-              
-              {/* Minister's Signature */}
-              <motion.div 
-                className="text-right font-ibm mx-2 sm:mx-4 mb-6 sm:mb-8"
-                variants={textVariants}
-              >
-                <div className="inline-block bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/40 shadow-xl">
                   <div className="text-white/95 leading-relaxed text-right">
-                    <p className="mb-2 sm:mb-3 text-sm sm:text-base text-white/80 italic">مع أطيب التمنيات،</p>
-                    <p className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white mb-1 sm:mb-2">عبدالسلام هيكل</p>
-                    <p className="text-sm sm:text-base md:text-lg text-white/90 font-medium">وزير الاتصالات وتقانة المعلومات</p>
-                    <p className="text-xs sm:text-sm text-white/80 mt-1">الجمهورية العربية السورية</p>
+                    {/* Main Message */}
+                    <div className="text-base mb-8">
+                      <CalligraphyAnimation 
+                        text="مرحباً، يسرني استقبال رسائلكم عبر هذه الصفحة. نراجع كل رسالة بعناية وجدية، ونحيلها إلى المتابعة المختصة عند الحاجة. أقدّر تواصلكم واهتمامكم، وأشكركم على مساهمتكم في تطوير قطاع الاتصالات والتكنولوجيا، راجياً تفهّمكم لعدم إمكانية الرد شخصياً على جميع المراسلات."
+                        duration={0.015}
+                        delay={0.5}
+                        className="inline-block font-ibm"
+                      />
+                    </div>
+                    
+                    {/* Signature */}
+                    <div className="text-base space-y-1">
+                      <p className="text-white/80 italic">مع أطيب التمنيات،</p>
+                      <p className="text-white">عبدالسلام هيكل</p>
+                      <p className="text-white/90">وزير الاتصالات وتقانة المعلومات</p>
+                      <p className="text-white/80">الجمهورية العربية السورية</p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
