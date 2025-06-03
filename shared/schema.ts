@@ -18,6 +18,14 @@ export const citizenCommunications = pgTable("citizen_communications", {
   captchaAnswer: text("captcha_answer").notNull(),
   consentToDataUse: boolean("consent_to_data_use").notNull(),
   status: text("status").notNull().default("pending"),
+  // Metadata fields
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  browserInfo: jsonb("browser_info"), // Browser type, version, OS, etc.
+  deviceInfo: jsonb("device_info"), // Screen resolution, timezone, device type, etc.
+  geolocation: jsonb("geolocation"), // City, region, country, ISP, etc.
+  securityInfo: jsonb("security_info"), // VPN detection, proxy info, etc.
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
