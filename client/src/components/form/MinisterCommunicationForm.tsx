@@ -147,6 +147,14 @@ const MinisterCommunicationForm: React.FC = () => {
   
   // Form submission handler
   const onSubmit = async (data: z.infer<typeof MinisterCommunicationSchema>) => {
+    // Ensure attachment data is included if a file was uploaded
+    if (fileAttachment) {
+      data.attachmentUrl = fileAttachment.url;
+      data.attachmentName = fileAttachment.name;
+      data.attachmentType = fileAttachment.type;
+      data.attachmentSize = Number(fileAttachment.size);
+    }
+    
     console.log("Form data:", data);
     mutate(data);
   };
