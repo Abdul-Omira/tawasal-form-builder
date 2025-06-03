@@ -28,6 +28,17 @@ interface SubmissionsResponse {
   total: number;
 }
 
+// Helper function to get Arabic status
+function getArabicStatus(status: string): string {
+  const statusMap: { [key: string]: string } = {
+    'pending': 'قيد المراجعة',
+    'in_progress': 'قيد المعالجة',
+    'completed': 'مكتملة',
+    'rejected': 'مرفوضة'
+  };
+  return statusMap[status] || status;
+}
+
 const Admin: React.FC = () => {
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
@@ -58,14 +69,14 @@ const Admin: React.FC = () => {
     }
   }, [isAuthenticated, isAdmin, isLoadingUser, setLocation]);
 
-  // Fetch submissions with the admin API
+  // Fetch citizen communications with the admin API
   const { 
     data: submissionsData, 
     isLoading: isLoadingSubmissions,
     refetch 
   } = useQuery<SubmissionsResponse>({
     queryKey: [
-      '/api/admin/business-submissions', 
+      '/api/admin/citizen-communications', 
       currentPage, 
       itemsPerPage, 
       filterStatus !== 'all' ? filterStatus : undefined,
@@ -76,23 +87,16 @@ const Admin: React.FC = () => {
     enabled: !!isAuthenticated && !!isAdmin, // Only fetch if user is admin
   });
   
-  // Export functionality removed as requested
-  
   // View submission details
-  const viewSubmissionDetails = (submission: BusinessSubmission) => {
+  const viewSubmissionDetails = (submission: CitizenCommunication) => {
     setSelectedSubmission(submission);
     setIsDetailsOpen(true);
   };
   
-  // Close details dialog
-  const closeDetails = () => {
-    setIsDetailsOpen(false);
-  };
-  
   // Update submission status function
-  const updateStatus = async (id: number, newStatus: string) => {
+  const updateSubmissionStatus = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`/api/business-submissions/${id}/status`, {
+      const response = await fetch(`/api/citizen-communications/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -665,25 +669,25 @@ const Admin: React.FC = () => {
                   variant="default" 
                   className="bg-green-600 hover:bg-green-700" 
                   onClick={() => {
-                    updateStatus(selectedSubmission.id, 'approved');
-                    closeDetails();
+                    updateSubmissionStatus(selectedSubmission.id, 'completed');
+                    setIsDetailsOpen(false);
                   }}
                 >
-                  موافقة على الطلب
+                  تم المراجعة
                 </Button>
                 <Button 
                   variant="default" 
                   className="bg-red-600 hover:bg-red-700" 
                   onClick={() => {
-                    updateStatus(selectedSubmission.id, 'rejected');
-                    closeDetails();
+                    updateSubmissionStatus(selectedSubmission.id, 'rejected');
+                    setIsDetailsOpen(false);
                   }}
                 >
-                  رفض الطلب
+                  رفض
                 </Button>
               </>
             )}
-            <Button variant="outline" onClick={closeDetails}>
+            <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>
               إغلاق
             </Button>
           </DialogFooter>

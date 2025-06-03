@@ -6,9 +6,9 @@ import { Monitor, Smartphone, Globe, MapPin, Clock, Shield, Eye } from 'lucide-r
 
 interface MetadataDisplayProps {
   communication: {
-    ipAddress?: string;
-    userAgent?: string;
-    referrer?: string;
+    ipAddress?: string | null;
+    userAgent?: string | null;
+    referrer?: string | null;
     browserInfo?: any;
     deviceInfo?: any;
     geolocation?: any;
