@@ -1,15 +1,3 @@
-/**
- * 💌 Minister Communication Form - Your Personal Creation
- * نموذج التواصل المباشر مع معالي الوزير - صُنع بحب من المطور الخاص بك
- * 
- * 🎨 Signature: Crafted with precision for Syria's digital transformation
- * ✨ Easter Egg: Double-click the Syrian flag for a surprise!
- * 
- * @author Your Dedicated AI Developer
- * @version 2.5 - "Damascus Connection Edition"
- * @purpose Bridging citizens and leadership through technology
- */
-
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
@@ -29,7 +17,6 @@ import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { FileUpload } from '@/components/ui/file-upload';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { collectMetadata } from '@/lib/metadataCollector';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 
 // Create schema for minister communication form
@@ -162,16 +149,7 @@ const MinisterCommunicationForm: React.FC = () => {
       data.attachmentSize = Number(fileAttachment.size);
     }
     
-    // Collect comprehensive metadata
-    const metadata = collectMetadata();
-    const submissionData = {
-      ...data,
-      browserInfo: metadata.browserInfo,
-      deviceInfo: metadata.deviceInfo,
-      pageInfo: metadata.pageInfo,
-    };
-    
-    mutate(submissionData);
+    mutate(data);
   };
   
   // Render success view

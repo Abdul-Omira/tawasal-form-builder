@@ -1,15 +1,3 @@
-/**
- * 🛣️ API Routes Engine - Your Personal Backend Architecture
- * محرك مسارات الواجهة البرمجية - من تصميم المطور الخاص بك
- * 
- * 🎯 Signature: Connecting frontend dreams to backend reality
- * ✨ Easter Egg: Every route tells a story of digital communication
- * 
- * @author Your Dedicated AI Developer
- * @version 4.0 - "Communication Highway Edition"
- * @purpose Routing Syria's digital conversations
- */
-
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -84,20 +72,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Add IP address and user agent from request headers
-      const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'Unknown';
-      const userAgent = req.headers['user-agent'] || 'Unknown';
-      const referrer = req.headers['referer'] || req.headers['referrer'] || 'Direct';
-      
-      // Combine form data with server-captured metadata
-      const dataWithMetadata = {
-        ...communication,
-        ipAddress: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress,
-        userAgent,
-        referrer,
-      };
-      
-      const createdCommunication = await storage.createCitizenCommunication(dataWithMetadata);
+      const createdCommunication = await storage.createCitizenCommunication(communication);
       res.status(201).json(createdCommunication);
     } catch (error) {
       console.error("Error creating communication:", error);
@@ -129,22 +104,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin endpoint for citizen communications - Abdulwahab Omira
   app.get("/api/admin/citizen-communications", isAdmin, async (req: Request, res: Response) => {
     try {
-      // Directly fetch all communications from storage
-      const allCommunications = await storage.getAllCitizenCommunications();
+      const { 
+        status, 
+        communicationType,
+        search, 
+        page = '1', 
+        limit = '10',
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query as Record<string, string>;
       
-      // Return in the expected format
-      const result = {
-        data: allCommunications,
-        total: allCommunications.length
-      };
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      
+      const result = await storage.getCitizenCommunicationsWithFilters({
+        status,
+        communicationType,
+        search,
+        page: pageNum,
+        limit: limitNum,
+        sortBy,
+        sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc'
+      });
       
       res.json(result);
     } catch (error) {
-      console.error("Error fetching communications:", error);
-      res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات", error: error.message });
+      console.error("Error fetching filtered communications:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
 
@@ -399,6 +387,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error changing password:", error);
       res.status(500).json({ message: "حدث خطأ أثناء تغيير كلمة المرور" });
+    }
+  });
+
+  // Dashboard API endpoints for citizen engagement
+  app.get("/api/dashboard/stats", async (req: Request, res: Response) => {
+    try {
+      const { timeframe = 'month' } = req.query;
+      
+      // Calculate date range based on timeframe
+      const now = new Date();
+      let fromDate: Date;
+      
+      switch (timeframe) {
+        case 'week':
+          fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'year':
+          fromDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+          break;
+        default: // month
+          fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+
+      const stats = await storage.getDashboardStats(fromDate);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب الإحصائيات" });
+    }
+  });
+
+  app.get("/api/dashboard/recent-communications", async (req: Request, res: Response) => {
+    try {
+      const { limit = '5' } = req.query;
+      const limitNum = parseInt(limit as string);
+      
+      const communications = await storage.getRecentCommunications(limitNum);
+      res.json(communications);
+    } catch (error) {
+      console.error("Error fetching recent communications:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب الرسائل الأخيرة" });
+    }
+  });
+
+  app.get("/api/dashboard/activity", async (req: Request, res: Response) => {
+    try {
+      const { limit = '10' } = req.query;
+      const limitNum = parseInt(limit as string);
+      
+      const activity = await storage.getRecentActivity(limitNum);
+      res.json(activity);
+    } catch (error) {
+      console.error("Error fetching recent activity:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء جلب النشاط الأخير" });
     }
   });
 

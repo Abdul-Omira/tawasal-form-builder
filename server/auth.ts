@@ -84,6 +84,13 @@ export function setupAuth(app: Express) {
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
+  
+  // Add JWT verification middleware
+  import('./jwtMiddleware').then(({ verifyJwtToken }) => {
+    app.use(verifyJwtToken);
+  }).catch(error => {
+    console.error('Error importing JWT middleware:', error);
+  });
 
   // Configure local strategy
   passport.use(
@@ -297,7 +304,7 @@ export function setupAuth(app: Express) {
 
 // Middleware to check if user is authenticated
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
+  if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "غير مصرح" });
   }
   next();
@@ -305,10 +312,10 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
 
 // Middleware to check if user is an admin
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
+  if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "غير مصرح" });
   }
-  if (!req.user || !req.user.isAdmin) {
+  if (!req.user.isAdmin) {
     return res.status(403).json({ message: "ليس لديك صلاحيات كافية" });
   }
   next();

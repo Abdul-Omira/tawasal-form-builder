@@ -11,7 +11,7 @@ import {
   users
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, sql, and, like, or, asc } from "drizzle-orm";
+import { eq, desc, sql, and, like, or, asc, gte } from "drizzle-orm";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { 
@@ -24,18 +24,6 @@ import {
 } from "./encryption";
 
 const scryptAsync = promisify(scrypt);
-
-/**
- * 🔐 Secure Data Storage Engine - Your Personal AI Developer's Creation
- * محرك تخزين البيانات الآمن - من صنع المطور الخاص بك
- * 
- * ✨ Easter Egg: This storage system remembers every citizen's voice
- * 🛡️ Security First - Built with enterprise-grade encryption
- * 
- * @author Your Dedicated AI Developer
- * @version 3.0 - "Fortress Edition" 
- * @purpose Safeguarding Syria's digital communications
- */
 
 /**
  * Helper function to safely decrypt business submission data
@@ -187,6 +175,26 @@ export interface IStorage {
     completed: number;
     byType: Record<string, number>;
   }>;
+  
+  // Dashboard-specific methods for citizen engagement
+  getDashboardStats(fromDate: Date): Promise<{
+    totalCommunications: number;
+    pendingCommunications: number;
+    completedCommunications: number;
+    responseRate: number;
+    avgResponseTime: string;
+  }>;
+  
+  getRecentCommunications(limit: number): Promise<CitizenCommunication[]>;
+  
+  getRecentActivity(limit: number): Promise<Array<{
+    id: number;
+    type: 'communication' | 'response' | 'update';
+    title: string;
+    description: string;
+    date: string;
+    status: string;
+  }>>;
 }
 
 // Helper functions for password hashing
@@ -360,10 +368,10 @@ export class DatabaseStorage implements IStorage {
       data = sortOrder === 'asc' 
         ? await query.orderBy(asc(citizenCommunications.status)) 
         : await query.orderBy(desc(citizenCommunications.status));
-    } else if (sortBy === 'fullName') {
+    } else if (sortBy === 'phone') {
       data = sortOrder === 'asc' 
-        ? await query.orderBy(asc(citizenCommunications.fullName)) 
-        : await query.orderBy(desc(citizenCommunications.fullName));
+        ? await query.orderBy(asc(citizenCommunications.phone)) 
+        : await query.orderBy(desc(citizenCommunications.phone));
     } else {
       // Default to createdAt
       data = sortOrder === 'asc' 
@@ -771,6 +779,75 @@ export class DatabaseStorage implements IStorage {
       rejected: Number(rejectedResults[0].count),
       byBusinessType
     };
+  }
+
+  // Dashboard-specific methods implementation
+  async getDashboardStats(fromDate: Date): Promise<{
+    totalCommunications: number;
+    pendingCommunications: number;
+    completedCommunications: number;
+    responseRate: number;
+    avgResponseTime: string;
+  }> {
+    const communications = await db
+      .select()
+      .from(citizenCommunications)
+      .where(gte(citizenCommunications.createdAt, fromDate))
+      .orderBy(desc(citizenCommunications.createdAt));
+
+    const decryptedCommunications = communications.map(c => safelyDecryptCitizenCommunication(c));
+
+    const stats = {
+      totalCommunications: decryptedCommunications.length,
+      pendingCommunications: decryptedCommunications.filter(c => c.status === 'pending').length,
+      completedCommunications: decryptedCommunications.filter(c => c.status === 'completed').length,
+      responseRate: 0,
+      avgResponseTime: "جاري الحساب"
+    };
+
+    // Calculate response rate
+    if (stats.totalCommunications > 0) {
+      const respondedCount = decryptedCommunications.filter(c => c.status !== 'pending').length;
+      stats.responseRate = Math.round((respondedCount / stats.totalCommunications) * 100);
+    }
+
+    return stats;
+  }
+
+  async getRecentCommunications(limit: number): Promise<CitizenCommunication[]> {
+    const communications = await db
+      .select()
+      .from(citizenCommunications)
+      .orderBy(desc(citizenCommunications.createdAt))
+      .limit(limit);
+
+    return communications.map(c => safelyDecryptCitizenCommunication(c));
+  }
+
+  async getRecentActivity(limit: number): Promise<Array<{
+    id: number;
+    type: 'communication' | 'response' | 'update';
+    title: string;
+    description: string;
+    date: string;
+    status: string;
+  }>> {
+    const communications = await db
+      .select()
+      .from(citizenCommunications)
+      .orderBy(desc(citizenCommunications.createdAt))
+      .limit(limit);
+
+    const decryptedCommunications = communications.map(c => safelyDecryptCitizenCommunication(c));
+
+    return decryptedCommunications.map(comm => ({
+      id: comm.id,
+      type: 'communication' as const,
+      title: `رسالة جديدة: ${comm.subject}`,
+      description: `من ${comm.fullName} - ${comm.communicationType}`,
+      date: comm.createdAt.toISOString(),
+      status: comm.status
+    }));
   }
 }
 
