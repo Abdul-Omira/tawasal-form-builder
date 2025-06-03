@@ -98,6 +98,55 @@ const Home: React.FC = () => {
               initial="hidden"
               animate="visible"
             >
+              {/* Syrian Government Logo */}
+              <motion.div 
+                className="flex justify-center mb-6 sm:mb-8"
+                variants={textVariants}
+              >
+                <div className="relative">
+                  {/* Official Syrian Coat of Arms SVG */}
+                  <svg className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28" viewBox="0 0 100 100" fill="none">
+                    {/* Shield background */}
+                    <path d="M50 5 L85 20 L85 60 C85 75 50 95 50 95 C50 95 15 75 15 60 L15 20 Z" fill="url(#goldGradient)" stroke="#FFD700" strokeWidth="1"/>
+                    
+                    {/* Eagle silhouette */}
+                    <path d="M50 15 L40 25 L30 30 L25 40 L30 50 L40 55 L50 60 L60 55 L70 50 L75 40 L70 30 L60 25 Z" fill="#8B4513"/>
+                    
+                    {/* Wings */}
+                    <path d="M35 35 L25 45 L30 50 L45 40 Z" fill="#654321"/>
+                    <path d="M65 35 L75 45 L70 50 L55 40 Z" fill="#654321"/>
+                    
+                    {/* Center emblem */}
+                    <circle cx="50" cy="42" r="8" fill="#FFD700" stroke="#8B4513" strokeWidth="1"/>
+                    <path d="M46 38 L50 42 L54 38 L54 46 L46 46 Z" fill="#8B4513"/>
+                    
+                    {/* Arabic text representation */}
+                    <rect x="35" y="65" width="30" height="3" fill="#FFD700" rx="1"/>
+                    <rect x="40" y="70" width="20" height="2" fill="#FFD700" rx="1"/>
+                    
+                    <defs>
+                      <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#FFD700" stopOpacity="0.9"/>
+                        <stop offset="50%" stopColor="#FFA500" stopOpacity="0.8"/>
+                        <stop offset="100%" stopColor="#FF8C00" stopOpacity="0.7"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  
+                  {/* Subtle glow effect */}
+                  <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-xl"></div>
+                </div>
+              </motion.div>
+
+              {/* Government Header */}
+              <motion.div 
+                className="mb-4 sm:mb-6"
+                variants={textVariants}
+              >
+                <p className="text-sm sm:text-base text-white/90 font-medium mb-2">الجمهورية العربية السورية</p>
+                <p className="text-xs sm:text-sm text-white/80">وزارة الاتصالات وتقانة المعلومات</p>
+              </motion.div>
+
               {/* Main Title */}
               <motion.div 
                 className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 animate-theme font-ibm leading-tight px-2"
