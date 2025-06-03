@@ -1,6 +1,15 @@
 import { Request } from 'express';
 
 /**
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * Metadata capture and validation for submission tracking
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
+/**
  * Metadata interface for submission tracking
  */
 export interface SubmissionMetadata {

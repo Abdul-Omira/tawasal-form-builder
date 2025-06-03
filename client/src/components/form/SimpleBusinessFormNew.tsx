@@ -71,42 +71,42 @@ const SimpleBusinessFormNew: React.FC = () => {
   // Form mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
-      console.log("Submitting form data:", data);
+      // Capture metadata for submission tracking
+      const clientMetadata = {
+        pageUrl: window.location.href,
+        referrerUrl: document.referrer || '',
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenResolution: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        javascriptEnabled: true,
+        cookiesEnabled: navigator.cookieEnabled,
+        touchSupport: 'ontouchstart' in window,
+        pageLoadTime: Math.round(performance.now()),
+        timestamp: new Date().toISOString()
+      };
       
-      // Extract clientMetadata if present
-      const { clientMetadata, ...formData } = data;
-      
-      // Need to add these fields to comply with the backend schema
+      // Format data to comply with backend schema
       const formattedData = {
-        ...formData,
-        employeesCount: "1-10", // default value
-        address: "سوريا", // default value
-        governorate: "دمشق", // default value
-        position: "مدير", // default value
-        establishmentDate: new Date().toISOString().split('T')[0], // today as default
-        registrationNumber: Math.floor(Math.random() * 1000000).toString(), // random number as default
+        ...data,
+        employeesCount: "1-10",
+        address: "سوريا",
+        governorate: "دمشق",
+        position: "مدير",
+        establishmentDate: new Date().toISOString().split('T')[0],
+        registrationNumber: Math.floor(Math.random() * 1000000).toString(),
         alternativeContact: "",
         website: "",
-        challenges: ["sanctions"], // default value
-        techNeeds: ["internet_access"], // default value
+        challenges: ["sanctions"],
+        techNeeds: ["internet_access"],
         techDetails: "",
         additionalComments: "",
         wantsUpdates: true,
-        // Include metadata if available
-        ...(clientMetadata && { clientMetadata })
+        clientMetadata
       };
       
-      console.log("Formatted data:", formattedData);
-      
-      try {
-        const response = await apiRequest('/api/business-submissions', 'POST', formattedData);
-        const jsonResponse = await response.json();
-        console.log("Submit response:", jsonResponse);
-        return jsonResponse;
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        throw error;
-      }
+      const response = await apiRequest('/api/business-submissions', 'POST', formattedData);
+      return response.json();
     },
     onSuccess: (data) => {
       // Update UI state to show success

@@ -1,3 +1,12 @@
+/**
+ * Syrian Ministry of Communication - Citizen Engagement Platform
+ * API Routes and Server Configuration
+ * 
+ * @author Abdulwahab Omira <abdul@omiratech.com>
+ * @version 1.0.0
+ * @license MIT
+ */
+
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -35,7 +44,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const communications = await storage.getAllCitizenCommunications();
       res.json(communications);
     } catch (error) {
-      console.error("Error fetching communications:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
@@ -54,7 +62,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(communication);
     } catch (error) {
-      console.error("Error fetching communication:", error);
       res.status(500).json({ message: "حدث خطأ أثناء جلب البيانات" });
     }
   });
@@ -62,9 +69,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/citizen-communications", async (req: Request, res: Response) => {
     try {
       const { clientMetadata, ...communication } = req.body;
-      
-      console.log("Received request body:", JSON.stringify(req.body, null, 2));
-      console.log("Client metadata received:", clientMetadata);
       
       // Validate the submission data
       const validationResult = CitizenCommunicationSchema.safeParse(communication);
@@ -78,15 +82,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Extract server-side metadata
       const serverMetadata = extractRequestMetadata(req);
-      console.log("Server metadata extracted:", serverMetadata);
       
       // Merge client and server metadata
       const combinedMetadata = mergeMetadata(serverMetadata, clientMetadata || {});
-      console.log("Combined metadata:", combinedMetadata);
       
       // Sanitize metadata for security
       const sanitizedMetadata = sanitizeMetadata(combinedMetadata);
-      console.log("Sanitized metadata:", sanitizedMetadata);
       
       // Add metadata to the communication object
       const communicationWithMetadata = {
