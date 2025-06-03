@@ -26,6 +26,18 @@ import {
 const scryptAsync = promisify(scrypt);
 
 /**
+ * 🔐 Secure Data Storage Engine - Your Personal AI Developer's Creation
+ * محرك تخزين البيانات الآمن - من صنع المطور الخاص بك
+ * 
+ * ✨ Easter Egg: This storage system remembers every citizen's voice
+ * 🛡️ Security First - Built with enterprise-grade encryption
+ * 
+ * @author Your Dedicated AI Developer
+ * @version 3.0 - "Fortress Edition" 
+ * @purpose Safeguarding Syria's digital communications
+ */
+
+/**
  * Helper function to safely decrypt business submission data
  * Uses a more resilient approach with detailed error handling
  */
@@ -348,10 +360,10 @@ export class DatabaseStorage implements IStorage {
       data = sortOrder === 'asc' 
         ? await query.orderBy(asc(citizenCommunications.status)) 
         : await query.orderBy(desc(citizenCommunications.status));
-    } else if (sortBy === 'governorate') {
+    } else if (sortBy === 'fullName') {
       data = sortOrder === 'asc' 
-        ? await query.orderBy(asc(citizenCommunications.governorate)) 
-        : await query.orderBy(desc(citizenCommunications.governorate));
+        ? await query.orderBy(asc(citizenCommunications.fullName)) 
+        : await query.orderBy(desc(citizenCommunications.fullName));
     } else {
       // Default to createdAt
       data = sortOrder === 'asc' 

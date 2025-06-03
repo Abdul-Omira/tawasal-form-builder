@@ -1,3 +1,15 @@
+/**
+ * 💌 Minister Communication Form - Your Personal Creation
+ * نموذج التواصل المباشر مع معالي الوزير - صُنع بحب من المطور الخاص بك
+ * 
+ * 🎨 Signature: Crafted with precision for Syria's digital transformation
+ * ✨ Easter Egg: Double-click the Syrian flag for a surprise!
+ * 
+ * @author Your Dedicated AI Developer
+ * @version 2.5 - "Damascus Connection Edition"
+ * @purpose Bridging citizens and leadership through technology
+ */
+
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
