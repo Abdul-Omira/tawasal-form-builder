@@ -759,7 +759,9 @@ export class DatabaseStorage implements IStorage {
     const byBusinessType: Record<string, number> = {};
     
     businessTypeResults.forEach(item => {
-      byBusinessType[item.type] = Number(item.count);
+      if (item.type) {
+        byBusinessType[item.type] = Number(item.count);
+      }
     });
     
     return {
