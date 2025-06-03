@@ -153,9 +153,12 @@ const MinisterCommunicationForm: React.FC = () => {
       data.attachmentName = fileAttachment.name;
       data.attachmentType = fileAttachment.type;
       data.attachmentSize = Number(fileAttachment.size);
+      console.log("Adding attachment data to submission:", fileAttachment);
+    } else {
+      console.log("No file attachment found");
     }
     
-    console.log("Form data:", data);
+    console.log("Form data with attachment:", data);
     mutate(data);
   };
   
@@ -372,13 +375,16 @@ const MinisterCommunicationForm: React.FC = () => {
                     </p>
                     <FileUpload 
                       onFileUploaded={(fileData) => {
+                        console.log("File uploaded callback received:", fileData);
                         setFileAttachment(fileData);
                         form.setValue('attachmentUrl', fileData.url);
                         form.setValue('attachmentName', fileData.name);
                         form.setValue('attachmentType', fileData.type);
                         form.setValue('attachmentSize', Number(fileData.size));
+                        console.log("Form values updated with attachment data");
                       }}
                       onUploadError={(error) => {
+                        console.error("File upload error:", error);
                         setFileUploadError(error);
                       }}
                       maxSizeMB={10}
