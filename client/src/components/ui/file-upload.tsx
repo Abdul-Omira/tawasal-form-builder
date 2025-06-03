@@ -195,12 +195,15 @@ export function FileUpload({
       const data = await response.json();
       
       // Notify parent component of successful upload
-      onFileUploaded({
+      const fileData = {
         url: data.file.path,
         name: data.file.originalname,
         type: data.file.mimetype,
         size: data.file.size
-      });
+      };
+      
+      console.log('FileUpload: Calling onFileUploaded with data:', fileData);
+      onFileUploaded(fileData);
       
       setUploaded(true);
       
