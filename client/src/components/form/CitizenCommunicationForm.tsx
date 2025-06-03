@@ -19,6 +19,7 @@ import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
+import { getMetadataForSubmission } from '@/lib/metadataCapture';
 
 // Create a schema for the form
 const MinisterCommunicationSchema = z.object({

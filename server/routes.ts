@@ -7,6 +7,7 @@ import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { setupAuth, isAuthenticated, isAdmin } from "./auth";
 import { uploadMiddleware, securityScanMiddleware, handleFileUpload, serveFile } from "./fileUpload";
+import { extractRequestMetadata, mergeMetadata, sanitizeMetadata, type SubmissionMetadata } from "./metadataCapture";
 
 // Helper function to translate status to Arabic
 function getArabicStatus(status: string): string {
@@ -60,7 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/citizen-communications", async (req: Request, res: Response) => {
     try {
-      const communication = req.body;
+      const { clientMetadata, ...communication } = req.body;
       
       // Validate the submission data
       const validationResult = CitizenCommunicationSchema.safeParse(communication);
@@ -72,7 +73,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const createdCommunication = await storage.createCitizenCommunication(communication);
+      // Extract server-side metadata
+      const serverMetadata = extractRequestMetadata(req);
+      
+      // Merge client and server metadata
+      const combinedMetadata = mergeMetadata(serverMetadata, clientMetadata || {});
+      
+      // Sanitize metadata for security
+      const sanitizedMetadata = sanitizeMetadata(combinedMetadata);
+      
+      // Add metadata to the communication object
+      const communicationWithMetadata = {
+        ...communication,
+        ipAddress: sanitizedMetadata.ipAddress,
+        geolocation: sanitizedMetadata.geolocation,
+        ispInfo: sanitizedMetadata.ispInfo,
+        vpnDetection: sanitizedMetadata.vpnDetection,
+        hostingProvider: sanitizedMetadata.hostingProvider,
+        userAgent: sanitizedMetadata.userAgent,
+        browserInfo: sanitizedMetadata.browserInfo,
+        deviceType: sanitizedMetadata.deviceType,
+        language: sanitizedMetadata.language,
+        screenResolution: sanitizedMetadata.screenResolution,
+        timezone: sanitizedMetadata.timezone,
+        touchSupport: sanitizedMetadata.touchSupport,
+        batteryStatus: sanitizedMetadata.batteryStatus,
+        installedFonts: sanitizedMetadata.installedFonts,
+        referrerUrl: sanitizedMetadata.referrerUrl,
+        pageUrl: sanitizedMetadata.pageUrl,
+        pageLoadTime: sanitizedMetadata.pageLoadTime,
+        javascriptEnabled: sanitizedMetadata.javascriptEnabled,
+        cookiesEnabled: sanitizedMetadata.cookiesEnabled,
+        doNotTrack: sanitizedMetadata.doNotTrack,
+        browserPlugins: sanitizedMetadata.browserPlugins,
+        webglFingerprint: sanitizedMetadata.webglFingerprint,
+      };
+      
+      const createdCommunication = await storage.createCitizenCommunication(communicationWithMetadata);
       res.status(201).json(createdCommunication);
     } catch (error) {
       console.error("Error creating communication:", error);
@@ -195,35 +232,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/business-submissions", async (req: Request, res: Response) => {
     try {
+      const { clientMetadata, ...submission } = req.body;
+      
       // Validate request body
-      const validatedData = BusinessSubmissionSchema.parse(req.body);
+      const validatedData = BusinessSubmissionSchema.parse(submission);
       
-      // Collect device information
-      const ipAddress = 
-        req.headers['x-forwarded-for'] || 
-        req.socket.remoteAddress || 
-        req.ip || 
-        '0.0.0.0';
+      // Extract server-side metadata
+      const serverMetadata = extractRequestMetadata(req);
       
-      const userAgent = req.headers['user-agent'] || '';
+      // Merge client and server metadata
+      const combinedMetadata = mergeMetadata(serverMetadata, clientMetadata || {});
       
-      // Add device information to additionalComments
-      const deviceInfo = `IP: ${Array.isArray(ipAddress) ? ipAddress[0] : ipAddress.toString()}\nالجهاز: ${userAgent}`;
+      // Sanitize metadata for security
+      const sanitizedMetadata = sanitizeMetadata(combinedMetadata);
       
-      // If there are existing comments, preserve them
-      const updatedComments = validatedData.additionalComments 
-        ? `${validatedData.additionalComments}\n\n${deviceInfo}`
-        : deviceInfo;
-      
-      // Update the submission data
-      const enhancedData = {
+      // Add metadata to the submission object
+      const submissionWithMetadata = {
         ...validatedData,
-        additionalComments: updatedComments
+        ipAddress: sanitizedMetadata.ipAddress,
+        geolocation: sanitizedMetadata.geolocation,
+        ispInfo: sanitizedMetadata.ispInfo,
+        vpnDetection: sanitizedMetadata.vpnDetection,
+        hostingProvider: sanitizedMetadata.hostingProvider,
+        userAgent: sanitizedMetadata.userAgent,
+        browserInfo: sanitizedMetadata.browserInfo,
+        deviceType: sanitizedMetadata.deviceType,
+        language: sanitizedMetadata.language,
+        screenResolution: sanitizedMetadata.screenResolution,
+        timezone: sanitizedMetadata.timezone,
+        touchSupport: sanitizedMetadata.touchSupport,
+        batteryStatus: sanitizedMetadata.batteryStatus,
+        installedFonts: sanitizedMetadata.installedFonts,
+        referrerUrl: sanitizedMetadata.referrerUrl,
+        pageUrl: sanitizedMetadata.pageUrl,
+        pageLoadTime: sanitizedMetadata.pageLoadTime,
+        javascriptEnabled: sanitizedMetadata.javascriptEnabled,
+        cookiesEnabled: sanitizedMetadata.cookiesEnabled,
+        doNotTrack: sanitizedMetadata.doNotTrack,
+        browserPlugins: sanitizedMetadata.browserPlugins,
+        webglFingerprint: sanitizedMetadata.webglFingerprint,
       };
       
       // Create submission
-      const submission = await storage.createBusinessSubmission(enhancedData);
-      res.status(201).json(submission);
+      const createdSubmission = await storage.createBusinessSubmission(submissionWithMetadata);
+      res.status(201).json(createdSubmission);
     } catch (error) {
       if (error instanceof ZodError) {
         // Convert Zod error to a more user-friendly format
