@@ -143,8 +143,23 @@ const CitizenCommunicationForm: React.FC = () => {
     setCaptchaError('');
     
     // Capture client-side metadata
+    console.log("Starting metadata capture process...");
+    
     try {
-      const clientMetadata = await getMetadataForSubmission();
+      // Simple metadata capture for testing
+      const clientMetadata = {
+        pageUrl: window.location.href,
+        referrerUrl: document.referrer,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenResolution: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        javascriptEnabled: true,
+        cookiesEnabled: navigator.cookieEnabled,
+        touchSupport: 'ontouchstart' in window,
+        pageLoadTime: Math.round(performance.now()),
+      };
+      
       console.log("Captured client metadata:", clientMetadata);
       
       // Combine form data with metadata
@@ -158,7 +173,7 @@ const CitizenCommunicationForm: React.FC = () => {
       // Submit form with metadata
       mutate(submissionData);
     } catch (error) {
-      console.warn("Failed to capture metadata, submitting without it:", error);
+      console.error("Failed to capture metadata:", error);
       // Submit form without metadata if capture fails
       mutate(data);
     }
