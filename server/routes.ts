@@ -63,6 +63,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { clientMetadata, ...communication } = req.body;
       
+      console.log("Received request body:", JSON.stringify(req.body, null, 2));
+      console.log("Client metadata received:", clientMetadata);
+      
       // Validate the submission data
       const validationResult = CitizenCommunicationSchema.safeParse(communication);
       if (!validationResult.success) {
@@ -75,12 +78,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Extract server-side metadata
       const serverMetadata = extractRequestMetadata(req);
+      console.log("Server metadata extracted:", serverMetadata);
       
       // Merge client and server metadata
       const combinedMetadata = mergeMetadata(serverMetadata, clientMetadata || {});
+      console.log("Combined metadata:", combinedMetadata);
       
       // Sanitize metadata for security
       const sanitizedMetadata = sanitizeMetadata(combinedMetadata);
+      console.log("Sanitized metadata:", sanitizedMetadata);
       
       // Add metadata to the communication object
       const communicationWithMetadata = {
@@ -108,6 +114,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         browserPlugins: sanitizedMetadata.browserPlugins,
         webglFingerprint: sanitizedMetadata.webglFingerprint,
       };
+      
+      console.log("Final communication data with metadata:", JSON.stringify(communicationWithMetadata, null, 2));
       
       const createdCommunication = await storage.createCitizenCommunication(communicationWithMetadata);
       res.status(201).json(createdCommunication);

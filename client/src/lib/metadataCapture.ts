@@ -145,13 +145,12 @@ function getBrowserPlugins(): string[] {
 function getWebGLFingerprint(): string {
   try {
     const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const gl = canvas.getContext('webgl') as WebGLRenderingContext | null;
     
     if (!gl) return '';
     
-    const webglContext = gl as WebGLRenderingContext;
-    const renderer = webglContext.getParameter(webglContext.RENDERER);
-    const vendor = webglContext.getParameter(webglContext.VENDOR);
+    const renderer = gl.getParameter(gl.RENDERER);
+    const vendor = gl.getParameter(gl.VENDOR);
     
     return `${vendor}|${renderer}`.slice(0, 100);
   } catch {
@@ -229,25 +228,23 @@ export async function captureClientMetadata(): Promise<ClientMetadata> {
  */
 export async function getMetadataForSubmission(): Promise<Partial<ClientMetadata>> {
   try {
-    const metadata = await captureClientMetadata();
+    console.log("Starting metadata capture...");
     
-    // Return only the fields that should be sent to server
-    return {
-      pageUrl: metadata.pageUrl,
-      referrerUrl: metadata.referrerUrl,
-      pageLoadTime: metadata.pageLoadTime,
-      javascriptEnabled: metadata.javascriptEnabled,
-      cookiesEnabled: metadata.cookiesEnabled,
-      doNotTrack: metadata.doNotTrack,
-      screenResolution: metadata.screenResolution,
-      timezone: metadata.timezone,
-      touchSupport: metadata.touchSupport,
-      language: metadata.language,
-      installedFonts: metadata.installedFonts,
-      browserPlugins: metadata.browserPlugins,
-      webglFingerprint: metadata.webglFingerprint,
-      batteryStatus: metadata.batteryStatus,
+    const metadata: Partial<ClientMetadata> = {
+      pageUrl: window.location.href,
+      referrerUrl: document.referrer,
+      javascriptEnabled: true,
+      cookiesEnabled: detectCookiesEnabled(),
+      screenResolution: getScreenResolution(),
+      timezone: getTimezone(),
+      touchSupport: detectTouchSupport(),
+      language: getUserLanguage(),
+      doNotTrack: getDoNotTrack(),
+      pageLoadTime: getPageLoadTime(),
     };
+    
+    console.log("Metadata captured successfully:", metadata);
+    return metadata;
   } catch (error) {
     console.warn('Failed to capture client metadata:', error);
     return {
