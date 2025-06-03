@@ -103,8 +103,32 @@ const CitizenCommunicationForm: React.FC = () => {
     mutationFn: async (data: any) => {
       console.log("Mutation received data:", data);
       
-      const response = await apiRequest('/api/citizen-communications', 'POST', data);
-      // Parse response to get JSON data
+      // Always capture metadata directly in the mutation
+      const clientMetadata = {
+        pageUrl: window.location.href,
+        referrerUrl: document.referrer || '',
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenResolution: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        javascriptEnabled: true,
+        cookiesEnabled: navigator.cookieEnabled,
+        touchSupport: 'ontouchstart' in window,
+        pageLoadTime: Math.round(performance.now()),
+        timestamp: new Date().toISOString()
+      };
+      
+      console.log("Captured metadata in mutation:", clientMetadata);
+      
+      // Add metadata to data
+      const dataWithMetadata = {
+        ...data,
+        clientMetadata
+      };
+      
+      console.log("Sending data with metadata:", dataWithMetadata);
+      
+      const response = await apiRequest('/api/citizen-communications', 'POST', dataWithMetadata);
       return response.json();
     },
     onSuccess: (data: any) => {
@@ -142,28 +166,9 @@ const CitizenCommunicationForm: React.FC = () => {
     // Reset captcha error
     setCaptchaError('');
     
-    // Capture client-side metadata
-    console.log("Starting metadata capture process...");
-    
-    try {
-      const clientMetadata = captureBasicMetadata();
-      console.log("Captured client metadata:", clientMetadata);
-      
-      // Combine form data with metadata
-      const submissionData = {
-        ...data,
-        clientMetadata
-      };
-      
-      console.log("Submitting minister communication:", submissionData);
-      
-      // Submit form with metadata
-      mutate(submissionData);
-    } catch (error) {
-      console.error("Failed to capture metadata:", error);
-      // Submit form without metadata if capture fails
-      mutate(data);
-    }
+    // Submit form directly - metadata will be captured in mutation
+    console.log("Submitting form data:", data);
+    mutate(data);
   };
   
   // Render success view
