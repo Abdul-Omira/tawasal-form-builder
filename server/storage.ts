@@ -368,10 +368,10 @@ export class DatabaseStorage implements IStorage {
       data = sortOrder === 'asc' 
         ? await query.orderBy(asc(citizenCommunications.status)) 
         : await query.orderBy(desc(citizenCommunications.status));
-    } else if (sortBy === 'phoneNumber') {
+    } else if (sortBy === 'phone') {
       data = sortOrder === 'asc' 
-        ? await query.orderBy(asc(citizenCommunications.phoneNumber)) 
-        : await query.orderBy(desc(citizenCommunications.phoneNumber));
+        ? await query.orderBy(asc(citizenCommunications.phone)) 
+        : await query.orderBy(desc(citizenCommunications.phone));
     } else {
       // Default to createdAt
       data = sortOrder === 'asc' 
