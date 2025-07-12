@@ -4,7 +4,7 @@ import SimpleHeader from '@/components/layout/SimpleHeader';
 import SimpleFooter from '@/components/layout/SimpleFooter';
 import LoginForm from '@/components/auth/LoginForm';
 import { motion } from 'framer-motion';
-import emblemSrc from '@assets/Emblem_of_Syria.svg.png';
+import syrianLogoSvg from '../assets/syrian-logo-gold.svg';
 import { useAuth } from '@/hooks/useAuth';
 import PageSEO from '@/components/seo/PageSEO';
 
@@ -12,16 +12,12 @@ const AuthPage: React.FC = () => {
   const [location, setLocation] = useLocation();
   const { user, isLoading, isAuthenticated, isAdmin } = useAuth();
   
-  // If user is already logged in, redirect to home or admin page
+  // If user is already logged in, redirect to dashboard
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      if (isAdmin) {
-        setLocation('/admin');
-      } else {
-        setLocation('/');
-      }
+      setLocation('/mgt-system-2024');
     }
-  }, [isAuthenticated, isAdmin, isLoading, setLocation]);
+  }, [isAuthenticated, isLoading, setLocation]);
 
   // Removed infinite loading check to prevent getting stuck
   // We'll only render the auth form for unauthenticated users
@@ -58,9 +54,9 @@ const AuthPage: React.FC = () => {
             >
               <div className="flex flex-col items-center">
                 <img 
-                  src={emblemSrc} 
-                  alt="شعار الجمهورية العربية السورية" 
-                  className="w-32 h-32 mb-6"
+                  src={syrianLogoSvg} 
+                  alt="وزارة الاتصالات وتقانة المعلومات - الجمهورية العربية السورية" 
+                  className="h-64 w-auto mb-6"
                 />
                 <h1 className="text-3xl font-bold text-center mb-4">وزارة الاتصالات وتقانة المعلومات</h1>
                 <p className="text-lg text-center mb-6">

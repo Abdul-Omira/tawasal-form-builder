@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import syrianEmblem from '../../assets/syria-emblem.png';
+import syrianLogoSvg from '../../assets/syrian-logo-gold.svg';
 import FastLink from '../navigation/FastLink';
 
 const SimpleFooter: React.FC = () => {
@@ -15,8 +15,8 @@ const SimpleFooter: React.FC = () => {
       transition={{ delay: 0.3, duration: 0.5 }}
     >
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
-          {/* Copyright - Responsive for mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+          {/* Copyright - Left side on desktop */}
           <motion.p 
             className="text-sm md:text-base text-center md:text-right order-2 md:order-1"
             initial={{ y: 10, opacity: 0 }}
@@ -27,7 +27,7 @@ const SimpleFooter: React.FC = () => {
             <span className="hidden sm:inline"> جميع الحقوق محفوظة.</span>
           </motion.p>
           
-          {/* Syrian Emblem in the middle */}
+          {/* Syrian Emblem in the exact middle */}
           <motion.div 
             className="flex justify-center order-1 md:order-2"
             initial={{ scale: 0.8, opacity: 0 }}
@@ -35,18 +35,18 @@ const SimpleFooter: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <div className="animate-smooth h-16 w-16 flex items-center justify-center">
+            <div className="animate-smooth h-20 md:h-24 flex items-center justify-center">
               <img 
-                src={syrianEmblem} 
-                alt="شعار الجمهورية العربية السورية" 
-                className="h-full w-auto"
+                src={syrianLogoSvg} 
+                alt="وزارة الاتصالات وتقانة المعلومات - الجمهورية العربية السورية" 
+                className="h-24 md:h-28 w-auto"
               />
             </div>
           </motion.div>
           
-          {/* Footer links - Responsive for mobile */}
+          {/* Footer links - Right side on desktop */}
           <motion.div 
-            className="flex space-x-6 space-x-reverse order-3"
+            className="flex justify-center md:justify-left space-x-6 space-x-reverse order-3"
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}

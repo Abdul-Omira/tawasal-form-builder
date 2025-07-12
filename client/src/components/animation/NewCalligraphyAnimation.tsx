@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface CalligraphyAnimationProps {
+export interface CalligraphyAnimationProps {
   text: string;
   className?: string;
   delay?: number;
@@ -35,17 +35,17 @@ export const CalligraphyAnimation: React.FC<CalligraphyAnimationProps> = ({
     })
   };
   
-  // Create variants for each word
+  // Create variants for each word - removed blur to prevent negative values
   const wordVariant = {
     hidden: {
       opacity: 0,
       y: 15,
-      filter: "blur(5px)",
+      scale: 0.95,
     },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
+      scale: 1,
       transition: {
         type: "spring",
         damping: 12,
@@ -108,18 +108,16 @@ export const FancyCalligraphyAnimation: React.FC<CalligraphyAnimationProps & {
     })
   };
   
-  // Create variants for each word
+  // Create variants for each word - removed blur to prevent negative values
   const wordVariant = {
     hidden: {
       opacity: 0,
       y: 20,
-      filter: "blur(4px)",
-      scale: 1.2
+      scale: 0.9
     },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       scale: 1,
       transition: {
         type: "spring",

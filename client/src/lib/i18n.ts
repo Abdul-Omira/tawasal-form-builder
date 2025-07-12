@@ -132,7 +132,7 @@ const arabicResources = {
     printConfirmation: "طباعة التأكيد",
     
     // Admin
-    adminDashboard: "لوحة تحكم المسؤول",
+    
     businessRequests: "طلبات الشركات",
     search: "بحث...",
     allRequests: "جميع الطلبات",

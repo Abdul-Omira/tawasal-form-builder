@@ -17,6 +17,7 @@ export const citizenCommunications = pgTable("citizen_communications", {
   fullName: text("full_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
+  governorate: text("governorate"), // Added governorate field
   communicationType: text("communication_type").notNull(),
   subject: text("subject").notNull(),
   message: text("message").notNull(),
@@ -26,6 +27,7 @@ export const citizenCommunications = pgTable("citizen_communications", {
   attachmentSize: integer("attachment_size"),
   captchaAnswer: text("captcha_answer").notNull(),
   consentToDataUse: boolean("consent_to_data_use").notNull(),
+  wantsUpdates: boolean("wants_updates").default(false), // Added wantsUpdates field
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   // Network & Location Metadata
@@ -201,6 +203,7 @@ export const CitizenCommunicationSchema = z.object({
   fullName: z.string().min(1, { message: "الاسم الكامل مطلوب" }),
   email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
   phone: z.string().optional(),
+  governorate: z.string().optional(), // Added governorate field
   communicationType: z.string().min(1, { message: "نوع التواصل مطلوب" }),
   subject: z.string().min(1, { message: "الموضوع مطلوب" }),
   message: z.string().min(10, { message: "الرسالة يجب أن تكون 10 أحرف على الأقل" }),
@@ -210,6 +213,7 @@ export const CitizenCommunicationSchema = z.object({
   attachmentSize: z.number().optional(),
   captchaAnswer: z.string().min(1, { message: "الإجابة على سؤال التحقق مطلوبة" }),
   consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام البيانات" }),
+  wantsUpdates: z.boolean().default(false), // Added wantsUpdates field
 });
 
 // Insert schemas

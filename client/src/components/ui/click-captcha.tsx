@@ -86,6 +86,46 @@ export const ClickCaptcha: React.FC<ClickCaptchaProps> = ({
   const [options, setOptions] = useState<VerificationOption[]>([]);
   const [verified, setVerified] = useState(false);
   const [hint, setHint] = useState<string>("");
+  const [attempts, setAttempts] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now());
+  const [mouseMovements, setMouseMovements] = useState(0);
+  const [behaviorScore, setBehaviorScore] = useState(0);
+  
+  // Behavioral tracking for bot detection
+  useEffect(() => {
+    let movementCount = 0;
+    const handleMouseMove = () => {
+      movementCount++;
+      setMouseMovements(movementCount);
+    };
+    
+    // Track human-like behavior
+    const interval = setInterval(() => {
+      const timeSpent = (Date.now() - startTime) / 1000;
+      let score = 0;
+      
+      // Natural mouse movement (humans move mouse naturally)
+      if (movementCount > 3 && timeSpent > 2) score += 30;
+      
+      // Reasonable time spent (not too fast)
+      if (timeSpent > 1.5 && timeSpent < 30) score += 25;
+      
+      // Multiple attempts suggest human (bots usually get it right first time)
+      if (attempts > 0 && attempts < 4) score += 20;
+      
+      // Page focus (humans typically have page in focus)
+      if (!document.hidden) score += 25;
+      
+      setBehaviorScore(Math.min(100, score));
+    }, 1000);
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      clearInterval(interval);
+    };
+  }, [startTime, attempts]);
   
   // Generate random options on mount
   useEffect(() => {
@@ -136,55 +176,88 @@ export const ClickCaptcha: React.FC<ClickCaptchaProps> = ({
     setOptions(selected.sort(() => 0.5 - Math.random()));
   };
   
-  // Handle option selection
+  // Handle option selection with behavioral validation
   const handleOptionClick = (option: VerificationOption) => {
-    if (option.isHuman) {
+    const timeSpent = (Date.now() - startTime) / 1000;
+    
+    // Check for suspicious behavior
+    const isSuspicious = timeSpent < 0.8 || // Too fast
+                        mouseMovements < 2 || // No mouse movement
+                        behaviorScore < 30; // Low behavior score
+    
+    if (option.isHuman && !isSuspicious) {
       setVerified(true);
       onChange("verified");
     } else {
       setVerified(false);
       onChange("");
-      // Regenerate options if they choose wrong
-      generateOptions();
+      setAttempts(prev => prev + 1);
+      
+      // If too many attempts or suspicious behavior, make it harder
+      if (attempts >= 2 || isSuspicious) {
+        // Add delay to slow down bots
+        setTimeout(() => {
+          generateOptions();
+        }, 1500);
+      } else {
+        generateOptions();
+      }
     }
   };
   
   return (
     <div className="mt-4">
-      <Card className="bg-muted/50 border-dashed">
+      <Card className="bg-white border border-gray-200 shadow-sm">
         <CardContent className="pt-4">
-          <div className="space-y-2">
-            <Label>تحقق الأمان</Label>
-            <p className="text-sm text-muted-foreground">
+          <div className="space-y-3">
+            <Label className="font-qomra text-gray-700 font-medium">تحقق الأمان</Label>
+            <p className="text-sm text-gray-600 font-qomra">
               {hint}:
             </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
               {options.map((option) => (
                 <Button
                   key={option.id}
                   type="button"
-                  variant="outline"
                   onClick={() => handleOptionClick(option)}
-                  className={`h-14 relative ${verified && option.isHuman ? 'bg-primary/10 border-primary' : ''}`}
-                  style={option.style}
+                  className={`h-14 relative font-qomra font-medium transition-all duration-300 border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground ${
+                    verified && option.isHuman 
+                      ? 'bg-green-50 border-green-500 text-green-700 shadow-lg' 
+                      : 'bg-white border-gray-300 text-gray-800 hover:border-yellow-500 hover:bg-yellow-50 hover:text-yellow-700 hover:shadow-lg active:scale-95 hover:transform hover:-translate-y-1'
+                  }`}
+                  style={option.style && !verified ? {
+                    ...option.style,
+                    borderColor: option.style.color,
+                    backgroundColor: 'white'
+                  } : option.style}
                   disabled={verified}
                 >
                   {option.label}
                   {verified && option.isHuman && (
-                    <CheckCircle2 className="h-5 w-5 absolute top-2 right-2 text-primary" />
+                    <CheckCircle2 className="h-5 w-5 absolute top-2 right-2 text-green-600" />
                   )}
                 </Button>
               ))}
             </div>
             
             {verified && (
-              <p className="text-sm text-green-600 font-medium mt-2">
-                تم التحقق بنجاح!
-              </p>
+              <div className="mt-4 p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-lg shadow-md">
+                <div className="flex items-center justify-center space-x-2 space-x-reverse">
+                  <div className="bg-green-500 rounded-full p-1">
+                    <CheckCircle2 className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="text-lg font-bold text-yellow-800 font-qomra">
+                    تم التحقق بنجاح!
+                  </p>
+                </div>
+                <p className="text-sm text-yellow-700 font-qomra text-center mt-2">
+                  يمكنك الآن المتابعة لإرسال الرسالة
+                </p>
+              </div>
             )}
             
-            {error && <p className="text-sm text-destructive mt-1">{error}</p>}
+            {error && <p className="text-sm text-destructive mt-1 font-qomra bg-red-50 p-2 rounded-md">{error}</p>}
           </div>
         </CardContent>
       </Card>

@@ -390,7 +390,7 @@ const MinisterCommunicationForm: React.FC = () => {
                       <div className="mt-2 p-2 border rounded flex items-center justify-between">
                         <div className="flex items-center">
                           <Send className="h-4 w-4 ml-2 text-primary" />
-                          <span className="text-sm">{fileAttachment.name} ({(fileAttachment.size / 1024).toFixed(1)} KB)</span>
+                          <span className="text-sm">تم إرفاق ملف بنجاح ({(fileAttachment.size / 1024).toFixed(1)} KB)</span>
                         </div>
                         <Button 
                           variant="ghost" 
@@ -463,7 +463,10 @@ const MinisterCommunicationForm: React.FC = () => {
                   <Button 
                     type="submit" 
                     disabled={isPending}
-                    className="w-full md:w-auto min-w-[250px] bg-primary hover:bg-primary/90 text-white font-ibm animate-smooth text-lg py-3"
+                    className="w-full md:w-auto min-w-[250px] text-white font-qomra animate-smooth text-lg py-3"
+                    style={{
+                      background: 'linear-gradient(135deg, #ad9e6e 0%, #8b7c4e 50%, #6d5f3a 100%)'
+                    }}
                   >
                     <Send className="ml-2 h-5 w-5" />
                     {isPending ? 'جارٍ الإرسال...' : 'أرسل الرسالة إلى الوزير'}

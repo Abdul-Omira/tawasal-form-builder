@@ -76,13 +76,13 @@ async function createTestUsers() {
       
     const employeeName = process.env.EMPLOYEE_NAME || 'موظف منصة';
     
-    // Log generated passwords in development mode only
+    // Never log actual passwords for security reasons
     if (!isProd) {
       if (!process.env.ADMIN_PASSWORD) {
-        console.log(`Generated admin password for development: ${adminPassword}`);
+        console.log(`Generated admin password for development: [HIDDEN FOR SECURITY]`);
       }
       if (!process.env.EMPLOYEE_PASSWORD) {
-        console.log(`Generated employee password for development: ${employeePassword}`);
+        console.log(`Generated employee password for development: [HIDDEN FOR SECURITY]`);
       }
     }
     
@@ -131,10 +131,10 @@ async function createTestUsers() {
     
     console.log('Test users setup complete!');
     
-    // Print credentials for reference
+    // Print credentials for reference (masked for security)
     console.log("Test users created successfully. Use:");
-    console.log(`1. Admin: username='${adminUsername}', password='${adminPassword}'`);
-    console.log(`2. Employee: username='${employeeUsername}', password='${employeePassword}'`);
+    console.log(`1. Admin: username='${adminUsername}', password='[HIDDEN FOR SECURITY]'`);
+    console.log(`2. Employee: username='${employeeUsername}', password='[HIDDEN FOR SECURITY]'`);
   } catch (error) {
     console.error('Error creating test users:', error);
   }

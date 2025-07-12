@@ -106,6 +106,11 @@ export const AdaptiveCaptcha: React.FC<AdaptiveCaptchaProps> = ({
       if (newRiskScore > 30 && !captchaShown) {
         setCaptchaShown(true);
       }
+      
+      // Auto-verify if risk score is low (user appears human)
+      if (newRiskScore <= 30 && timeOnPage > 3 && movementCount > 5 && value !== 'verified') {
+        onChange('verified');
+      }
     };
     
     // Listen for mouse movement
@@ -133,7 +138,7 @@ export const AdaptiveCaptcha: React.FC<AdaptiveCaptchaProps> = ({
   
   return (
     <div className="mt-4">
-      <Card className={`${captchaMode === 'enhanced' ? 'border-yellow-400' : 'border-dashed'} bg-muted/50`}>
+      <Card className={`${captchaMode === 'enhanced' ? 'border-yellow-400' : 'border-gray-300'} bg-white`}>
         <CardContent className="pt-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">

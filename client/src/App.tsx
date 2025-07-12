@@ -9,7 +9,6 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from './lib/i18n';
 import Home from '@/pages/Home';
 import Admin from '@/pages/Admin';
-import Dashboard from '@/pages/Dashboard';
 import Confirmation from '@/pages/Confirmation';
 import AuthPage from '@/pages/AuthPage';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
@@ -29,10 +28,8 @@ function Router() {
     
     if (location === '/') {
       currentPage = 'home';
-    } else if (location === '/admin') {
+    } else if (location === '/mgt-system-2024') {
       currentPage = 'admin';
-    } else if (location === '/dashboard') {
-      currentPage = 'admin'; // Use admin metadata for dashboard
     } else if (location === '/auth') {
       currentPage = 'auth';
     } else if (location === '/confirmation') {
@@ -56,8 +53,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
-      <ProtectedRoute path="/admin" component={Admin} adminOnly={true} />
-      <ProtectedRoute path="/dashboard" component={Dashboard} adminOnly={false} />
+      <ProtectedRoute path="/mgt-system-2024" component={Admin} adminOnly={true} />
       <Route path="/confirmation" component={Confirmation}/>
       <Route path="/auth" component={AuthPage}/>
       <Route path="/privacy-policy" component={PrivacyPolicy}/>

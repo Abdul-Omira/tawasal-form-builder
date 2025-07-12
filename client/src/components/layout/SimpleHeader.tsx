@@ -13,7 +13,8 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import syriaLogo from '../../assets/syria-logo.png';
+import { SyrianLogoAnimation } from '@/components/animation/SyrianLogoAnimation';
+import headerLogo from '../../assets/headerlogo.png';
 
 const SimpleHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,7 +57,7 @@ const SimpleHeader: React.FC = () => {
   };
   
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-border shadow-sm py-2 md:py-4 animate-smooth">
+    <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm py-2 md:py-4 animate-smooth">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -66,14 +67,13 @@ const SimpleHeader: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <img
-                src={syriaLogo}
-                alt="شعار الجمهورية العربية السورية"
-                className="h-20 md:h-28 w-auto hover-scale animate-smooth"
-              />
-              <div className="mr-3 md:mr-4">
-                <h1 className="text-lg md:text-xl font-bold text-foreground">وزارة الاتصالات وتقانة المعلومات</h1>
-                <p className="text-xs md:text-sm text-muted-foreground">الجمهورية العربية السورية</p>
+              {/* New Ministry Header Logo */}
+              <div className="flex items-center">
+                <img
+                  src={headerLogo}
+                  alt="وزارة الاتصالات وتقانة المعلومات - الجمهورية العربية السورية"
+                  className="h-20 md:h-28 w-auto opacity-90 hover:opacity-100 transition-opacity duration-300"
+                />
               </div>
             </motion.div>
           </div>
@@ -85,12 +85,12 @@ const SimpleHeader: React.FC = () => {
             </Link>
             
             {isAdmin && (
-              <Link href="/admin" className="text-muted-foreground hover:text-primary font-medium animate-theme">
+              <Link href="/mgt-system-2024" className="text-muted-foreground hover:text-primary font-medium animate-theme">
                 لوحة التحكم
               </Link>
             )}
             
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="gap-2">
@@ -116,12 +116,6 @@ const SimpleHeader: React.FC = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Link href="/auth">
-                <Button variant="default" size="sm">
-                  تسجيل الدخول
-                </Button>
-              </Link>
             )}
           </div>
           
@@ -160,7 +154,7 @@ const SimpleHeader: React.FC = () => {
             
             {isAdmin && (
               <Link 
-                href="/admin" 
+                href="/mgt-system-2024" 
                 className="block py-2 px-4 text-muted-foreground hover:bg-gray-50 hover:text-primary rounded-md animate-smooth"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -168,7 +162,7 @@ const SimpleHeader: React.FC = () => {
               </Link>
             )}
             
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <div 
                 className="block py-2 px-4 text-destructive hover:bg-gray-50 rounded-md animate-smooth cursor-pointer"
                 onClick={() => {
@@ -178,14 +172,6 @@ const SimpleHeader: React.FC = () => {
               >
                 تسجيل الخروج
               </div>
-            ) : (
-              <Link 
-                href="/auth" 
-                className="block py-2 px-4 text-primary font-medium hover:bg-gray-50 rounded-md animate-smooth"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                تسجيل الدخول
-              </Link>
             )}
           </div>
         </motion.div>

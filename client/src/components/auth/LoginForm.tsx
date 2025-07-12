@@ -39,13 +39,35 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     mutationFn: async (data: LoginFormData) => {
       setIsLoading(true);
       try {
-        console.log(`Attempting to login with username: ${data.username}`);
+        // Simple, safe metadata collection
+        const basicFingerprint = navigator.userAgent + '|' + navigator.language + '|' + screen.width + 'x' + screen.height;
+        const hash = Array.from(basicFingerprint).reduce((hash, char) => {
+          const charCode = char.charCodeAt(0);
+          hash = ((hash << 5) - hash) + charCode;
+          return hash & hash; // Convert to 32-bit integer
+        }, 0);
         
-        // Use the apiRequest function that handles CSRF tokens properly
-        const res = await apiRequest('POST', '/api/login', data);
+        const loginData = {
+          ...data,
+          fingerprint: Math.abs(hash).toString(36),
+          deviceInfo: JSON.stringify({
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            screen: `${screen.width}x${screen.height}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timestamp: new Date().toISOString()
+          })
+        };
+        
+        // Use the apiRequest function for API calls
+        const res = await apiRequest('POST', '/api/login', loginData);
+        
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || 'Login failed');
+        }
         
         const userData = await res.json();
-        console.log('Login successful, user data received');
         return userData;
       } catch (error) {
         console.error('Login error:', error);
@@ -61,20 +83,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         });
       }
       
+      // Ensure we have user data before setting cache
+      if (data.user && typeof data.user === 'object') {
       // Update user data in React Query cache
-      queryClient.setQueryData(['/api/user'], data);
+        queryClient.setQueryData(['/api/user'], data.user);
+      }
       
       toast({
         title: 'تم تسجيل الدخول بنجاح',
-        description: `مرحباً بعودتك ${data.username}`,
+        description: `مرحباً بعودتك ${data.user?.username}`,
       });
       
-      // Redirect to admin dashboard if admin, otherwise to home
-      if (data.isAdmin) {
-        setLocation('/admin');
-      } else {
-        setLocation('/');
-      }
+      // Redirect all authenticated users to the dashboard
+      setLocation('/mgt-system-2024');
       
       if (onSuccess) {
         onSuccess();

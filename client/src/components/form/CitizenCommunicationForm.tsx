@@ -7,13 +7,14 @@
  * @license MIT
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'wouter';
 import { useMutation } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
+import { getDeviceFingerprint, collectDeviceInfo, collectEnhancedDeviceInfo } from '@/lib/fingerprint';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Printer, Paperclip } from 'lucide-react';
@@ -24,26 +25,12 @@ import { FileUpload } from '@/components/ui/file-upload';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCodeInput } from '@/components/ui/country-code-input';
-import { AdaptiveCaptcha } from '@/components/ui/adaptive-captcha';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { isValidEmail, isValidPhone } from '@/lib/utils';
 
-// Create a schema for the form
-const MinisterCommunicationSchema = z.object({
-  communicationType: z.string().min(1, { message: "تصنيف الرسالة مطلوب" }),
-  subject: z.string().min(1, { message: "الموضوع مطلوب" }),
-  message: z.string().min(10, { message: "نص الرسالة مطلوب ويجب أن يكون 10 أحرف على الأقل" }),
-  fullName: z.string().min(1, { message: "الاسم مطلوب" }),
-  email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
-  phone: z.string().optional(),
-  attachmentUrl: z.string().optional(),
-  attachmentName: z.string().optional(),
-  attachmentType: z.string().optional(),
-  attachmentSize: z.number().optional(),
-  captchaAnswer: z.string().min(1, { message: "الإجابة على سؤال التحقق مطلوبة" }),
-  consentToDataUse: z.boolean().refine(val => val === true, { message: "يجب الموافقة على استخدام المعلومات" }),
-});
+// Import the proper schema from shared
+import { CitizenCommunicationSchema } from '@shared/schema';
 
 // Animation variants
 const containerVariants = {
@@ -72,6 +59,7 @@ const CitizenCommunicationForm: React.FC = () => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [captchaError, setCaptchaError] = useState('');
+  const [captchaData, setCaptchaData] = useState<{id: string, question: string, token: string} | null>(null);
   
   // State to track submission success
   const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
@@ -88,28 +76,55 @@ const CitizenCommunicationForm: React.FC = () => {
   const [fileUploadError, setFileUploadError] = useState<string | null>(null);
 
   // Form handling
-  const form = useForm<z.infer<typeof MinisterCommunicationSchema>>({
-    resolver: zodResolver(MinisterCommunicationSchema),
+  const form = useForm<z.infer<typeof CitizenCommunicationSchema>>({
+    resolver: zodResolver(CitizenCommunicationSchema),
     defaultValues: {
-      communicationType: '',
-      subject: '',
-      message: '',
       fullName: '',
       email: '',
       phone: '',
+      governorate: '',
+      communicationType: '',
+      subject: '',
+      message: '',
       attachmentUrl: '',
       attachmentName: '',
       attachmentType: '',
       attachmentSize: undefined,
       captchaAnswer: '',
       consentToDataUse: false,
+      wantsUpdates: false,
     }
   });
+
+  // Function to fetch CAPTCHA data
+  const fetchCaptcha = async () => {
+    try {
+      setCaptchaError('');
+      const response = await fetch('/api/captcha');
+      const data = await response.json();
+      setCaptchaData(data);
+      // Clear the captcha answer when refreshing
+      form.setValue('captchaAnswer', '');
+    } catch (error) {
+      console.error('Failed to fetch CAPTCHA:', error);
+      setCaptchaError('فشل في تحميل CAPTCHA');
+    }
+  };
+
+  // Fetch CAPTCHA data on component mount
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
   
   // Form mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
-      // Capture metadata for submission tracking
+      // Capture enhanced metadata and fingerprint for submission tracking
+      const [fingerprint, enhancedDeviceInfo] = await Promise.all([
+        getDeviceFingerprint(),
+        collectEnhancedDeviceInfo()
+      ]);
+      
       const clientMetadata = {
         pageUrl: window.location.href,
         referrerUrl: document.referrer || '',
@@ -121,13 +136,23 @@ const CitizenCommunicationForm: React.FC = () => {
         cookiesEnabled: navigator.cookieEnabled,
         touchSupport: 'ontouchstart' in window,
         pageLoadTime: Math.round(performance.now()),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        webglFingerprint: fingerprint,
+        deviceInfo: JSON.stringify(enhancedDeviceInfo),
+        // Include MAC-like hardware fingerprint
+        hardwareMAC: enhancedDeviceInfo.hardwareMAC,
+        // VPN detection data
+        vpnDetection: JSON.stringify(enhancedDeviceInfo.vpnDetection),
+        webRTCInfo: JSON.stringify(enhancedDeviceInfo.webRTCInfo)
       };
       
       const dataWithMetadata = {
         ...data,
-        clientMetadata
+        clientMetadata,
+        captchaId: captchaData?.id,
+        captchaToken: captchaData?.token
       };
+      
       
       const response = await apiRequest('/api/citizen-communications', 'POST', dataWithMetadata);
       return response.json();
@@ -146,11 +171,24 @@ const CitizenCommunicationForm: React.FC = () => {
         variant: "default",
       });
     },
-    onError: (error) => {
-      // Show error toast
+    onError: (error: any) => {
+      console.error('Form submission error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response,
+        status: error.status
+      });
+      
+      // If it's a CAPTCHA error, refresh the CAPTCHA
+      if (error.message && error.message.includes('CAPTCHA')) {
+        fetchCaptcha();
+        setCaptchaError('يرجى إعادة المحاولة مع سؤال CAPTCHA الجديد');
+      }
+      
+      // Show error toast with more details
       toast({
         title: "خطأ في إرسال الرسالة",
-        description: "حدث خطأ أثناء إرسال الرسالة، يرجى المحاولة مرة أخرى",
+        description: error.message || "حدث خطأ أثناء إرسال الرسالة، يرجى المحاولة مرة أخرى",
         variant: "destructive",
       });
     }
@@ -256,7 +294,7 @@ const CitizenCommunicationForm: React.FC = () => {
                         <FormLabel className="font-medium">المحافظة *</FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          defaultValue={field.value || ""}
                         >
                           <FormControl>
                             <SelectTrigger className="focus:ring-1 focus:ring-primary animate-smooth font-ibm">
@@ -298,7 +336,7 @@ const CitizenCommunicationForm: React.FC = () => {
                         <FormLabel className="font-medium">رقم الهاتف *</FormLabel>
                         <FormControl>
                           <CountryCodeInput 
-                            value={field.value} 
+                            value={field.value || ''} 
                             onChange={field.onChange}
                             className="focus:border-primary focus:ring-1 focus:ring-primary animate-smooth font-ibm"
                             placeholder="9xx xxx xxx"
@@ -337,7 +375,7 @@ const CitizenCommunicationForm: React.FC = () => {
                         <FormLabel className="font-medium">نوع التواصل *</FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          defaultValue={field.value || ""}
                         >
                           <FormControl>
                             <SelectTrigger className="focus:ring-1 focus:ring-primary animate-smooth font-ibm">
@@ -430,7 +468,7 @@ const CitizenCommunicationForm: React.FC = () => {
                       <div className="mt-2 p-2 border rounded flex items-center justify-between">
                         <div className="flex items-center">
                           <Paperclip className="h-4 w-4 ml-2 text-primary" />
-                          <span className="text-sm">{fileAttachment.name} ({(fileAttachment.size / 1024).toFixed(1)} KB)</span>
+                          <span className="text-sm">تم إرفاق ملف بنجاح ({(fileAttachment.size / 1024).toFixed(1)} KB)</span>
                         </div>
                         <Button 
                           variant="ghost" 
@@ -461,11 +499,33 @@ const CitizenCommunicationForm: React.FC = () => {
                       <FormItem className="animate-smooth">
                         <FormLabel className="font-medium">التحقق الأمني *</FormLabel>
                         <FormControl>
-                          <AdaptiveCaptcha 
-                            value={field.value} 
-                            onChange={field.onChange}
-                            error={form.formState.errors.captchaAnswer?.message?.toString()}
-                          />
+                          <div className="space-y-2">
+                            {captchaData ? (
+                              <>
+                                <div className="flex items-center justify-between bg-muted p-2 rounded">
+                                  <p className="text-sm font-medium">
+                                    {captchaData.question}
+                                  </p>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={fetchCaptcha}
+                                    className="text-xs"
+                                  >
+                                    تحديث
+                                  </Button>
+                                </div>
+                                <Input
+                                  {...field}
+                                  placeholder="أدخل الإجابة"
+                                  className="text-center"
+                                />
+                              </>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">جاري تحميل السؤال...</p>
+                            )}
+                          </div>
                         </FormControl>
                         {captchaError && <p className="text-red-500 text-sm mt-1">{captchaError}</p>}
                         <FormMessage />

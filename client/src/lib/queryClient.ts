@@ -1,36 +1,22 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { getAuthHeader, getToken, handleTokenRefresh, isTokenExpired, removeToken } from "./jwtUtils";
 
-// Function to get CSRF token from response headers
-let csrfToken: string | null = null;
+type UnauthorizedBehavior = "redirect" | "returnNull";
 
-// Initially fetch CSRF token with a GET request to a dedicated endpoint
-fetch('/api/csrf-token', { credentials: 'include' })
-  .then(response => {
-    const token = response.headers.get('CSRF-Token');
-    if (token) {
-      csrfToken = token;
-      console.log('Initial CSRF token fetched successfully');
-    } else {
-      console.warn('No CSRF token in response headers');
-    }
-  })
-  .catch(error => {
-    console.error('Error fetching initial CSRF token:', error);
-  });
-
-async function throwIfResNotOk(res: Response) {
+const throwIfResNotOk = async (res: Response) => {
   if (!res.ok) {
-    // Check for token expiry response
     if (res.status === 401) {
-      // If token expired, clear it to force re-authentication
-      removeToken();
+      throw new Error("Unauthorized access - please login again");
     }
     
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    try {
+      const errorData = await res.json();
+      throw new Error(errorData.message || `Request failed with status ${res.status}`);
+    } catch (parseError) {
+      throw new Error(`Request failed with status ${res.status}`);
+    }
   }
-}
+};
 
 /**
  * API request function that handles JWT tokens
@@ -40,34 +26,17 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  // Update the CSRF token if present in headers
-  const updateCSRFToken = (res: Response) => {
-    const token = res.headers.get('CSRF-Token');
-    if (token) {
-      csrfToken = token;
-    }
-  };
-
-  // Combine content type and auth headers with CSRF token if available
   const headers: Record<string, string> = {
     ...(data ? { "Content-Type": "application/json" } : {}),
     ...getAuthHeader(),
-    // Always include CSRF token, even if null - the server will handle this properly
-    "CSRF-Token": csrfToken || ""
   };
   
   const res = await fetch(url, {
     method,
     headers,
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include", // Keep cookies for session fallback
+    credentials: "include",
   });
-  
-  // Update CSRF token if present in response headers
-  const token = res.headers.get('CSRF-Token');
-  if (token) {
-    csrfToken = token;
-  }
   
   // Check for token refresh in response headers
   handleTokenRefresh(res);
@@ -76,29 +45,19 @@ export async function apiRequest(
   return res;
 }
 
-type UnauthorizedBehavior = "returnNull" | "throw";
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    // Add JWT token and CSRF token to headers
     const headers: Record<string, string> = {
       ...getAuthHeader(),
-      // Always include CSRF token, even if null - the server will handle this properly
-      "CSRF-Token": csrfToken || ""
     };
     
     const res = await fetch(queryKey[0] as string, {
       headers,
-      credentials: "include", // Keep cookies for session fallback
+      credentials: "include",
     });
-    
-    // Update CSRF token if present in response headers
-    const token = res.headers.get('CSRF-Token');
-    if (token) {
-      csrfToken = token;
-    }
     
     // Check for token refresh in response headers
     handleTokenRefresh(res);
@@ -118,14 +77,26 @@ export const getQueryFn: <T>(options: {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
+      queryFn: getQueryFn({ on401: "returnNull" }),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (was cacheTime)
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      retry: (failureCount, error: any) => {
+        // Don't retry on 401 errors
+        if (error?.message?.includes('401') || error?.message?.includes('Unauthorized')) {
+          return false;
+        }
+        return failureCount < 3;
+      },
     },
     mutations: {
-      retry: false,
+      retry: (failureCount, error: any) => {
+        // Don't retry on 401 errors
+        if (error?.message?.includes('401') || error?.message?.includes('Unauthorized')) {
+          return false;
+        }
+        return failureCount < 3;
+      },
     },
   },
 });

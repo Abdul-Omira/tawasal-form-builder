@@ -1,28 +1,47 @@
 /**
- * Syrian Ministry of Communication - Citizen Engagement Platform
- * Database Connection and Configuration
- * 
- * @author Abdulwahab Omira <abdul@omiratech.com>
- * @version 1.0.0
- * @license MIT
+ * Database Configuration Module
+ *
+ * This module establishes and exports the PostgreSQL database connection
+ * using Drizzle ORM and a native Postgres (pg) client.
  */
 
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
-import * as schema from "@shared/schema";
+import pg from "pg";
+import { drizzle } from "drizzle-orm/node-postgres"; // for native Postgres use
+import * as schema from "@shared/schema"; // adjust the path if needed
+import "dotenv/config";
 
-neonConfig.webSocketConstructor = ws;
+const { Pool } = pg;
 
+// Validate database connection string
 if (!process.env.DATABASE_URL) {
   throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
+    "DATABASE_URL environment variable is not defined. Please provide a valid PostgreSQL connection string."
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+// Create a connection pool
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  idleTimeoutMillis: 30000,
+  max: 20,
+});
 
-export const closePool = async () => {
-  await pool.end();
-};
+// Drizzle ORM instance
+export const db = drizzle(pool, { schema });
+
+// Handle connection errors
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle database client", err);
+  process.exit(-1);
+});
+
+// Test database connection
+(async function testConnection() {
+  try {
+    const client = await pool.connect();
+    console.log("✅ Successfully connected to PostgreSQL database");
+    client.release();
+  } catch (err) {
+    console.error("❌ Failed to connect to database:", err);
+  }
+})();
