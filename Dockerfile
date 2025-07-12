@@ -1,8 +1,9 @@
-# Use official Node.js 20 image
-FROM node:20-alpine
+# Multi-stage build for Syrian Ministry Communications Platform
+# Stage 1: Build stage
+FROM node:20-alpine AS builder
 
-# Install system dependencies
-RUN apk add --no-cache python3 make g++
+# Install system dependencies for building
+RUN apk add --no-cache python3 make g++ curl
 
 # Set working directory
 WORKDIR /app
@@ -13,33 +14,69 @@ COPY package*.json ./
 # Install all dependencies including devDependencies for building
 RUN npm ci --include=dev
 
-# Copy application source code
+# Copy source code
 COPY . .
 
 # Build the application
 RUN npm run build
 
-# Remove devDependencies to reduce image size
-RUN npm prune --production
+# Stage 2: Production stage
+FROM node:20-alpine AS production
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    curl \
+    tzdata \
+    dumb-init \
+    && rm -rf /var/cache/apk/*
+
+# Set timezone to Syria
+RUN cp /usr/share/zoneinfo/Asia/Damascus /etc/localtime
+
+# Create app directory
+WORKDIR /app
 
 # Create non-root user for security
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001 -G nodejs
 
-# Change ownership of the app directory
-RUN chown -R nextjs:nodejs /app
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies only
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/client/dist ./client/dist
+
+# Create necessary directories
+RUN mkdir -p uploads logs backups && \
+    chown -R nextjs:nodejs /app
+
+# Create secure uploads directory
+RUN mkdir -p /var/secure-uploads && \
+    chown -R nextjs:nodejs /var/secure-uploads && \
+    chmod 700 /var/secure-uploads
+
+# Switch to non-root user
 USER nextjs
 
-# Expose the port
+# Expose port
 EXPOSE 5000
 
 # Set environment variables
 ENV NODE_ENV=production
 ENV PORT=5000
+ENV SECURE_UPLOADS_DIR=/var/secure-uploads
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node --version || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:5000/api/health || exit 1
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
 
 # Start the application
 CMD ["node", "dist/index.js"]
