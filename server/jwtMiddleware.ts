@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken, extractTokenFromHeader, refreshTokenIfNeeded } from './jwt';
+import { verifyToken, extractTokenFromHeader, extractTokenFromRequest, refreshTokenIfNeeded } from './jwt';
 
 /**
  * Middleware to verify JWT token from Authorization header
@@ -56,9 +56,8 @@ export const verifyJwtToken = (req: Request, res: Response, next: NextFunction) 
  */
 export const requireJwtToken = (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Get token from request headers
-    const authHeader = req.headers.authorization;
-    const token = extractTokenFromHeader(authHeader);
+    // Get token from request (headers, cookies, body, or query)
+    const token = extractTokenFromRequest(req);
     
     // Check if token exists
     if (!token) {

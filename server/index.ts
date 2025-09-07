@@ -29,7 +29,7 @@ console.log('🛡️ Initializing enterprise security configuration...');
 // General API rate limiting - Reduced for production security
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === "production" ? 50 : 1000, // Production: 50 requests per 15min
+  max: process.env.NODE_ENV === "production" ? 2000 : 5000, // Production: 2000 requests per 15min
   message: {
     error: "Too many requests from this IP, please try again later",
     retryAfter: "15 minutes"
@@ -92,7 +92,7 @@ export const loginLimiter = rateLimit({
 // File upload rate limiting
 export const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // Only 5 file uploads per hour
+  max: 10, // 10 file uploads per hour
   message: {
     error: "Too many file uploads from this IP, please try again later",
     retryAfter: "1 hour"
@@ -110,7 +110,7 @@ export const uploadLimiter = rateLimit({
 // Form submission rate limiting
 export const formLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: process.env.NODE_ENV === 'production' ? 2 : 20, // 2 in production, 20 in development
+  max: process.env.NODE_ENV === 'production' ? 1000 : 2000, // 1000 in production, 2000 in development
   message: {
     error: "Too many form submissions from this IP, please try again later",
     retryAfter: "10 minutes"
@@ -129,11 +129,11 @@ export const formLimiter = rateLimit({
 app.use(generalLimiter);
 
 console.log('🚦 Enterprise rate limiting configured:');
-console.log(`   📊 General API: ${process.env.NODE_ENV === "production" ? "50" : "200"} requests/15min`);
+console.log(`   📊 General API: ${process.env.NODE_ENV === "production" ? "2000" : "5000"} requests/15min`);
 console.log('   👨‍💼 Admin API: 500 requests/15min');
 console.log('   🔒 Login: 3 attempts/15min');
-console.log('   📁 Upload: 5 files/hour');
-console.log(`   📝 Forms: ${process.env.NODE_ENV === "production" ? "2" : "20"} submissions/10min`);
+console.log('   📁 Upload: 10 files/hour');
+console.log(`   📝 Forms: ${process.env.NODE_ENV === "production" ? "1000" : "2000"} submissions/10min`);
 
 // 2. COMPREHENSIVE SECURITY HEADERS
 const helmetConfig = {
@@ -278,6 +278,18 @@ console.log('');
 (async () => {
   // Initialize routes
   const server = await registerRoutes(app);
+
+  // Ensure admin password is correct on startup
+  try {
+    console.log('🔑 Verifying admin password...');
+    const { execSync } = await import('child_process');
+    execSync('node ensure-admin-password.js', { 
+      cwd: process.cwd(),
+      stdio: 'inherit'
+    });
+  } catch (error) {
+    console.warn('⚠️ Admin password verification failed:', error);
+  }
 
   // Enhanced error handling for production
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

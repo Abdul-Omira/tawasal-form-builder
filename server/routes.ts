@@ -702,8 +702,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Secure file serving endpoint (deprecated - use secure-files)
   app.get('/api/files/:filename', serveFile);
   
-  // New secure token-based file serving endpoint
-  app.get('/api/secure-files/:token', safeServeSecureFile);
+  // New secure token-based file serving endpoint - ADMIN ONLY
+  app.get('/api/secure-files/:token', isAuthenticated, isAdmin, safeServeSecureFile);
 
   // Our new auth.ts file handles these routes:
   // - /api/login

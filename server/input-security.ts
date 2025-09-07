@@ -115,6 +115,7 @@ const MAX_LENGTHS = {
   subject: 200,
   message: 5000,
   url: 2048,
+  filename: 255,
   general: 1000
 };
 
@@ -301,7 +302,19 @@ export const SecureCitizenCommunicationSchema = z.object({
   communicationType: z.string()
     .min(1, { message: "نوع التواصل مطلوب" })
     .refine((val) => {
-      const allowedTypes = ['شكوى', 'اقتراح', 'استفسار', 'طلب خدمة', 'أخرى'];
+      const allowedTypes = [
+        // Frontend form values - CitizenCommunicationForm
+        'اقتراح', 'شكوى', 'استفسار', 'مشروع', 'طلب', 'أخرى',
+        // Frontend form values - MinisterCommunicationForm  
+        'رأي', 'تعاون',
+        // Database analysis values (already in use)
+        'شكوي', 'اقتراحات', 'استفسارات', 'طلبات', 'آراء',
+        // Additional common variations
+        'مشكلة', 'ملاحظة', 'تساؤل', 'عام', 'اخرى', 'مشاريع',
+        // English equivalents
+        'complaint', 'inquiry', 'suggestion', 'request', 'other', 'general', 'opinion', 'cooperation', 'project'
+      ];
+      
       return allowedTypes.includes(val);
     }, { message: "نوع التواصل غير صالح" }),
     

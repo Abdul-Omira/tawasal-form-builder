@@ -8,6 +8,31 @@ import { v4 as uuidv4 } from 'uuid';
 import sanitize from 'sanitize-filename';
 import { safeStoreFileSecurely, isSecureFileSystemAvailable } from './secure-file-wrapper';
 
+// Helper function to extract real client IP from proxy headers
+function extractClientIP(req: any): string {
+  // Priority order for IP extraction:
+  // 1. X-Real-IP header (nginx real IP)
+  // 2. X-Forwarded-For header (first IP if multiple)
+  // 3. req.ip (express default)
+  // 4. req.connection.remoteAddress (fallback)
+  
+  const xRealIP = req.headers['x-real-ip'];
+  if (xRealIP && typeof xRealIP === 'string') {
+    return xRealIP.trim();
+  }
+  
+  const xForwardedFor = req.headers['x-forwarded-for'];
+  if (xForwardedFor && typeof xForwardedFor === 'string') {
+    // X-Forwarded-For can contain multiple IPs: "client, proxy1, proxy2"
+    const firstIP = xForwardedFor.split(',')[0].trim();
+    if (firstIP) {
+      return firstIP;
+    }
+  }
+  
+  return req.ip || req.connection?.remoteAddress || 'unknown';
+}
+
 // Create uploads directory if it doesn't exist
 const uploadDir = path.join(process.cwd(), 'uploads');
 const quarantineDir = path.join(process.cwd(), 'quarantine');
@@ -527,7 +552,7 @@ export const handleFileUpload = (req: Request, res: Response) => {
     console.log(`File uploaded successfully: ${file.originalname} -> ${file.filename} (Hash: ${req.fileHash})`);
     
     // Try secure storage first, fallback to regular storage
-    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+    const clientIP = extractClientIP(req);
     const fileBuffer = fs.readFileSync(file.path);
     
     if (isSecureFileSystemAvailable()) {

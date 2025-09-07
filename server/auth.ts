@@ -271,6 +271,14 @@ export async function setupAuth(app: Express) {
       // Generate JWT token
       const token = generateToken(userWithoutPassword);
       
+      // Set token in HTTP-only cookie for secure access
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Only use HTTPS in production
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      });
+      
       return res.status(200).json({
         user: userWithoutPassword,
         token
@@ -283,6 +291,8 @@ export async function setupAuth(app: Express) {
 
   // Logout endpoint (JWT doesn't require server-side logout, just client removes token)
   app.post("/api/logout", (req, res) => {
+    // Clear the token cookie
+    res.clearCookie('token');
     res.json({ message: "تم تسجيل الخروج بنجاح" });
   });
 

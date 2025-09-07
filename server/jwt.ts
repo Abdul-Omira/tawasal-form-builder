@@ -140,3 +140,29 @@ export function extractTokenFromHeader(authHeader?: string): string | null {
   
   return authHeader.substring(7); // Remove 'Bearer ' prefix
 }
+
+// Enhanced token extraction that checks multiple sources
+export function extractTokenFromRequest(req: any): string | null {
+  // 1. Check Authorization header first
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7);
+  }
+  
+  // 2. Check cookies
+  if (req.cookies && req.cookies.token) {
+    return req.cookies.token;
+  }
+  
+  // 3. Check request body (for form submissions)
+  if (req.body && req.body.token) {
+    return req.body.token;
+  }
+  
+  // 4. Check query parameters
+  if (req.query && req.query.token) {
+    return req.query.token;
+  }
+  
+  return null;
+}
