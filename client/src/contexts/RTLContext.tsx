@@ -1,42 +1,44 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+/**
+ * Form Builder Platform - RTL Context
+ * Provides RTL (Right-to-Left) support for Arabic language
+ */
+
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
-  setRTL: (rtl: boolean) => void;
+  toggleRTL: () => void;
+  direction: 'ltr' | 'rtl';
 }
 
-const RTLContext = createContext<RTLContextType | null>(null);
-
-export const useRTL = () => {
-  const context = useContext(RTLContext);
-  if (!context) {
-    throw new Error('useRTL must be used within a RTLProvider');
-  }
-  return context;
-};
+const RTLContext = createContext<RTLContextType | undefined>(undefined);
 
 interface RTLProviderProps {
   children: ReactNode;
 }
 
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
-  const [isRTL, setRTL] = useState(true); // Default to RTL for Arabic
+  const [isRTL, setIsRTL] = useState(true); // Default to RTL for Arabic
 
-  useEffect(() => {
-    // Set the document direction
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    
-    // Add or remove RTL class to body
-    if (isRTL) {
-      document.body.classList.add('rtl');
-    } else {
-      document.body.classList.remove('rtl');
-    }
-  }, [isRTL]);
+  const toggleRTL = () => {
+    setIsRTL(!isRTL);
+  };
+
+  const direction = isRTL ? 'rtl' : 'ltr';
 
   return (
-    <RTLContext.Provider value={{ isRTL, setRTL }}>
+    <RTLContext.Provider value={{ isRTL, toggleRTL, direction }}>
       {children}
     </RTLContext.Provider>
   );
 };
+
+export const useRTL = (): RTLContextType => {
+  const context = useContext(RTLContext);
+  if (context === undefined) {
+    throw new Error('useRTL must be used within an RTLProvider');
+  }
+  return context;
+};
+
+export default RTLProvider;

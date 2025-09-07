@@ -13,12 +13,12 @@ import {
   PlusIcon, 
   EyeIcon, 
   PlayIcon, 
-  SaveIcon,
+  DocumentArrowDownIcon as SaveIcon,
   PencilIcon,
   TrashIcon,
   ArrowUpIcon,
   ArrowDownIcon,
-  DuplicateIcon,
+  DocumentDuplicateIcon as DuplicateIcon,
 } from '@heroicons/react/24/outline';
 import { componentRegistry } from '../form-components/ComponentRegistry';
 

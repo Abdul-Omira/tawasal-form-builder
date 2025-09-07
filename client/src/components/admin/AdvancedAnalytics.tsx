@@ -25,8 +25,8 @@ import { Form, FormAnalyticsData, DailyStats } from '../../types/form';
 import { cn } from '../../lib/utils';
 import {
   ChartBarIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon as TrendingUpIcon,
+  ArrowTrendingDownIcon as TrendingDownIcon,
   EyeIcon,
   UsersIcon,
   ClockIcon,
