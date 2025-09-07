@@ -12,6 +12,9 @@ import { cn } from './lib/utils';
 import Dashboard from './components/admin/Dashboard';
 import FormManagement from './components/admin/FormManagement';
 import Analytics from './components/admin/Analytics';
+import AdvancedAnalytics from './components/admin/AdvancedAnalytics';
+import SecurityAudit from './components/admin/SecurityAudit';
+import Documentation from './components/admin/Documentation';
 
 // Form Builder Components
 import FormCanvas from './components/form-builder/FormCanvas';
@@ -111,7 +114,7 @@ const mockAnalytics: FormAnalyticsData[] = [
 ];
 
 function App() {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'form-builder' | 'public-form'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'form-builder' | 'public-form' | 'analytics' | 'security' | 'documentation'>('dashboard');
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [selectedComponent, setSelectedComponent] = useState<BaseComponent | null>(null);
   const [forms, setForms] = useState<Form[]>(mockForms);
@@ -285,6 +288,23 @@ function App() {
     alert(`سيتم تصدير البيانات بصيغة ${format.toUpperCase()}`);
   };
 
+  const handleFixSecurityIssue = (issueId: string) => {
+    console.log('Fixing security issue:', issueId);
+    // In a real app, this would fix the security issue
+    alert('تم إصلاح مشكلة الأمان');
+  };
+
+  const handleRunFullAudit = () => {
+    console.log('Running full security audit');
+    // In a real app, this would run a full security audit
+    alert('تم تشغيل التدقيق الأمني الشامل');
+  };
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    alert('تم نسخ الكود إلى الحافظة');
+  };
+
   // Render current view
   const renderCurrentView = () => {
     switch (currentView) {
@@ -299,6 +319,31 @@ function App() {
             onViewForm={handleViewForm}
             onShareForm={handleShareForm}
             onArchiveForm={handleArchiveForm}
+          />
+        );
+      
+      case 'analytics':
+        return (
+          <AdvancedAnalytics
+            forms={forms}
+            analytics={analytics}
+            onExportData={handleExportData}
+          />
+        );
+      
+      case 'security':
+        return (
+          <SecurityAudit
+            forms={forms}
+            onFixIssue={handleFixSecurityIssue}
+            onRunFullAudit={handleRunFullAudit}
+          />
+        );
+      
+      case 'documentation':
+        return (
+          <Documentation
+            onCopyCode={handleCopyCode}
           />
         );
       
@@ -404,6 +449,39 @@ function App() {
                     )}
                   >
                     منشئ النماذج
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('analytics')}
+                    className={cn(
+                      "px-3 py-2 rounded-md text-sm font-medium",
+                      currentView === 'analytics'
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    التحليلات
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('security')}
+                    className={cn(
+                      "px-3 py-2 rounded-md text-sm font-medium",
+                      currentView === 'security'
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    الأمان
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('documentation')}
+                    className={cn(
+                      "px-3 py-2 rounded-md text-sm font-medium",
+                      currentView === 'documentation'
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    الوثائق
                   </button>
                 </div>
               </div>
