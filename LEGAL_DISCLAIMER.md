@@ -150,7 +150,7 @@ By using this system, you acknowledge that you have read, understood, and agree 
 
 ---
 
-**© 2024 Syrian Ministry of Communications and Information Technology**  
+**© 2025 Syrian Ministry of Communications and Information Technology**  
 **All Rights Reserved. Unauthorized Distribution Prohibited.**
 
-*This legal disclaimer is effective as of December 2024 and supersedes all previous versions.*
+*This legal disclaimer is effective as of January 2025 and supersedes all previous versions.*

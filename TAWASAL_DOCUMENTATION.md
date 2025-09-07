@@ -270,7 +270,7 @@ curl -X POST https://tawasal.moct.gov.sy/api/ai/analyze \
     "confidence": 87
   },
   "communicationId": 123,
-  "timestamp": "2024-12-27T15:30:00.000Z"
+  "timestamp": "2025-01-27T15:30:00.000Z"
 }
 ```
 
@@ -640,13 +640,13 @@ This software is developed and licensed to the **Government of Syria** under the
 **Email:** abdulwahab.omira@moct.gov.sy  
 **Ministry:** Syrian Ministry of Communications and Information Technology  
 **Version:** 1.0.0  
-**Last Updated:** December 2024  
+**Last Updated:** January 2025  
 
 ---
 
 ## 📝 Changelog
 
-### Version 1.0.0 (December 2024)
+### Version 1.0.0 (January 2025)
 - ✅ Initial release
 - ✅ AI integration with local Llama models
 - ✅ Enterprise security implementation
@@ -656,7 +656,7 @@ This software is developed and licensed to the **Government of Syria** under the
 
 ---
 
-**© 2024 Syrian Ministry of Communications and Information Technology**  
+**© 2025 Syrian Ministry of Communications and Information Technology**  
 **All rights reserved. Unauthorized distribution prohibited.**
 
 *Built with ❤️ for the Syrian people*

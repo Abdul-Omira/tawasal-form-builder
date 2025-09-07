@@ -125,4 +125,4 @@ Email: abdulwahab.omira@moct.gov.sy
 ---
 
 **Syrian Ministry of Communications and Information Technology**  
-© 2024 All rights reserved
+© 2025 All rights reserved

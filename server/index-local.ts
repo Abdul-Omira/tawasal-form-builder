@@ -5,7 +5,7 @@
  * @author Abdulwahab Omira <abdulwahab.omira@moct.gov.sy>
  * @version 1.0.0
  * @license Government of Syria - Ministry of Communications
- * @copyright 2024 Syrian Ministry of Communications and Information Technology
+ * @copyright 2025 Syrian Ministry of Communications and Information Technology
  */
 
 import express, { type Request, Response, NextFunction } from "express";

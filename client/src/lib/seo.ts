@@ -45,7 +45,7 @@ export const pageMetadata: Record<string, PageMetadata> = {
     title: 'لوحة تحكم المشرف',
     description:
       'إدارة رسائل المواطنين وعرض الإحصائيات والتقارير لمنصة التواصل مع الوزير',
-    path: '/mgt-system-2024',
+    path: '/mgt-system-2025',
     image: `${BASE_URL}/assets/syrian-logo-gold.svg`
   },
   auth: {

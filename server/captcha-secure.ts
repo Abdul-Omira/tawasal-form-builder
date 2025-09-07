@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { Request } from 'express';
 
 // Secret key for CAPTCHA token generation (should be in environment variable)
-const CAPTCHA_SECRET = process.env.CAPTCHA_SECRET || 'syrian-ministry-captcha-secret-2024-ultra-secure';
+const CAPTCHA_SECRET = process.env.CAPTCHA_SECRET || 'syrian-ministry-captcha-secret-2025-ultra-secure';
 
 interface SecureCaptchaChallenge {
   id: string;
