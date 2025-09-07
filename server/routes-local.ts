@@ -15,6 +15,11 @@ import { citizenCommunications, businessSubmissions, users } from "@shared/schem
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
+// Import form builder routes
+import formsRouter from "./routes/forms";
+import responsesRouter from "./routes/responses";
+import analyticsRouter from "./routes/analytics";
+
 export async function registerRoutes(app: Express): Promise<void> {
   console.log("🔧 Setting up local development routes...");
 
@@ -158,6 +163,11 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.status(500).json({ error: "Internal server error" });
     }
   });
+
+  // Form Builder API Routes
+  app.use("/api/forms", formsRouter);
+  app.use("/api/responses", responsesRouter);
+  app.use("/api/analytics", analyticsRouter);
 
   // Admin routes (protected)
   app.get("/api/admin/submissions", async (req: Request, res: Response) => {

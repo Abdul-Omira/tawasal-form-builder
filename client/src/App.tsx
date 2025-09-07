@@ -1,102 +1,422 @@
-import { useEffect, useState } from 'react';
-import { Switch, Route, useLocation } from 'wouter';
-import { queryClient } from './lib/queryClient';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { RTLProvider } from '@/contexts/RTLContext';
-import { I18nextProvider } from 'react-i18next';
-import i18n from './lib/i18n';
-import Home from '@/pages/Home';
-import Admin from '@/pages/Admin';
-import Confirmation from '@/pages/Confirmation';
-import AuthPage from '@/pages/AuthPage';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import TermsOfUse from '@/pages/TermsOfUse';
-import NotFound from '@/pages/not-found';
-import { ProtectedRoute } from '@/lib/protected-route';
-import WelcomeScreen from '@/components/animation/WelcomeScreen';
-import { pageMetadata, setPageTitle, updateMetaTags } from '@/lib/seo';
+/**
+ * Form Builder Platform - Main App Component
+ * Integrates admin dashboard, form builder, and public forms
+ */
 
-function Router() {
-  const [location] = useLocation();
-  
-  // Update SEO metadata when location changes
-  useEffect(() => {
-    // Find which page metadata to use based on the current path
-    let currentPage: keyof typeof pageMetadata = 'home';
-    
-    if (location === '/') {
-      currentPage = 'home';
-    } else if (location === '/mgt-system-2024') {
-      currentPage = 'admin';
-    } else if (location === '/auth') {
-      currentPage = 'auth';
-    } else if (location === '/confirmation') {
-      currentPage = 'confirmation';
-    } else if (location === '/privacy-policy') {
-      currentPage = 'privacyPolicy';
-    } else if (location === '/terms-of-use') {
-      currentPage = 'termsOfUse';
-    } else {
-      currentPage = 'notFound';
-    }
-    
-    // Get the metadata for the current page
-    const metadata = pageMetadata[currentPage];
-    
-    // Update title and meta tags
-    setPageTitle(metadata.title);
-    updateMetaTags(metadata);
-  }, [location]);
-  
-  return (
-    <Switch>
-      <Route path="/" component={Home}/>
-      <ProtectedRoute path="/mgt-system-2024" component={Admin} adminOnly={true} />
-      <Route path="/confirmation" component={Confirmation}/>
-      <Route path="/auth" component={AuthPage}/>
-      <Route path="/privacy-policy" component={PrivacyPolicy}/>
-      <Route path="/terms-of-use" component={TermsOfUse}/>
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { RTLProvider } from './contexts/RTLContext';
+import { cn } from './lib/utils';
+
+// Admin Components
+import Dashboard from './components/admin/Dashboard';
+import FormManagement from './components/admin/FormManagement';
+import Analytics from './components/admin/Analytics';
+
+// Form Builder Components
+import FormCanvas from './components/form-builder/FormCanvas';
+import ComponentLibrary from './components/form-builder/ComponentLibrary';
+import PropertyPanel from './components/form-builder/PropertyPanel';
+
+// Public Components
+import FormRenderer from './components/public/FormRenderer';
+import FormSubmission from './components/public/FormSubmission';
+
+// Types
+import { Form, FormComponent, FormResponse, FormAnalyticsData } from './types/form';
+import { BaseComponent } from './types/component';
+
+// Mock data for development
+const mockForms: Form[] = [
+  {
+    id: '1',
+    title: 'نموذج استطلاع المواطنين',
+    description: 'استطلاع لقياس رضا المواطنين عن الخدمات الحكومية',
+    status: 'published',
+    createdBy: 'admin',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-20'),
+    publishedAt: new Date('2024-01-20'),
+    settings: {},
+  },
+  {
+    id: '2',
+    title: 'نموذج تسجيل الأعمال',
+    description: 'نموذج لتسجيل الشركات والمؤسسات',
+    status: 'draft',
+    createdBy: 'admin',
+    createdAt: new Date('2024-01-18'),
+    updatedAt: new Date('2024-01-22'),
+    settings: {},
+  },
+];
+
+const mockComponents: BaseComponent[] = [
+  {
+    id: 'comp1',
+    type: 'text',
+    config: {
+      label: 'الاسم الكامل',
+      placeholder: 'أدخل اسمك الكامل',
+      required: true,
+      helpText: 'يرجى إدخال اسمك الكامل كما هو مكتوب في الهوية',
+    },
+    validation: {
+      required: true,
+      minLength: 2,
+      maxLength: 100,
+    },
+    orderIndex: 0,
+    isVisible: true,
+    isRequired: true,
+  },
+  {
+    id: 'comp2',
+    type: 'email',
+    config: {
+      label: 'البريد الإلكتروني',
+      placeholder: 'example@email.com',
+      required: true,
+      helpText: 'سيتم استخدام هذا البريد للتواصل معك',
+    },
+    validation: {
+      required: true,
+      pattern: '^[^@]+@[^@]+\\.[^@]+$',
+    },
+    orderIndex: 1,
+    isVisible: true,
+    isRequired: true,
+  },
+];
+
+const mockAnalytics: FormAnalyticsData[] = [
+  {
+    formId: '1',
+    totalViews: 1250,
+    totalSubmissions: 340,
+    completionRate: 0.85,
+    avgCompletionTime: 180,
+    dailyStats: [],
+    componentAnalytics: [],
+  },
+  {
+    formId: '2',
+    totalViews: 890,
+    totalSubmissions: 120,
+    completionRate: 0.72,
+    avgCompletionTime: 240,
+    dailyStats: [],
+    componentAnalytics: [],
+  },
+];
 
 function App() {
-  // State to control showing the welcome screen
-  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
-  
-  useEffect(() => {
-    // Check if we should skip the welcome screen (for development purposes)
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('skipWelcome') === 'true') {
-      setShowWelcomeScreen(false);
-    }
-  }, []);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'form-builder' | 'public-form'>('dashboard');
+  const [selectedForm, setSelectedForm] = useState<Form | null>(null);
+  const [selectedComponent, setSelectedComponent] = useState<BaseComponent | null>(null);
+  const [forms, setForms] = useState<Form[]>(mockForms);
+  const [components, setComponents] = useState<BaseComponent[]>(mockComponents);
+  const [analytics, setAnalytics] = useState<FormAnalyticsData[]>(mockAnalytics);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
 
-  // Handle when the welcome screen animation completes
-  const handleWelcomeComplete = () => {
-    setShowWelcomeScreen(false);
+  // Form Builder State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'input' | 'selection' | 'file' | 'date' | 'rating' | 'layout' | 'logic'>('all');
+
+  // Handle form operations
+  const handleCreateForm = () => {
+    const newForm: Form = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: 'نموذج جديد',
+      description: '',
+      status: 'draft',
+      createdBy: 'admin',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      settings: {},
+    };
+    setForms(prev => [newForm, ...prev]);
+    setSelectedForm(newForm);
+    setCurrentView('form-builder');
+  };
+
+  const handleEditForm = (formId: string) => {
+    const form = forms.find(f => f.id === formId);
+    if (form) {
+      setSelectedForm(form);
+      setCurrentView('form-builder');
+    }
+  };
+
+  const handleDeleteForm = (formId: string) => {
+    setForms(prev => prev.filter(f => f.id !== formId));
+    if (selectedForm?.id === formId) {
+      setSelectedForm(null);
+      setCurrentView('dashboard');
+    }
+  };
+
+  const handleViewForm = (formId: string) => {
+    const form = forms.find(f => f.id === formId);
+    if (form) {
+      setSelectedForm(form);
+      setCurrentView('public-form');
+    }
+  };
+
+  const handleShareForm = (formId: string) => {
+    const form = forms.find(f => f.id === formId);
+    if (form) {
+      const url = `${window.location.origin}/form/${formId}`;
+      navigator.clipboard.writeText(url);
+      // Show success message
+      alert('تم نسخ رابط النموذج إلى الحافظة');
+    }
+  };
+
+  const handleArchiveForm = (formId: string) => {
+    setForms(prev => prev.map(f => 
+      f.id === formId ? { ...f, status: 'archived' as const } : f
+    ));
+  };
+
+  const handleDuplicateForm = (formId: string) => {
+    const form = forms.find(f => f.id === formId);
+    if (form) {
+      const duplicatedForm: Form = {
+        ...form,
+        id: Math.random().toString(36).substr(2, 9),
+        title: `${form.title} (نسخة)`,
+        status: 'draft',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        publishedAt: undefined,
+      };
+      setForms(prev => [duplicatedForm, ...prev]);
+    }
+  };
+
+  const handleViewAnalytics = (formId: string) => {
+    // Switch to analytics view
+    setCurrentView('dashboard');
+  };
+
+  // Form Builder Operations
+  const handleComponentAdd = (component: BaseComponent) => {
+    setComponents(prev => [...prev, component]);
+    setIsDirty(true);
+  };
+
+  const handleComponentUpdate = (componentId: string, updates: Partial<BaseComponent>) => {
+    setComponents(prev => prev.map(c => 
+      c.id === componentId ? { ...c, ...updates } : c
+    ));
+    setIsDirty(true);
+  };
+
+  const handleComponentDelete = (componentId: string) => {
+    setComponents(prev => prev.filter(c => c.id !== componentId));
+    if (selectedComponent?.id === componentId) {
+      setSelectedComponent(null);
+    }
+    setIsDirty(true);
+  };
+
+  const handleComponentSelect = (component: BaseComponent | null) => {
+    setSelectedComponent(component);
+  };
+
+  const handleComponentMove = (fromIndex: number, toIndex: number) => {
+    setComponents(prev => {
+      const newComponents = [...prev];
+      const [movedComponent] = newComponents.splice(fromIndex, 1);
+      newComponents.splice(toIndex, 0, movedComponent);
+      return newComponents;
+    });
+    setIsDirty(true);
+  };
+
+  const handleSaveForm = () => {
+    if (selectedForm) {
+      setForms(prev => prev.map(f => 
+        f.id === selectedForm.id 
+          ? { ...f, updatedAt: new Date() }
+          : f
+      ));
+      setIsDirty(false);
+      // Show success message
+      alert('تم حفظ النموذج بنجاح');
+    }
+  };
+
+  const handlePreviewForm = () => {
+    setIsPreviewMode(!isPreviewMode);
+  };
+
+  const handlePublishForm = () => {
+    if (selectedForm) {
+      setForms(prev => prev.map(f => 
+        f.id === selectedForm.id 
+          ? { ...f, status: 'published', publishedAt: new Date(), updatedAt: new Date() }
+          : f
+      ));
+      setIsDirty(false);
+      // Show success message
+      alert('تم نشر النموذج بنجاح');
+    }
+  };
+
+  // Public Form Operations
+  const handleFormSubmit = async (response: FormResponse) => {
+    console.log('Form submitted:', response);
+    // In a real app, this would send to the API
+    alert('تم إرسال النموذج بنجاح');
+  };
+
+  const handleSaveProgress = async (response: Partial<FormResponse>) => {
+    console.log('Progress saved:', response);
+    // In a real app, this would save to the API
+  };
+
+  const handleExportData = (format: 'csv' | 'pdf' | 'excel') => {
+    console.log('Exporting data as:', format);
+    // In a real app, this would trigger the export
+    alert(`سيتم تصدير البيانات بصيغة ${format.toUpperCase()}`);
+  };
+
+  // Render current view
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'dashboard':
+        return (
+          <Dashboard
+            forms={forms}
+            analytics={analytics}
+            onCreateForm={handleCreateForm}
+            onEditForm={handleEditForm}
+            onDeleteForm={handleDeleteForm}
+            onViewForm={handleViewForm}
+            onShareForm={handleShareForm}
+            onArchiveForm={handleArchiveForm}
+          />
+        );
+      
+      case 'form-builder':
+        return (
+          <div className="flex h-screen">
+            <ComponentLibrary
+              onComponentDrag={handleComponentAdd}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+            <div className="flex-1 flex">
+              <FormCanvas
+                form={selectedForm}
+                components={components}
+                selectedComponent={selectedComponent}
+                onComponentAdd={handleComponentAdd}
+                onComponentUpdate={handleComponentUpdate}
+                onComponentDelete={handleComponentDelete}
+                onComponentSelect={handleComponentSelect}
+                onComponentMove={handleComponentMove}
+                onSaveForm={handleSaveForm}
+                onPreviewForm={handlePreviewForm}
+                onPublishForm={handlePublishForm}
+                isPreviewMode={isPreviewMode}
+                isDirty={isDirty}
+              />
+              <PropertyPanel
+                selectedComponent={selectedComponent}
+                onConfigChange={(config) => selectedComponent && handleComponentUpdate(selectedComponent.id, { config })}
+                onValidationChange={(validation) => selectedComponent && handleComponentUpdate(selectedComponent.id, { validation })}
+                onConditionalLogicChange={(logic) => selectedComponent && handleComponentUpdate(selectedComponent.id, { conditionalLogic: logic })}
+                onComponentDelete={handleComponentDelete}
+                onComponentToggleVisibility={(id) => handleComponentUpdate(id, { isVisible: !components.find(c => c.id === id)?.isVisible })}
+              />
+            </div>
+          </div>
+        );
+      
+      case 'public-form':
+        return selectedForm ? (
+          <FormRenderer
+            form={selectedForm}
+            components={components}
+            onSubmit={handleFormSubmit}
+            onSaveProgress={handleSaveProgress}
+            showProgress={true}
+            allowSaveProgress={true}
+            isPreview={false}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                نموذج غير موجود
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                النموذج المطلوب غير موجود أو تم حذفه
+              </p>
+            </div>
+          </div>
+        );
+      
+      default:
+        return <Navigate to="/dashboard" replace />;
+    }
   };
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <RTLProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            {showWelcomeScreen ? (
-              <WelcomeScreen 
-                onComplete={handleWelcomeComplete} 
-                duration={5} // Set welcome screen duration to 5 seconds
-              />
-            ) : null}
-            <Router />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </RTLProvider>
-    </I18nextProvider>
+    <RTLProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+          {/* Navigation */}
+          <nav className="bg-white dark:bg-gray-800 shadow">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between h-16">
+                <div className="flex items-center">
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                    منصة بناء النماذج
+                  </h1>
+                </div>
+                <div className="flex items-center space-x-4 space-x-reverse">
+                  <button
+                    onClick={() => setCurrentView('dashboard')}
+                    className={cn(
+                      "px-3 py-2 rounded-md text-sm font-medium",
+                      currentView === 'dashboard'
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    لوحة التحكم
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('form-builder')}
+                    className={cn(
+                      "px-3 py-2 rounded-md text-sm font-medium",
+                      currentView === 'form-builder'
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    منشئ النماذج
+                  </button>
+                </div>
+              </div>
+            </div>
+          </nav>
+
+          {/* Main Content */}
+          <main>
+            {renderCurrentView()}
+          </main>
+        </div>
+      </Router>
+    </RTLProvider>
   );
 }
 
