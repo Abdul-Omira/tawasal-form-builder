@@ -13,6 +13,17 @@ import { sqliteTable, text, integer, real, blob } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Users table
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  password: text("password").notNull(),
+  role: text("role").notNull().default("employee"), // admin, employee, citizen
+  createdAt: integer("created_at", { mode: 'timestamp' }).notNull().default(Date.now()),
+  updatedAt: integer("updated_at", { mode: 'timestamp' }).notNull().default(Date.now()),
+});
+
 // Forms table
 export const forms = sqliteTable("forms", {
   id: text("id").primaryKey(),
@@ -335,6 +346,11 @@ export const selectFormAnalyticsSchema = createSelectSchema(formAnalytics);
 export const selectFormTemplateSchema = createSelectSchema(formTemplates);
 
 // Types
+// User schemas
+export const UserSchema = createSelectSchema(users);
+export const insertUserSchema = createInsertSchema(users);
+
+export type User = z.infer<typeof UserSchema>;
 export type Form = z.infer<typeof FormSchema>;
 export type FormComponent = z.infer<typeof FormComponentSchema>;
 export type FormResponse = z.infer<typeof FormResponseSchema>;
@@ -358,6 +374,7 @@ export type FormSettings = z.infer<typeof FormSettings>;
 export type UserInfo = z.infer<typeof UserInfo>;
 
 // Insert types
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertForm = z.infer<typeof insertFormSchema>;
 export type InsertFormComponent = z.infer<typeof insertFormComponentSchema>;
 export type InsertFormResponse = z.infer<typeof insertFormResponseSchema>;

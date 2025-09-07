@@ -6,7 +6,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { db } from '../db-form-builder';
-import { users } from '../../shared/schema-form-builder';
+import { users, forms } from '../../shared/schema-form-builder';
 import { eq } from 'drizzle-orm';
 
 // Extend Request interface to include user
