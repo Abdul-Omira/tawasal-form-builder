@@ -58,9 +58,9 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     // Add user to request
     req.user = {
       id: user[0].id,
-      email: user[0].email,
-      role: user[0].role,
-      name: user[0].name,
+      email: user[0].email || '',
+      role: user[0].is_admin ? 'admin' : 'user',
+      name: user[0].name || '',
     };
 
     next();

@@ -4,7 +4,8 @@
  */
 
 import React, { useState, useRef, useCallback } from 'react';
-import { FileUploadConfig, ComponentRenderProps } from '../../types/component';
+import { FileUploadConfig } from '../../types/form';
+import { ComponentRenderProps } from '../../types/component';
 import { cn, formatFileSize, isImageFile, isPdfFile } from '../../lib/utils';
 import { CloudArrowUpIcon, XMarkIcon, DocumentIcon, PhotoIcon } from '@heroicons/react/24/outline';
 

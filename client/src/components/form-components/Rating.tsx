@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import { RatingConfig, ComponentRenderProps } from '../../types/component';
+import { RatingConfig } from '../../types/form';
+import { ComponentRenderProps } from '../../types/component';
 import { cn } from '../../lib/utils';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';

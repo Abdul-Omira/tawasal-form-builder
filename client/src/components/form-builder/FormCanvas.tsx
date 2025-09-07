@@ -4,8 +4,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { DndProvider, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useDrop } from 'react-dnd';
 import { Form, FormComponent, ComponentType } from '../../types/form';
 import { BaseComponent } from '../../types/component';
 import { cn } from '../../lib/utils';
@@ -117,8 +116,7 @@ export const FormCanvas: React.FC<FormCanvasProps> = ({
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="flex-1 flex flex-col h-full">
+    <div className="flex-1 flex flex-col h-full">
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
@@ -195,7 +193,6 @@ export const FormCanvas: React.FC<FormCanvasProps> = ({
           </div>
         </div>
       </div>
-    </DndProvider>
   );
 };
 

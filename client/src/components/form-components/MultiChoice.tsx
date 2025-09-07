@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import { MultiChoiceConfig, ComponentRenderProps } from '../../types/component';
+import { MultiChoiceConfig } from '../../types/form';
+import { ComponentRenderProps } from '../../types/component';
 import { cn } from '../../lib/utils';
 
 interface MultiChoiceProps extends ComponentRenderProps {

@@ -5,11 +5,11 @@
 
 import React from 'react';
 import { ComponentDefinition, ComponentType, ComponentCategory } from '../../types/component';
-import TextInput from './TextInput';
-import Dropdown from './Dropdown';
-import MultiChoice from './MultiChoice';
-import FileUpload from './FileUpload';
-import Rating from './Rating';
+import { TextInput } from './TextInput';
+import { Dropdown } from './Dropdown';
+import { MultiChoice } from './MultiChoice';
+import { FileUpload } from './FileUpload';
+import { Rating } from './Rating';
 
 // Component registry
 export const componentRegistry: Record<ComponentType, ComponentDefinition> = {

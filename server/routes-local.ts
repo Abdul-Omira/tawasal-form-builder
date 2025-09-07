@@ -11,9 +11,12 @@
 
 import type { Express, Request, Response, NextFunction } from "express";
 import { db } from "./db-local";
+import { db as formBuilderDb } from "./db-form-builder";
 import { citizenCommunications, businessSubmissions, users } from "@shared/schema-local";
+import { users as formBuilderUsers } from "@shared/schema-form-builder";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 // Import form builder routes
 import formsRouter from "./routes/forms";
@@ -41,8 +44,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(400).json({ error: "Username and password are required" });
       }
 
-      // Find user in database
-      const user = await db.select().from(users).where(eq(users.username, username)).get();
+      // Find user in form builder database
+      const user = await formBuilderDb.select().from(formBuilderUsers).where(eq(formBuilderUsers.username, username)).get();
       
       if (!user) {
         return res.status(401).json({ error: "Invalid credentials" });
@@ -55,8 +58,17 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
-      // Create simple session token (in production, use JWT)
-      const sessionToken = Buffer.from(`${user.id}:${Date.now()}`).toString('base64');
+      // Create JWT token
+      const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+      const token = jwt.sign(
+        { 
+          userId: user.id, 
+          username: user.username,
+          role: user.is_admin ? 'admin' : 'user'
+        },
+        JWT_SECRET,
+        { expiresIn: '24h' }
+      );
       
       res.json({
         success: true,
@@ -64,9 +76,9 @@ export async function registerRoutes(app: Express): Promise<void> {
           id: user.id,
           username: user.username,
           name: user.name,
-          isAdmin: user.isAdmin
+          isAdmin: user.is_admin
         },
-        sessionToken
+        token
       });
 
     } catch (error) {

@@ -16,12 +16,12 @@ import { z } from "zod";
 // Users table
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  name: text("name").notNull(),
+  username: text("username").notNull().unique(),
+  email: text("email"),
+  name: text("name"),
   password: text("password").notNull(),
-  role: text("role").notNull().default("employee"), // admin, employee, citizen
-  createdAt: integer("created_at", { mode: 'timestamp' }).notNull().default(Date.now()),
-  updatedAt: integer("updated_at", { mode: 'timestamp' }).notNull().default(Date.now()),
+  is_admin: integer("is_admin", { mode: 'boolean' }).notNull().default(false),
+  created_at: integer("created_at", { mode: 'timestamp' }).notNull().default(Date.now()),
 });
 
 // Forms table

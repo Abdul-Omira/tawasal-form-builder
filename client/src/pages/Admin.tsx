@@ -527,7 +527,7 @@ const Admin: React.FC = () => {
           </div>
           
           <Tabs defaultValue="submissions" className="bg-white rounded-lg shadow-md">
-            <TabsList className="w-full md:w-auto grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-white">
+            <TabsList className="w-full md:w-auto grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-white">
               <TabsTrigger value="submissions" className="data-[state=active]:bg-primary data-[state=active]:text-white">
                 <FilePlusIcon className="ml-2 h-4 w-4" />
                 رسائل المواطنين
@@ -535,6 +535,10 @@ const Admin: React.FC = () => {
               <TabsTrigger value="statistics" className="data-[state=active]:bg-primary data-[state=active]:text-white">
                 <BarChart4Icon className="ml-2 h-4 w-4" />
                 الإحصائيات المتقدمة
+              </TabsTrigger>
+              <TabsTrigger value="form-builder" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                <FileTextIcon className="ml-2 h-4 w-4" />
+                منشئ النماذج
               </TabsTrigger>
               <TabsTrigger value="settings" className="data-[state=active]:bg-primary data-[state=active]:text-white">
                 <SettingsIcon className="ml-2 h-4 w-4" />
@@ -1222,6 +1226,86 @@ const Admin: React.FC = () => {
                   </div>
                 </div>
               )}
+            </TabsContent>
+            
+            <TabsContent value="form-builder" className="p-6">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-semibold text-foreground">منشئ النماذج</h3>
+                  <Button 
+                    onClick={() => window.open('/form-builder', '_blank')}
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    <FileTextIcon className="ml-2 h-4 w-4" />
+                    فتح منشئ النماذج
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => window.open('/form-builder', '_blank')}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <FileTextIcon className="ml-2 h-5 w-5 text-primary" />
+                        إنشاء نموذج جديد
+                      </CardTitle>
+                      <CardDescription>
+                        ابدأ بإنشاء نموذج جديد باستخدام منشئ النماذج المتقدم
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        استخدم واجهة السحب والإفلات لإنشاء نماذج تفاعلية بسهولة
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <BarChart4Icon className="ml-2 h-5 w-5 text-primary" />
+                        إدارة النماذج
+                      </CardTitle>
+                      <CardDescription>
+                        عرض وإدارة جميع النماذج المنشأة
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        تحرير، حذف، أو نشر النماذج الموجودة
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <TrendingUpIcon className="ml-2 h-5 w-5 text-primary" />
+                        تحليلات النماذج
+                      </CardTitle>
+                      <CardDescription>
+                        عرض إحصائيات وتقارير النماذج
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        تتبع معدلات الإكمال والاستجابات
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-900 mb-2">مميزات منشئ النماذج</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• واجهة سحب وإفلات سهلة الاستخدام</li>
+                    <li>• مكونات متعددة: نصوص، قوائم منسدلة، رفع ملفات</li>
+                    <li>• منطق شرطي متقدم لإظهار/إخفاء الحقول</li>
+                    <li>• تخصيص التصميم والألوان</li>
+                    <li>• تحليلات مفصلة للاستجابات</li>
+                    <li>• إمكانية النشر العام أو المحمي</li>
+                  </ul>
+                </div>
+              </div>
             </TabsContent>
             
             <TabsContent value="settings" className="p-6">

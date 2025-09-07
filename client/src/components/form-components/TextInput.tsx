@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import { TextInputConfig, ComponentRenderProps } from '../../types/component';
+import { TextInputConfig } from '../../types/form';
+import { ComponentRenderProps } from '../../types/component';
 import { cn } from '../../lib/utils';
 
 interface TextInputProps extends ComponentRenderProps {

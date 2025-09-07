@@ -4,7 +4,8 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { DropdownConfig, ComponentRenderProps } from '../../types/component';
+import { DropdownConfig } from '../../types/form';
+import { ComponentRenderProps } from '../../types/component';
 import { cn } from '../../lib/utils';
 import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline';
 
