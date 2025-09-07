@@ -273,11 +273,11 @@ This privacy policy is based on:
 
 By using the Tawasal platform, you acknowledge that you have read, understood, and agree to this privacy policy. If you do not agree with any part of this policy, please do not use the platform.
 
-**This privacy policy is effective as of December 2024 and supersedes all previous versions.**
+**This privacy policy is effective as of January 2025 and supersedes all previous versions.**
 
 ---
 
-**© 2024 Syrian Ministry of Communications and Information Technology**  
+**© 2025 Syrian Ministry of Communications and Information Technology**  
 **All Rights Reserved. Unauthorized Distribution Prohibited.**
 
 *For questions about this privacy policy, please contact privacy@moct.gov.sy*

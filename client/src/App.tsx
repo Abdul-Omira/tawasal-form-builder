@@ -37,9 +37,9 @@ const mockForms: Form[] = [
     description: 'استطلاع لقياس رضا المواطنين عن الخدمات الحكومية',
     status: 'published',
     createdBy: 'admin',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-20'),
-    publishedAt: new Date('2024-01-20'),
+    createdAt: new Date('2025-01-15'),
+    updatedAt: new Date('2025-01-20'),
+    publishedAt: new Date('2025-01-20'),
     settings: {},
   },
   {
@@ -48,8 +48,8 @@ const mockForms: Form[] = [
     description: 'نموذج لتسجيل الشركات والمؤسسات',
     status: 'draft',
     createdBy: 'admin',
-    createdAt: new Date('2024-01-18'),
-    updatedAt: new Date('2024-01-22'),
+    createdAt: new Date('2025-01-18'),
+    updatedAt: new Date('2025-01-22'),
     settings: {},
   },
 ];

@@ -306,7 +306,7 @@ class MinistryEmailService {
                             <!-- Action buttons -->
                             <div style="text-align: center; margin-top: 35px;">
                                 <div style="margin-bottom: 15px;">
-                                    <a href="${process.env.APP_URL || 'https://tawasal.moct.gov.sy'}/mgt-system-2024"
+                                    <a href="${process.env.APP_URL || 'https://tawasal.moct.gov.sy'}/mgt-system-2025"
                                        class="btn"
                                        style="display: inline-block; background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 12px; font-size: 16px; font-weight: 600; box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; text-align: center; min-width: 200px;">
                                         🖥️ عرض في لوحة التحكم
@@ -373,7 +373,7 @@ ${communication.attachmentUrl ? `
 📎 المرفقات: يحتوي هذا التواصل على مرفق يمكنكم الوصول إليه من خلال لوحة التحكم
 ` : ''}
 
-🖥️ عرض في لوحة التحكم: ${process.env.APP_URL || 'https://tawasal.moct.gov.sy'}/mgt-system-2024
+🖥️ عرض في لوحة التحكم: ${process.env.APP_URL || 'https://tawasal.moct.gov.sy'}/mgt-system-2025
 
 ---
 🤖 رسالة آلية من منصة التواصل المباشر

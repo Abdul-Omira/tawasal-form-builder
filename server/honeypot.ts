@@ -237,14 +237,14 @@ const generateComprehensiveFakeData = () => {
       security: 'disabled',
       debug: true,
       maintenance: false,
-      lastUpdate: '2024-01-15T10:30:00Z'
+      lastUpdate: '2025-01-15T10:30:00Z'
     },
     users: [
       { 
         id: 1, 
         username: 'demo_admin', 
         role: 'admin', 
-        lastLogin: '2024-01-15',
+        lastLogin: '2025-01-15',
         email: 'admin@fake-system.local',
         permissions: ['read', 'write', 'delete'],
         sessions: 3
@@ -253,7 +253,7 @@ const generateComprehensiveFakeData = () => {
         id: 2, 
         username: 'test_user', 
         role: 'user', 
-        lastLogin: '2024-01-10',
+        lastLogin: '2025-01-10',
         email: 'user@fake-system.local',
         permissions: ['read'],
         sessions: 1
@@ -262,7 +262,7 @@ const generateComprehensiveFakeData = () => {
         id: 3, 
         username: 'backup_admin', 
         role: 'backup', 
-        lastLogin: '2024-01-05',
+        lastLogin: '2025-01-05',
         email: 'backup@fake-system.local',
         permissions: ['backup', 'restore'],
         sessions: 0
@@ -283,7 +283,7 @@ const generateComprehensiveFakeData = () => {
       name: 'fake_ministry_db',
       tables: 42,
       records: 15847,
-      lastBackup: '2024-01-14T02:00:00Z',
+      lastBackup: '2025-01-14T02:00:00Z',
       status: 'connected'
     },
     security: {

@@ -95,7 +95,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       });
       
       // Redirect all authenticated users to the dashboard
-      setLocation('/mgt-system-2024');
+      setLocation('/mgt-system-2025');
       
       if (onSuccess) {
         onSuccess();
